@@ -10,6 +10,7 @@ public class spigot extends JavaPlugin {
     public void onEnable() {
         getLogger().info("Hey! This is just for you to know that the plugin is enabled!");
         BedFire bedfire = new BedFire();
+        bedfire.run();
         getServer().getPluginManager().registerEvents((Listener) bedfire, this);
 
     }
