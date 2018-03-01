@@ -1,5 +1,5 @@
 name: FernLogger
-main: io.github.fernplayzz.fcommands
+main: io.github.fernplayzz.fcommands.spigot
 version: 1.0
 author: fernplayzz
 description: Commands for the ferns out there :P
