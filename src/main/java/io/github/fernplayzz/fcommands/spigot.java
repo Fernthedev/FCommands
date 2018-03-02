@@ -1,6 +1,7 @@
 package io.github.fernplayzz.fcommands;
 
 import io.github.fernplayzz.fcommands.spigotclass.BedFire;
+import io.github.fernplayzz.fcommands.spigotclass.LavaBurn;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,6 +15,9 @@ public class spigot extends JavaPlugin implements Listener {
         //BedFire.run();
         //Bukkit.getServer().getPluginManager().registerEvents(new BedFire(), this);
         this.getServer().getPluginManager().registerEvents(new BedFire(), this);
+        this.getServer().getPluginManager().registerEvents(new LavaBurn(), this);
+        BedFire.onEnable();
+        LavaBurn.onEnable();
         //BedFire bedfire = new BedFire();
         //this.getCommand("fbedcheck").setExecutor(new BedFire());
         /*if (getServer().getPluginManager().isPluginEnabled(bedfire)) {

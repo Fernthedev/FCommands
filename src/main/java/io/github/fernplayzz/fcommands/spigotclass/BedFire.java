@@ -28,6 +28,9 @@ public class BedFire implements Listener {
             }
         }
     }
+    public static void onEnable() {
+        Bukkit.getLogger().info("ENABLED BEDFIRE");
+    }
 }
     /*@Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
