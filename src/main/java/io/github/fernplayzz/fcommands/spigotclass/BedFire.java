@@ -2,19 +2,41 @@ package io.github.fernplayzz.fcommands.spigotclass;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.event.player.PlayerBedEnterEvent;
 
-public class BedFire extends JavaPlugin implements Listener {
+public class BedFire implements Listener {
     //Player players = (Player) Bukkit.getServer().getOnlinePlayers();
-    public static void run() {
-        for (Player players : Bukkit.getServer().getOnlinePlayers()) {
-            if (players.isSleeping()) {
+    @EventHandler
+    public static void onPlayerBedEnter(PlayerBedEnterEvent event) {
+        //for (Player players : Bukkit.getServer().getOnlinePlayers()) {
+          /*  if (players.isSleeping()) {
                 players.setFireTicks(200);
                 players.sendMessage(ChatColor.GOLD + "YOU'RE NOW ON FIRE THANKS TO A SHAODW! HAHAHAHAH");
+            }
+        }*/
+
+        Player target = event.getPlayer();
+        if (!(target.isInvulnerable())) {
+            if (!(target.getGameMode() == GameMode.CREATIVE)) {
+                target.setFireTicks(200);
+                target.sendMessage(ChatColor.GOLD + "A Shadow Burnt you to death. Maybe.");
+                Bukkit.getLogger().info("Burnt inbed: " + target.getDisplayName());
             }
         }
     }
 }
+    /*@Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if(getServer().getPluginCommand(BedFire)) == true) {
+            sender.sendMessage(ChatColor.GREEN + "Bedfire is enabled");
+        }else{
+            sender.sendMessage(ChatColor.RED + "Bedfire is not enabled");
+        }
+        return true;
+    }*/
+
 

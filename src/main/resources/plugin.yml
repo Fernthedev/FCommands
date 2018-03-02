@@ -1,5 +1,9 @@
-name: FernLogger
-main: io.github.fernplayzz.fcommands.spigot
+name: FernCommands
 version: 1.0
-author: fernplayzz
-description: Commands for the ferns out there :P
+main: io.github.fernplayzz.fcommands.spigot
+#author: fernplayzz
+#description: Commands for the ferns out there :P
+#commands:
+#   fbedcheck:
+#      description: Check if bedfern is running
+#      usage: /fbedcheck
