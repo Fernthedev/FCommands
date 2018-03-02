@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Random;
 
 public class LavaBurn implements Listener {
+    //Idea from Ender. Cool guy :D
     @EventHandler
     public static void onPlayerPickupItem(PlayerPickupItemEvent event) {
     if(event.getItem().getItemStack().equals(new ItemStack(Material.LAVA_BUCKET))) {
