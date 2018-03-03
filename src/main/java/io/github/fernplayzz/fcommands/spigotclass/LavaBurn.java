@@ -14,6 +14,7 @@ public class LavaBurn implements Listener {
     //Idea from Ender. Cool guy :D
     @EventHandler
     public static void onPlayerPickupItem(PlayerPickupItemEvent event) {
+        Bukkit.getLogger().info("LOADED LAVABURN EVENT");
         //LAVA
     if(event.getItem().getItemStack().equals(new ItemStack(Material.LAVA_BUCKET))) {
         event.getPlayer().sendMessage("YOU PICKED UP " + event.getItem().getItemStack());

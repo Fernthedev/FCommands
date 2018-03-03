@@ -12,6 +12,7 @@ public class BedFire implements Listener {
     //Player players = (Player) Bukkit.getServer().getOnlinePlayers();
     @EventHandler
     public static void onPlayerBedEnter(PlayerBedEnterEvent event) {
+        Bukkit.getLogger().info("LOADED BEDFIRE EVENT");
         //for (Player players : Bukkit.getServer().getOnlinePlayers()) {
           /*  if (players.isSleeping()) {
                 players.setFireTicks(200);
