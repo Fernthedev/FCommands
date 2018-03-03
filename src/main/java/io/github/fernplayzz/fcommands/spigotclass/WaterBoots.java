@@ -1,6 +1,8 @@
 package io.github.fernplayzz.fcommands.spigotclass;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,19 +18,26 @@ import java.util.ArrayList;
 
 public class WaterBoots implements Listener, CommandExecutor {
     //Another cool idea from Ender
-    public static void checkarmor() {
+    private static void checkarmor() {
         Bukkit.getLogger().info("LOADED WATER WALKING EVENT");
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                ItemStack Boots = p.getInventory().getBoots();
-                if (Boots != null) {
-                    if (Boots.getType() == Material.DIAMOND_BOOTS || Boots.getType() == Material.IRON_BOOTS || Boots.getType() == Material.LEATHER_BOOTS) {
-                        if ((Boots.getItemMeta().getLore() != null) &&
-                                (Boots.getItemMeta().getLore().contains("WaterWalk"))) {
-                            Material m = p.getLocation().getBlock().getType();
-                            for (; ; ) {
-                                if (m == Material.STATIONARY_WATER || m == Material.WATER) {
-                                    p.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 1, 255, true, false));
-                                }
+            for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+               // for (ItemStack stack : p.getPlayer().getInventory().getArmorContents()) {
+                   // if (stack.getType() != null) {
+                        ItemStack Boots = p.getInventory().getBoots();
+                        if (Boots != null) {
+                            if (Boots.getType() == Material.DIAMOND_BOOTS || Boots.getType() == Material.IRON_BOOTS) {
+                                if ((Boots.getItemMeta().getLore() != null) && (Boots.getItemMeta().getLore().contains("WaterWalk"))) {
+                                    Location pl = p.getLocation();
+                                    Material m = p.getLocation().getBlock().getType();
+                                    pl.setY(pl.getY() - 1);
+                                    Material plbelow = pl.getBlock().getType();
+                                    p.sendMessage("EXPERIMENTAL WATER");
+                                        while (plbelow == Material.STATIONARY_WATER || plbelow == Material.WATER) {
+                                            p.sendMessage("Test");
+                                            p.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 1, 255, true, false));
+
+                                    //}
+                              //  }
                             }
                         }
                     }
@@ -40,16 +49,17 @@ public class WaterBoots implements Listener, CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            ItemStack main = (ItemStack) player.getInventory().getItemInMainHand();
-            ItemStack offhand = (ItemStack) player.getInventory().getBoots();
-            ItemStack inv = (ItemStack) player.getInventory();
-                //if(((main.getType() == Material.DIAMOND_BOOTS) && (offhand.getType() == Material.ICE)) || ((main.getType() == Material.ICE) && (offhand.getType() == Material.DIAMOND_BOOTS)) || ((main.getType() == Material.IRON_BOOTS) && (offhand.getType() == Material.ICE)) || ((main.getType() == Material.ICE) && (offhand.getType() == Material.IRON_BOOTS))) {
+            ItemStack main = player.getInventory().getItemInMainHand();
+            //ItemStack offhand = (ItemStack) player.getInventory().getBoots();
+           // ItemStack inv = (ItemStack) player.getInventory();
+            /* //if(((main.getType() == Material.DIAMOND_BOOTS) && (offhand.getType() == Material.ICE)) || ((main.getType() == Material.ICE) && (offhand.getType() == Material.DIAMOND_BOOTS)) || ((main.getType() == Material.IRON_BOOTS) && (offhand.getType() == Material.ICE)) || ((main.getType() == Material.ICE) && (offhand.getType() == Material.IRON_BOOTS))) { */
             if(main.getType() == Material.DIAMOND_BOOTS && player.getInventory().contains(Material.ICE) || main.getType() == Material.IRON_BOOTS && player.getInventory().contains(Material.ICE)) {
-                    ItemMeta offlore = main.getItemMeta();
-                    ArrayList<String> lore = new ArrayList<String>();
-                    lore.add("Waterfall");
-                    offlore.setLore(lore);
-                    player.getInventory().remove(Material.ICE);
+                ItemMeta mainlore = main.getItemMeta();
+                ArrayList<String> lore = new ArrayList<String>();
+                lore.add(ChatColor.GRAY + "WaterWalk");
+                mainlore.setLore(lore);
+                main.setItemMeta(mainlore);
+                player.getInventory().remove(Material.ICE);
                /* } else if (offhand.getType() == Material.ICE) {
                     ItemMeta mainl = main.getItemMeta();
                     ArrayList<String> mainlore = new ArrayList<String>();
@@ -63,7 +73,7 @@ public class WaterBoots implements Listener, CommandExecutor {
 
             }else if(main.getType() != Material.DIAMOND_BOOTS || main.getType() != Material.IRON_BOOTS){
                 player.sendMessage("This is not applicable for WaterWalk");
-            }else if(!player.getInventory().contains(Material.ICE)) {
+            }else if(player.getInventory().contains(Material.ICE) == false) {
                 player.sendMessage("You need ice to be able to enchant this");
             }
         }

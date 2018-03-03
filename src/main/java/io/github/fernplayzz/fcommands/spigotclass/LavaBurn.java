@@ -24,9 +24,9 @@ public class LavaBurn implements Listener {
         if (firechance<=80) {
             Player target = event.getPlayer();
             Random firetick = new Random();
-            int numbertick = firetick.nextInt(100) + 1;
+            int numbertick = firetick.nextInt(100) + 1 ;
             if (numbertick >= 40) {
-                target.setFireTicks(numbertick * 2);
+                target.setFireTicks(numbertick *2);
             }
         }
     }
