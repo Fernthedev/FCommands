@@ -2,8 +2,8 @@ name: FernCommands
 version: 1.0
 main: io.github.fernplayzz.fcommands.spigot
 #author: fernplayzz
-#description: Commands for the ferns out there :P
-#commands:
-#   fbedcheck:
-#      description: Check if bedfern is running
-#      usage: /fbedcheck
+description: Commands for the ferns out there :P
+commands:
+   fboot:
+      description: Crafts water walking boots
+      usage: /fboot

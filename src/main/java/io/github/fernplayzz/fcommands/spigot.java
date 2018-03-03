@@ -20,6 +20,7 @@ public class spigot extends JavaPlugin implements Listener {
         LavaBurn.onEnable();
         this.getServer().getPluginManager().registerEvents(new WaterBoots(), this);
         WaterBoots.onEnable();
+        this.getCommand("fboot").setExecutor(new WaterBoots());
         //BedFire bedfire = new BedFire();
         //this.getCommand("fbedcheck").setExecutor(new BedFire());
         /*if (getServer().getPluginManager().isPluginEnabled(bedfire)) {
