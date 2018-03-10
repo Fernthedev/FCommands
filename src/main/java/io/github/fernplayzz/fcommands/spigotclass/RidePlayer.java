@@ -1,59 +1,70 @@
 package io.github.fernplayzz.fcommands.spigotclass;
 
-import org.bukkit.Location;
-import org.bukkit.block.Block;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-
-import java.util.ArrayList;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.spigotmc.event.entity.EntityDismountEvent;
 
 public class RidePlayer implements Listener {
+
     @SuppressWarnings("deprecation")
-@EventHandler
-public void onPlayerClick(PlayerInteractEvent e) {
+    @EventHandler
+    public static void onPlayerClick(PlayerInteractEntityEvent e) {
+        Player en = (Player) e.getRightClicked();
         Player p = e.getPlayer();
-        Entity en = getNearestEntityInSight(p, 5);
-        if (e.getAction() == Action.RIGHT_CLICK_AIR && en instanceof Player) {
-            p.sendMessage("You have rightclicked a player.");
-            Slime slime = (Slime) en.getWorld().spawnEntity(en.getLocation(), EntityType.SLIME);
-            if (en.getPassengers() != null) {
-                for (Entity epl : en.getPassengers()) {
-                    Entity eppl = (Entity) epl.getPassengers();
-                    for (Player epplayer = (Player) eppl.getPassengers(); ; ) {
-                        p.setPassenger(slime);
-                        epplayer.setPassenger(p);
-                    }
-                }
-                p.setPassenger(slime);
-                en.setPassenger(p);
-            }
-        }
-    }
-
-
-    public static Entity getNearestEntityInSight(Player player, int range) {
-        ArrayList<Entity> entities = (ArrayList<Entity>) player.getNearbyEntities(range, range, range);
-        ArrayList<Block> sightBlock = (ArrayList<Block>) player.getLineOfSight(null, range);
-        ArrayList<Location> sight = new ArrayList<Location>();
-        for (int i = 0;i<sightBlock.size();i++)
-            sight.add(sightBlock.get(i).getLocation());
-        for (int i = 0;i<sight.size();i++) {
-            for (int k = 0;k<entities.size();k++) {
-                if (Math.abs(entities.get(k).getLocation().getX()-sight.get(i).getX())<1.3) {
-                    if (Math.abs(entities.get(k).getLocation().getY()-sight.get(i).getY())<1.5) {
-                        if (Math.abs(entities.get(k).getLocation().getZ()-sight.get(i).getZ())<1.3) {
-                            return entities.get(k);
+        Slime slime = (Slime) en.getWorld().spawnEntity(en.getLocation(), EntityType.SLIME);
+        slime.setSilent(true);
+        slime.setSize(2);
+        slime.setInvulnerable(true);
+        slime.setCollidable(false);
+        slime.setAI(false);
+        slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 9999999, 9999999, false, false));
+            if (e.getRightClicked().getType() == EntityType.PLAYER) {
+                p.sendMessage("You have rightclicked a player.");
+                e.getPlayer().sendMessage("You clicked a Villager :P");
+                en.addPassenger(slime);
+                slime.addPassenger(p);
+                if (en.getPassengers() != null) {
+                    for (Entity epl : en.getPassengers()) {
+                        Entity eppl = (Entity) epl.getPassengers();
+                        for (Player epplayer = (Player) eppl.getPassengers(); ; ) {
+                            epplayer.addPassenger(slime);
+                            slime.addPassenger(p);
+                            //epplayer.setPassenger(p);
                         }
                     }
+                    p.setPassenger(slime);
+                    en.setPassenger(p);
                 }
             }
         }
-        return null;
+
+    public static void onEnable() {
+        Bukkit.getLogger().info("LOADED RIDER CLASS");
+    }
+    @SuppressWarnings("deprecation")
+    @EventHandler
+    public static void onPlayerDismount(EntityDismountEvent e) {
+        Entity sl = e.getDismounted();
+        Player en = (Player) sl.getPassenger();
+        Player p = (Player) e.getEntity();
+        Slime slime = (Slime) en.getWorld().spawnEntity(en.getLocation(), EntityType.SLIME);
+        slime.setSilent(true);
+        slime.setSize(2);
+        slime.setInvulnerable(true);
+        slime.setCollidable(false);
+        slime.setAI(false);
+        slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 9999999, 9999999, false, false));
+        slime.remove();
     }
 }
+
+
+
