@@ -27,8 +27,6 @@ public class RidePlayer implements Listener {
         slime.setAI(false);
         slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 9999999, 9999999, false, false));
             if (e.getRightClicked().getType() == EntityType.PLAYER) {
-                p.sendMessage("You have rightclicked a player.");
-                e.getPlayer().sendMessage("You clicked a Villager :P");
                 en.addPassenger(slime);
                 slime.addPassenger(p);
                 if (en.getPassengers() != null) {
