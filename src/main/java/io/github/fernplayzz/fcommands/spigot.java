@@ -1,9 +1,6 @@
 package io.github.fernplayzz.fcommands;
 
-import io.github.fernplayzz.fcommands.spigotclass.BedFire;
-import io.github.fernplayzz.fcommands.spigotclass.LavaBurn;
-import io.github.fernplayzz.fcommands.spigotclass.RidePlayer;
-import io.github.fernplayzz.fcommands.spigotclass.WaterBoots;
+import io.github.fernplayzz.fcommands.spigotclass.*;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 

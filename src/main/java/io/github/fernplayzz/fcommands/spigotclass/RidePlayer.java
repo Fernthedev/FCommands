@@ -1,15 +1,10 @@
 package io.github.fernplayzz.fcommands.spigotclass;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Slime;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
 public class RidePlayer implements Listener {
@@ -21,32 +16,27 @@ public class RidePlayer implements Listener {
             Player en = (Player) e.getRightClicked();
             Player p = e.getPlayer();
             Slime slime = (Slime) en.getWorld().spawnEntity(en.getLocation(), EntityType.SLIME);
-            if(slime.getVehicle() == en) {
+            /*if(en.getPassenger().getPassenger() == p) {
                 e.setCancelled(true);
-            }
+            }*/
+            slime.remove();
             slime.setSilent(true);
             slime.setSize(2);
             slime.setInvulnerable(true);
-            slime.getNoDamageTicks();
             slime.setCollidable(false);
             slime.setAI(false);
-            slime.setHealth(900000000);
-            slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 9999999, 9999999, false, false));
+            slime.setCustomName(p.getDisplayName() + " " + p.getUniqueId());
+           //slime.setHealth(900000000);
+            //slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 9999999, 9999999, false, false));
             en.addPassenger(slime);
-            slime.addPassenger(p);
-            if (en.getPassengers() != null) {
-                for (Entity epl : slime.getPassengers()) {
-                    Entity eppl = (Entity) epl.getPassengers();
-                    eppl.addPassenger(p);
-                       // e.addPassenger(slime);
-                       // slime.addPassenger(p);
-                        //epplayer.setPassenger(p);
-                }
-                p.setPassenger(slime);
-                en.setPassenger(p);
+            slime.setPassenger(p);
+           /*if (en.getPassenger() != null) {
+//PassengerHandling
+               p.setPassenger(slime);*/
+//NMSPacketHandling
+               //PacketPlayOutMount packet = new PacketPlayOutMount(((CraftPlayer)player).getHandle());
             }
         }
-    }
 
     public static void onEnable() {
         Bukkit.getLogger().info("LOADED RIDER CLASS");
@@ -54,17 +44,22 @@ public class RidePlayer implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler
     public static void onPlayerDismount(EntityDismountEvent e) {
-        Player p = (Player) e.getEntity();
-        p.sendMessage(e.getDismounted() + " Was your vehicle");
+       // p.sendMessage(e + " Was your vehicle");
         Entity sl = e.getDismounted();
-        sl.eject();
-        sl.remove();
-        if(!sl.isDead()) {
+        Entity p = e.getEntity();
+        if(p.getVehicle() != p) {
+            //sl.remove();
+            p.getVehicle();
+        /*if(!sl.isDead()) {
             p.sendMessage("slime still alive");
+        }*/
+          //  while (!sl.isDead()) {
+           //     sl.remove();
+          //      //p.sendMessage("tried to kill entity");
+          //  }
         }
-        if(sl.getVehicle().getType() == EntityType.PLAYER) {
-            p.sendMessage("slime didnt dismount");
-        }
+
+
     }
 }
 

@@ -1,10 +1,37 @@
 package io.github.fernplayzz.fcommands.bungeeclass;
 
+import net.md_5.bungee.api.event.ServerConnectEvent;
+import net.md_5.bungee.api.event.ServerConnectedEvent;
+import net.md_5.bungee.api.event.ServerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.event.EventHandler;
 
 public class servermaintenance extends Plugin implements Listener {
-    public void lobbycheck() {
+    @EventHandler
+    public void lobbydisconnect(ServerDisconnectEvent disco) {
+        if(disco.getTarget().getName().equals(getProxy().getServerInfo("Lobby").getName())) {
+            getProxy().getLogger().info("Lobby was disconnected, enabling maintenance");
+            getProxy().getPluginManager().dispatchCommand(getProxy().getConsole(), "/maintenance on");
+        }
+    }
+    @EventHandler
+    public void lobbyconnect(ServerConnectEvent connect) {
+        if(connect.getTarget().getName().equals(getProxy().getServerInfo("Lobby").getName())) {
+            getProxy().getLogger().info("Lobby was connnected, disabling maintenance");
+            getProxy().getPluginManager().dispatchCommand(getProxy().getConsole(), "/maintenance off");
+        }
+    }
+
+
+    @EventHandler
+    public void lobbyconnected(ServerConnectedEvent connecte) {
+        if(connecte.getServer().equals(getProxy().getServerInfo("Lobby").getName())) {
+            getProxy().getLogger().info("Lobby was connnected, disabling maintenance");
+            getProxy().getPluginManager().dispatchCommand(getProxy().getConsole(), "/maintenance off");
+        }
+    }
+
        /* boolean online = false; {
             try {
             Socket s = new Socket();
@@ -31,11 +58,13 @@ public class servermaintenance extends Plugin implements Listener {
             getProxy().getLogger().info("Lobby connected, disabling maintenance");
             getProxy().getPluginManager().dispatchCommand(getProxy().getConsole(), "/maintenance off");
         }*/
-    }
 
 
+
+
+
+    @Override
     public void onEnable() {
-        lobbycheck();
         getProxy().getLogger().info("ENABLED LOBBY MAINTENANCE DETECTOR");
     }
 
