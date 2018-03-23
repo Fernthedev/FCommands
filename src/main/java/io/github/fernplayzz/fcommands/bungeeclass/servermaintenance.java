@@ -1,74 +1,162 @@
 package io.github.fernplayzz.fcommands.bungeeclass;
 
-import net.md_5.bungee.api.event.ServerConnectEvent;
-import net.md_5.bungee.api.event.ServerConnectedEvent;
+import io.github.fernplayzz.fcommands.bungee;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.ServerPing;
+import net.md_5.bungee.api.connection.PendingConnection;
+import net.md_5.bungee.api.event.PreLoginEvent;
+import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.event.ServerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.event.EventHandler;
 
-public class servermaintenance extends Plugin implements Listener {
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
+public class servermaintenance implements Listener {
+    Configuration config = new bungee().getConfig();
+    //boolean online = false;
     @EventHandler
     public void lobbydisconnect(ServerDisconnectEvent disco) {
-        if(disco.getTarget().getName().equals(getProxy().getServerInfo("Lobby").getName())) {
-            getProxy().getLogger().info("Lobby was disconnected, enabling maintenance");
-            getProxy().getPluginManager().dispatchCommand(getProxy().getConsole(), "/maintenance on");
-        }
+        lobbycheck();
     }
-    @EventHandler
+   /* @EventHandler
     public void lobbyconnect(ServerConnectEvent connect) {
-        if(connect.getTarget().getName().equals(getProxy().getServerInfo("Lobby").getName())) {
+        if() {
             getProxy().getLogger().info("Lobby was connnected, disabling maintenance");
             getProxy().getPluginManager().dispatchCommand(getProxy().getConsole(), "/maintenance off");
         }
-    }
+    }*/
 
+
+    /*@EventHandler
+    public void lobbyconnected(ServerConnectedEvent connecte) {
+        lobbycheck();
+
+       /* boolean online = false;
+        try {
+            //Socket s = new Socket("localhost", 25566);
+            Socket s = new Socket();
+            s.connect(new InetSocketAddress("localhost", 25566), 20); //good timeout is 10-20
+            // ONLINE
+            s.close();
+            online = true;
+        } catch (UnknownHostException e) {
+            // OFFLINE
+          //  getProxy().getLogger().info("Lobby was disconnected, enabling maintenance");
+          //  getProxy().getPluginManager().dispatchCommand(getProxy().getConsole(), "/maintenance on");
+        } catch (IOException e) {
+            // OFFLINE
+            //getProxy().getLogger().info("Lobby was disconnected, enabling maintenance");
+            //getProxy().getPluginManager().dispatchCommand(getProxy().getConsole(), "/maintenance on");
+        }
+
+        if(online) {
+            getProxy.getLogger().info("Lobby was connected, disabling maintenance");
+            getProxy.getPluginManager().dispatchCommand(getProxy.getConsole(), "/maintenance off");
+        }else{
+            getProxy.getLogger().info("Lobby was disconnected, enabling maintenance");
+            getProxy.getPluginManager().dispatchCommand(getProxy.getConsole(), "/maintenance on");
+        }
+
+    }*/
 
     @EventHandler
-    public void lobbyconnected(ServerConnectedEvent connecte) {
-        if(connecte.getServer().equals(getProxy().getServerInfo("Lobby").getName())) {
-            getProxy().getLogger().info("Lobby was connnected, disabling maintenance");
-            getProxy().getPluginManager().dispatchCommand(getProxy().getConsole(), "/maintenance off");
+    public void prelogin(PreLoginEvent prelogin) {
+        lobbycheck();
+    }
+
+    /*@EventHandler
+    public void login(LoginEvent login) {
+        lobbycheck();
+    }*/
+
+    /*@EventHandler
+    public void serverconnect(ServerConnectedEvent connect) {
+        lobbycheck();
+    }*/
+
+    public void onEnable() {
+        ProxyServer getProxy = ProxyServer.getInstance();
+        getProxy.getLogger().info("ENABLED LOBBY MAINTENANCE DETECTOR");
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean lobbycheck() {
+        ProxyServer getProxy = ProxyServer.getInstance();
+        //boolean online = false;
+        /*getProxy.getServers().get(getProxy.getServerInfo("lobby").getName()).ping(new Callback<ServerPing>() {
+            boolean online;
+
+            {
+                this.online = online;
+            }
+
+            @Override
+            public void done(ServerPing result, Throwable error) {
+                if (error != null) {
+                    //Means that server is not responding : OFFLINE
+                    online = false;
+                    //Store this, by example, in a Hashmap<Server,Boolean> serverStatus, false is OFFLINE and true ONLINE
+                   // Object put = hm.put(1, false);
+                } else {
+                    online = true;
+
+                }
+            }
+        });*/
+        boolean online;
+        {
+            Socket s = null;
+            try {
+                s = new Socket();
+                s.connect(new InetSocketAddress("localhost", 25566), 20);
+                online = true;
+            } catch (Exception e) {
+                online = false;
+            } finally {
+                if (s != null)
+                    try {
+                        s.close();
+                    } catch (Exception e) {
+                    }
+            }
+        }
+
+        if (online) {
+            getProxy.getLogger().info("Lobby was connected, disabling maintenance");
+            //getProxy.getPluginManager().dispatchCommand(getProxy.getConsole(), "/maintenance off");
+            //getProxy.getPluginManager().dispatchCommand(getProxy.getConsole(), "maintenance off");
+            return online;
+            // Bukkit.getServer().getPluginManager().callEvent(myEvent)
+        } else if (!online) {
+            getProxy.getLogger().info("Lobby was disconnected, enabling maintenance");
+            //getProxy.getPluginManager().dispatchCommand(getProxy.getConsole(), "/maintenance on");
+            // getProxy.getPluginManager().dispatchCommand(getProxy.getConsole(), "maintenance on");
+            return online;
+        }
+        return online;
+    }
+    @EventHandler
+    @SuppressWarnings("deprecation")
+    public void MaintenanceMotd(ProxyPingEvent eping) {
+        boolean online = this.lobbycheck();
+        if (online) {
+            ServerPing pingResponse = eping.getResponse();
+            PendingConnection address = eping.getConnection();
+            String motd = config.getString("Motd");
+            ChatColor.translateAlternateColorCodes('&', motd);
+            pingResponse.setDescription(motd);
+            eping.setResponse(pingResponse);
+        }else if(!online) {
+            ServerPing pingResponse = eping.getResponse();
+            PendingConnection address = eping.getConnection();
+            pingResponse.setDescription(ChatColor.RED + "SERVER UNDER MAINTENANCE!");
+            eping.setResponse(pingResponse);
         }
     }
-
-       /* boolean online = false; {
-            try {
-            Socket s = new Socket();
-                s.connect(new InetSocketAddress("localhost", 25566), 20); //good timeout is 10-20
-                s.close();
-                getProxy().getLogger().info("Lobby connected, disabling maintenance");
-                // ONLINE
-                online = true;
-                getProxy().getPluginManager().dispatchCommand(getProxy().getConsole(), "/maintenance off");
-            } catch (UnknownHostException e) {
-                // OFFLINE
-                getProxy().getLogger().info("Lobby disconnected, enabling maintenance");
-                getProxy().getPluginManager().dispatchCommand(getProxy().getConsole(), "/maintenance on");
-            } catch (IOException e) {
-                e.printStackTrace();
-                // OFFLINE
-                getProxy().getLogger().info("Lobby disconnected, enabling maintenance");
-                getProxy().getPluginManager().dispatchCommand(getProxy().getConsole(), "/maintenance on");
-            }*/
-
-
-        /*if (online) {
-            //Bukkit.dispatchCommand(sender, cmd);
-            getProxy().getLogger().info("Lobby connected, disabling maintenance");
-            getProxy().getPluginManager().dispatchCommand(getProxy().getConsole(), "/maintenance off");
-        }*/
-
-
-
-
-
-    @Override
-    public void onEnable() {
-        getProxy().getLogger().info("ENABLED LOBBY MAINTENANCE DETECTOR");
-    }
-
-
 
 
 }

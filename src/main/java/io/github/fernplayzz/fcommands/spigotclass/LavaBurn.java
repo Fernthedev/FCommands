@@ -14,9 +14,9 @@ public class LavaBurn implements Listener {
     //Idea from Ender. Cool guy :D
     @EventHandler
     public static void onPlayerPickupItem(PlayerPickupItemEvent event) {
-        Bukkit.getLogger().info("LOADED LAVABURN EVENT");
         //LAVA
     if(event.getItem().getItemStack().equals(new ItemStack(Material.LAVA_BUCKET))) {
+        Bukkit.getLogger().info("LOADED LAVABURN EVENT");
         event.getPlayer().sendMessage("YOU PICKED UP " + event.getItem().getItemStack());
 
         Random fire = new Random();
@@ -31,7 +31,7 @@ public class LavaBurn implements Listener {
         }
     }
     //Cactus
-        if(event.getItem().getItemStack().equals(new ItemStack(Material.CACTUS))) {
+        if(event.getItem() == new ItemStack(Material.CACTUS)) {
         Random hurt = new Random();
         int cactuscheck = hurt.nextInt(100) + 1;
         if (cactuscheck<=90) {
