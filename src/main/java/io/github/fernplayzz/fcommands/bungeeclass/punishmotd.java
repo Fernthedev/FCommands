@@ -2,6 +2,7 @@ package io.github.fernplayzz.fcommands.bungeeclass;
 
 import io.github.fernplayzz.fcommands.bungee;
 import me.leoko.advancedban.manager.PunishmentManager;
+import me.leoko.advancedban.manager.TimeManager;
 import me.leoko.advancedban.utils.PunishmentType;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
@@ -12,10 +13,12 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -27,17 +30,17 @@ public class punishmotd implements Listener {
     public static Configuration IpDataConfig = new bungee().getIpDataConfig();
     public static Configuration configuration = new bungee().getConfiguration();
     public static ConfigurationProvider configp = new bungee().getConfigp();
-
+    public static String messagee;
     //public static Plugin plugin;
     ProxyServer getProxy = ProxyServer.getInstance();
 
     @SuppressWarnings("deprecation")
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void motdcheck(ProxyPingEvent eping) {
         Boolean ipfileloaded;
         Configuration ipconfig = new bungee().getIpconfig();
         ServerPing pingResponse = eping.getResponse();
-        String hostAddress = eping.getConnection().getAddress().getHostName();
+        String hostAddress = eping.getConnection().getAddress().getHostString();
         hostAddress = hostAddress.replaceAll("\\.", " ");
         List<String> players = ipconfig.getStringList(hostAddress);
         try {
@@ -65,20 +68,49 @@ public class punishmotd implements Listener {
                         //PERM BAN
                         if (PunishmentManager.get().getBan(key).getType() == PunishmentType.BAN) {
                             getProxy.getLogger().info("Player pinged, and is permanently banned" + key);
-                            pingResponse.setDescription(message("&c&lYOU HAVE BEEN PERMANENTLY BANNED"));
+                            messagee = message("&c&lYOU HAVE BEEN PERMANENTLY BANNED");
+                            pingResponse.setDescription(messagee);
                             eping.setResponse(pingResponse);
                             //PERM IP_BAN
                         } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.IP_BAN) {
-                            pingResponse.setDescription(message("&c&lYOUR IP HAS BEEN PERMANENTLY BANNED"));
+                            messagee = message("&c&lYOUR IP HAS BEEN PERMANENTLY BANNED");
+                            pingResponse.setDescription(messagee);
                             eping.setResponse(pingResponse);
                             //TEMP BAN
                         } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.TEMP_BAN) {
-                            pingResponse.setDescription(message("&c&lYOU HAVE BEEN BANNED UNTIL " + PunishmentManager.get().getBan(key).getEnd()));
-                            pingResponse.setFavicon(message( "&a&lRemaining " + PunishmentManager.get().getBan(key).getDuration(false)));
+                            long time = TimeManager.getTime() + PunishmentManager.get().getBan(key).getEnd();
+                            //String hms = String.format("%02d:%02d:%02d",
+                            //        TimeUnit.MILLISECONDS.toHours(time),
+                             //       TimeUnit.MILLISECONDS.toMinutes(time) -
+                             //               TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(time)), // The change is in this line
+                            //        TimeUnit.MILLISECONDS.toSeconds(time) -
+                            //                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time)));
+
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm:ss");
+                            String hms = sdf.format(time);
+
+
+                            messagee = message("&c&lYOU HAVE BEEN BANNED UNTIL " + hms);
+                            pingResponse.setDescription(messagee);
+                            String favicon = message( "&a&lRemaining " + PunishmentManager.get().getBan(key).getDuration(false));
+                            pingResponse.setFavicon(favicon);
+                            eping.setResponse(pingResponse);
                             //TEMP IP_BAN
                         } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.TEMP_IP_BAN) {
-                            pingResponse.setDescription(message("&c&lYOUR IP HAS BEEN BANNED UNTIL " + PunishmentManager.get().getBan(key).getEnd()));
-                            pingResponse.setFavicon(message("&a&lRemaining " + PunishmentManager.get().getBan(key).getDuration(false)));
+                            long time = TimeManager.getTime() + PunishmentManager.get().getBan(key).getEnd();
+                          //  String hms = String.format("%02d:%02d:%02d",
+                             //       TimeUnit.MILLISECONDS.toHours(time),
+                            //        TimeUnit.MILLISECONDS.toMinutes(time) -
+                            ///                TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(time)),
+                            //        TimeUnit.MILLISECONDS.toSeconds(time) -
+                            //                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time)));
+                            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm:ss");
+                            String hms = sdf.format(time);
+                            messagee =message("&c&lYOUR IP HAS BEEN BANNED UNTIL " + hms);
+                            String favicon = message("&a&lRemaining " + PunishmentManager.get().getBan(key).getDuration(false));
+                            pingResponse.setDescription(messagee);
+                            pingResponse.setFavicon(favicon);
                             eping.setResponse(pingResponse);
 
                         }
