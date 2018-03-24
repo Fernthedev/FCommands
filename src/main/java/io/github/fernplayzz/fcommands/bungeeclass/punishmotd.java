@@ -60,7 +60,7 @@ public class punishmotd implements Listener {
             } else {
                 for (String key : players) {
                     getProxy.getLogger().info("Pinged by " + hostAddress + " and uuid is " + key);
-                    while (PunishmentManager.get().isBanned(key)) {
+                    if (PunishmentManager.get().isBanned(key)) {
                         PunishmentManager.get().getBan(key);
                         //PERM BAN
                         if (PunishmentManager.get().getBan(key).getType() == PunishmentType.BAN) {
