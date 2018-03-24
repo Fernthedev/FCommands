@@ -3,7 +3,6 @@ package io.github.fernplayzz.fcommands.bungeeclass;
 import io.github.fernplayzz.fcommands.bungee;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.utils.PunishmentType;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.event.PostLoginEvent;
@@ -66,20 +65,20 @@ public class punishmotd implements Listener {
                         //PERM BAN
                         if (PunishmentManager.get().getBan(key).getType() == PunishmentType.BAN) {
                             getProxy.getLogger().info("Player pinged, and is permanently banned" + key);
-                            pingResponse.setDescription(ChatColor.RED.BOLD + "YOU HAVE BEEN PERMANENTLY BANNED");
+                            pingResponse.setDescription(message("&c&lYOU HAVE BEEN PERMANENTLY BANNED"));
                             eping.setResponse(pingResponse);
                             //PERM IP_BAN
                         } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.IP_BAN) {
-                            pingResponse.setDescription(ChatColor.RED.BOLD + "YOUR IP HAS BEEN PERMANENTLY BANNED");
+                            pingResponse.setDescription(message("&c&lYOUR IP HAS BEEN PERMANENTLY BANNED"));
                             eping.setResponse(pingResponse);
                             //TEMP BAN
                         } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.TEMP_BAN) {
-                            pingResponse.setDescription(ChatColor.RED.BOLD + "YOU HAVE BEEN BANNED UNTIL " + PunishmentManager.get().getBan(key).getEnd());
-                            pingResponse.setFavicon(ChatColor.GREEN + "Remaining " + PunishmentManager.get().getBan(key).getDuration(false));
+                            pingResponse.setDescription(message("&c&lYOU HAVE BEEN BANNED UNTIL " + PunishmentManager.get().getBan(key).getEnd()));
+                            pingResponse.setFavicon(message( "&a&lRemaining " + PunishmentManager.get().getBan(key).getDuration(false)));
                             //TEMP IP_BAN
                         } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.TEMP_IP_BAN) {
-                            pingResponse.setDescription(ChatColor.RED.BOLD + "YOUR IP HAS BEEN BANNED UNTIL " + PunishmentManager.get().getBan(key).getEnd());
-                            pingResponse.setFavicon(ChatColor.GREEN + "Remaining " + PunishmentManager.get().getBan(key).getDuration(false));
+                            pingResponse.setDescription(message("&c&lYOUR IP HAS BEEN BANNED UNTIL " + PunishmentManager.get().getBan(key).getEnd()));
+                            pingResponse.setFavicon(message("&a&lRemaining " + PunishmentManager.get().getBan(key).getDuration(false)));
                             eping.setResponse(pingResponse);
 
                         }
@@ -186,6 +185,10 @@ public class punishmotd implements Listener {
                 //new bungee().saveIps();
            // }
         }
+    }
+
+    public String message(String text) {
+        return text.replace("&","§");
     }
 
 }

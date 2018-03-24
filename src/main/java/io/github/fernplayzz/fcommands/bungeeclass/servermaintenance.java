@@ -12,11 +12,14 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.event.EventHandler;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class servermaintenance implements Listener {
+    ProxyServer getProxy = ProxyServer.getInstance();
     Configuration config = new bungee().getConfig();
+    Object motd;
     //boolean online = false;
     @EventHandler
     public void lobbydisconnect(ServerDisconnectEvent disco) {
@@ -144,13 +147,30 @@ public class servermaintenance implements Listener {
     public void MaintenanceMotd(ProxyPingEvent eping) {
         boolean online = this.lobbycheck();
         if (online) {
+            try {
+                new bungee().loadFiles("config");
+            } catch (IOException e) {
+                getProxy.getLogger().warning("Unable to load config");
+            }
+            config = new bungee().getConfig();
             ServerPing pingResponse = eping.getResponse();
             PendingConnection address = eping.getConnection();
-            String motd = config.getString("Motd");
-            ChatColor.translateAlternateColorCodes('&', motd);
-            pingResponse.setDescription(motd);
-            eping.setResponse(pingResponse);
-        }else if(!online) {
+            motd = config.get("Motd");
+            if (motd == null) {
+                ProxyServer.getInstance().getLogger().warning("Unable to find MOTD");
+            } else {
+                //String motd = config.getString("Motd");
+                String emotd = null;
+                emotd = motd.toString();
+                if(emotd == null) {
+                    getProxy.getLogger().warning("Motd is null oh no!");
+                }
+                //ChatColor.translateAlternateColorCodes('&', (String) motd);
+                motd = ((String) motd).replace('&','§');
+                pingResponse.setDescription((String) motd);
+                eping.setResponse(pingResponse);
+            }
+        }else {
             ServerPing pingResponse = eping.getResponse();
             PendingConnection address = eping.getConnection();
             pingResponse.setDescription(ChatColor.RED + "SERVER UNDER MAINTENANCE!");

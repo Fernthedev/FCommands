@@ -4,6 +4,10 @@ package io.github.fernplayzz.fcommands;
 import io.github.fernplayzz.fcommands.bungeeclass.punishmotd;
 import io.github.fernplayzz.fcommands.bungeeclass.reloadconfig;
 import io.github.fernplayzz.fcommands.bungeeclass.servermaintenance;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -85,7 +89,11 @@ public class bungee extends Plugin {
         }else{
         getProxy().getLogger().info("ADVANCEDBAN NOT FOUND, DISABLING PUNISHMOTD");
     }
-        loadFiles("all");
+        try {
+            loadFiles("all");
+        } catch (IOException e) {
+            getProxy().getLogger().warning("Unable to load config and ip files");
+        }
         getProxy().getPluginManager().registerCommand(this,new reloadconfig());
     //configc();
 
@@ -227,35 +235,38 @@ public class bungee extends Plugin {
         }
     }
 
-    public void loadFiles(String which) {
-        if(configfile.exists()) {
-            if (which == "config" || which == "all") {
+    public void loadFiles(String which) throws IOException {
+        if (configfile.exists()) {
+            if (which.equals("config") || which.equals("all")) {
                 try {
                     config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configfile);
                 } catch (IOException e) {
                     getProxy().getLogger().warning("failed to load config");
                     e.printStackTrace();
                 }
-                getProxy().getLogger().info("loaded config");
+                ProxyServer.getInstance().getLogger().info("Config was reloaded  " + which);
             }
-        }else{
-            getProxy().getLogger().warning("Tried to reload config, although config doesn't exist");
+        } else if (new File(getDataFolder(), "config.yml").exists()) {
+            ProxyServer.getInstance().getLogger().warning("Tried to reload config, although file doesn't exist");
         }
-        if (which == "ip" || which == "all") {
-            if (ipfile.exists()) {
+        if (ipfile.exists()) {
+            if (which.equals("ip") || which.equals("all")) {
+
                 try {
                     ipconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
                 } catch (IOException e) {
                     getProxy().getLogger().warning("failed to load ips");
                     e.printStackTrace();
                 }
-                getProxy().getLogger().info("loaded ips");
+                ProxyServer.getInstance().getLogger().info("Ips was reloaded  " + which);
             }
         }else{
-            getProxy().getLogger().warning("Tried to reload ips, although file doesn't exist");
+            ProxyServer.getInstance().getLogger().warning("Tried to reload ips, although file doesn't exist");
         }
     }
 
-
+    public BaseComponent[] message(String text) {
+        return new ComponentBuilder(ChatColor.translateAlternateColorCodes('&',text)).create();
+    }
 
 }
