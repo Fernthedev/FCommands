@@ -1,6 +1,5 @@
 package io.github.fernplayzz.fcommands.bungeeclass;
 
-import io.github.fernplayzz.fcommands.bungee;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
 import me.leoko.advancedban.utils.PunishmentType;
@@ -22,17 +21,15 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static io.github.fernplayzz.fcommands.bungee.ipfile;
+import static io.github.fernplayzz.fcommands.bungeeclass.bungee.ipfile;
 
 public class punishmotd implements Listener {
-    public static File pluginFolder = ProxyServer.getInstance().getPluginsFolder();
-    public static File IpFile = new bungee().getIpFile();
-    public static Configuration IpDataConfig = new bungee().getIpDataConfig();
-    public static Configuration configuration = new bungee().getConfiguration();
-    public static ConfigurationProvider configp = new bungee().getConfigp();
-    public static String messagee;
+    private static File pluginFolder = ProxyServer.getInstance().getPluginsFolder();
+    private static Configuration IpDataConfig = new bungee().getIpDataConfig();
+    private static Configuration configuration = new bungee().getConfiguration();
+    private static ConfigurationProvider configp = new bungee().getConfigp();
     //public static Plugin plugin;
-    ProxyServer getProxy = ProxyServer.getInstance();
+    private ProxyServer getProxy = ProxyServer.getInstance();
 
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.HIGH)
@@ -44,7 +41,8 @@ public class punishmotd implements Listener {
         hostAddress = hostAddress.replaceAll("\\.", " ");
         List<String> players = ipconfig.getStringList(hostAddress);
         try {
-            ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
+            //ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
+            new bungee().loadFiles("ip");
             //ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, configfile);
             ipfileloaded = true;
         } catch (IOException e) {
@@ -66,6 +64,7 @@ public class punishmotd implements Listener {
                     if (PunishmentManager.get().isBanned(key)) {
                         PunishmentManager.get().getBan(key);
                         //PERM BAN
+                        String messagee;
                         if (PunishmentManager.get().getBan(key).getType() == PunishmentType.BAN) {
                             getProxy.getLogger().info("Player pinged, and is permanently banned" + key);
                             messagee = message("&c&lYOU HAVE BEEN PERMANENTLY BANNED");
@@ -78,7 +77,7 @@ public class punishmotd implements Listener {
                             eping.setResponse(pingResponse);
                             //TEMP BAN
                         } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.TEMP_BAN) {
-                            long time = TimeManager.getTime() + PunishmentManager.get().getBan(key).getEnd();
+                            long time = PunishmentManager.get().getBan(key).getEnd();
                             //String hms = String.format("%02d:%02d:%02d",
                             //        TimeUnit.MILLISECONDS.toHours(time),
                              //       TimeUnit.MILLISECONDS.toMinutes(time) -
@@ -89,14 +88,14 @@ public class punishmotd implements Listener {
 
                             SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm:ss");
                             String hms = sdf.format(time);
-
-
-                            messagee = message("&c&lYOU HAVE BEEN BANNED UNTIL " + hms);
-                            pingResponse.setDescription(messagee);
-                            String favicon = message( "&a&lRemaining " + PunishmentManager.get().getBan(key).getDuration(false));
-                            pingResponse.setFavicon(favicon);
-                            eping.setResponse(pingResponse);
-                            //TEMP IP_BAN
+                            for(sdf.format(time - 1); ;) {
+                                messagee = message("&c&lYOU HAVE BEEN BANNED UNTIL " + hms);
+                                pingResponse.setDescription(messagee);
+                                String favicon = message("&a&lRemaining " + PunishmentManager.get().getBan(key).getDuration(false));
+                                pingResponse.setFavicon(favicon);
+                                eping.setResponse(pingResponse);
+                                //TEMP IP_BAN
+                            }
                         } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.TEMP_IP_BAN) {
                             long time = TimeManager.getTime() + PunishmentManager.get().getBan(key).getEnd();
                           //  String hms = String.format("%02d:%02d:%02d",
@@ -134,7 +133,7 @@ public class punishmotd implements Listener {
     @SuppressWarnings("deprecation")
     public void configip() {
         Logger log = getProxy.getLogger();
-        IpFile = new File(pluginFolder, "IPData.yml");
+        File ipFile = new File(pluginFolder, "IPData.yml");
         //new bungee().loadIps();
         if (!pluginFolder.exists()) {
             try {
@@ -143,9 +142,9 @@ public class punishmotd implements Listener {
                 log.info("could not create folder");
             }
         }
-        if (!IpFile.exists()) {
+        if (!ipFile.exists()) {
             try {
-                IpFile.createNewFile();
+                ipFile.createNewFile();
             } catch (Exception ex) {
                 log.info("could not create file");
             }
@@ -219,8 +218,10 @@ public class punishmotd implements Listener {
         }
     }
 
-    public String message(String text) {
+    private String message(String text) {
         return text.replace("&","§");
     }
+
+
 
 }

@@ -1,7 +1,6 @@
 package io.github.fernplayzz.fcommands.bungeeclass;
 
 
-import io.github.fernplayzz.fcommands.bungee;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Command;
@@ -14,7 +13,7 @@ public class reloadconfig extends Command {
     Configuration reload;
     //String[] args;
 
-    public reloadconfig() {
+    reloadconfig() {
         super("fernc","fernc.reload","ferncommand","ferncommands");
     }
 

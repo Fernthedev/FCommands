@@ -1,9 +1,6 @@
-package io.github.fernplayzz.fcommands;
+package io.github.fernplayzz.fcommands.bungeeclass;
 
 
-import io.github.fernplayzz.fcommands.bungeeclass.punishmotd;
-import io.github.fernplayzz.fcommands.bungeeclass.reloadconfig;
-import io.github.fernplayzz.fcommands.bungeeclass.servermaintenance;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -23,13 +20,13 @@ import java.util.logging.Logger;
 public class bungee extends Plugin {
 
     public static File pluginFolder;
-    public static File ipfile;
-    public static Configuration IpDataConfig;
-    public static Configuration configuration;
-    public static ConfigurationProvider configp;
-    public static Configuration config;
-    public static Configuration ipconfig;
-    public static File configfile;
+    static File ipfile;
+    private static Configuration IpDataConfig;
+    private static Configuration configuration;
+    private static ConfigurationProvider configp;
+    private static Configuration config;
+    private static Configuration ipconfig;
+    private static File configfile;
     //public static Configuration config;
    // @Override
    // public void onEnable() {
@@ -45,8 +42,9 @@ public class bungee extends Plugin {
         ipfile = new File(getDataFolder(), "ipdata.yml");
         configfile = new File(getDataFolder(), "config.yml");
         configp = ConfigurationProvider.getProvider(YamlConfiguration.class);
-        if (!getDataFolder().exists())
-            getDataFolder().mkdir();
+        if (!getDataFolder().exists()) {
+            boolean mkdir = getDataFolder().mkdir();
+        }
 
         File file = new File(getDataFolder(), "config.yml");
 
@@ -98,16 +96,8 @@ public class bungee extends Plugin {
     //configc();
 
     //getProxy().getPluginManager().registerListener(this, new maintenancemotd());
-        getProxy().getScheduler().schedule(this, new Runnable(){
-            @Override
-            public void run() {
-                try {
-                    Configuration load = ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
-                } catch (IOException e) {
-                    getLogger().warning("unable to reload config");
-                }
-            }
-        }, 3L, TimeUnit.SECONDS);
+        run();
+
     }
 
 
@@ -132,55 +122,55 @@ public class bungee extends Plugin {
         }*/
     }
 
-    public File getIpFile() {
+    File getIpFile() {
         return ipfile;
     }
 
-    public void setIpFile(File ipFile) {
+    void setIpFile(File ipFile) {
         ipfile = ipFile;
     }
 
-    public Configuration getIpDataConfig() {
+    Configuration getIpDataConfig() {
         return IpDataConfig;
     }
 
-    public void setIpDataConfig(Configuration ipDataConfig) {
+    void setIpDataConfig(Configuration ipDataConfig) {
         IpDataConfig = ipDataConfig;
     }
 
-    public Configuration getConfiguration() {
+    Configuration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(Configuration configuration) {
+    void setConfiguration(Configuration configuration) {
         bungee.configuration = configuration;
     }
 
-    public ConfigurationProvider getConfigp() {
+    ConfigurationProvider getConfigp() {
         return configp;
     }
 
-    public void setConfigp(ConfigurationProvider configp) {
+    void setConfigp(ConfigurationProvider configp) {
         bungee.configp = configp;
     }
 
-    public Configuration getConfig() {
+    Configuration getConfig() {
         return config;
     }
 
-    public void setConfig(Configuration config) {
+    void setConfig(Configuration config) {
         bungee.config = config;
     }
 
-    public File getConfigfile() {
+    File getConfigfile() {
         return configfile;
     }
 
-    public void setConfigfile(File configfile) {
+    void setConfigfile(File configfile) {
         bungee.configfile = configfile;
     }
 
-    public static File getIpfile() {
+    static File getIpfile() {
         return ipfile;
     }
 
@@ -188,11 +178,11 @@ public class bungee extends Plugin {
         bungee.ipfile = ipfile;
     }
 
-    public Configuration getIpconfig() {
+    Configuration getIpconfig() {
         return ipconfig;
     }
 
-    public void setIpconfig(Configuration ipconfig) {
+    void setIpconfig(Configuration ipconfig) {
         bungee.ipconfig = ipconfig;
     }
     //public Configuration getConfig() {
@@ -223,8 +213,7 @@ public class bungee extends Plugin {
             e.printStackTrace();
         }
     }
-
-    public void createipFile() {
+    private void createipFile() {
         File IpFile = new File(getDataFolder(), "ipdata.yml");
         if (!IpFile.exists()) {
             try {
@@ -235,7 +224,7 @@ public class bungee extends Plugin {
         }
     }
 
-    public void loadFiles(String which) throws IOException {
+    void loadFiles(String which) throws IOException {
         if (configfile.exists()) {
             if (which.equals("config") || which.equals("all")) {
                 try {
@@ -265,8 +254,17 @@ public class bungee extends Plugin {
         }
     }
 
-    public BaseComponent[] message(String text) {
+    BaseComponent[] message(String text) {
         return new ComponentBuilder(ChatColor.translateAlternateColorCodes('&',text)).create();
     }
 
+    private void run() {
+        getProxy().getScheduler().schedule(this, () -> {
+            try {
+                Configuration load = ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
+            } catch (IOException e) {
+                getLogger().warning("unable to reload config");
+            }
+        }, 3L, TimeUnit.SECONDS);
+    }
 }

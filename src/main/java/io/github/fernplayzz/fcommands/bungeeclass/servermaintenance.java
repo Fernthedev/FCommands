@@ -1,6 +1,5 @@
 package io.github.fernplayzz.fcommands.bungeeclass;
 
-import io.github.fernplayzz.fcommands.bungee;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
@@ -17,9 +16,9 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class servermaintenance implements Listener {
-    ProxyServer getProxy = ProxyServer.getInstance();
-    Configuration config = new bungee().getConfig();
-    Object motd;
+    private ProxyServer getProxy = ProxyServer.getInstance();
+    private Configuration config = new bungee().getConfig();
+
     //boolean online = false;
     @EventHandler
     public void lobbydisconnect(ServerDisconnectEvent disco) {
@@ -123,7 +122,7 @@ public class servermaintenance implements Listener {
                 if (s != null)
                     try {
                         s.close();
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
             }
         }
@@ -155,12 +154,12 @@ public class servermaintenance implements Listener {
             config = new bungee().getConfig();
             ServerPing pingResponse = eping.getResponse();
             PendingConnection address = eping.getConnection();
-            motd = config.get("Motd");
+            Object motd = config.get("Motd");
             if (motd == null) {
                 ProxyServer.getInstance().getLogger().warning("Unable to find MOTD");
             } else {
                 //String motd = config.getString("Motd");
-                String emotd = null;
+                String emotd;
                 emotd = motd.toString();
                 if(emotd == null) {
                     getProxy.getLogger().warning("Motd is null oh no!");

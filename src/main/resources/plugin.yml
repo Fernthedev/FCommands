@@ -1,6 +1,6 @@
 name: FernCommands
 version: 1.0
-main: io.github.fernplayzz.fcommands.spigot
+main: io.github.fernplayzz.fcommands.spigotclass.spigot
 #author: fernplayzz
 description: Commands for the ferns out there :P
 commands:

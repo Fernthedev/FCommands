@@ -1,6 +1,5 @@
-package io.github.fernplayzz.fcommands;
+package io.github.fernplayzz.fcommands.spigotclass;
 
-import io.github.fernplayzz.fcommands.spigotclass.*;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -19,8 +18,8 @@ public class spigot extends JavaPlugin implements Listener {
         this.getServer().getPluginManager().registerEvents(new WaterBoots(), this);
         WaterBoots.onEnable();
         this.getCommand("fboot").setExecutor(new WaterBoots());
-        this.getServer().getPluginManager().registerEvents(new RidePlayer(), this);
-        RidePlayer.onEnable();
+        //this.getServer().getPluginManager().registerEvents(new RidePlayer(), this);
+        //RidePlayer.onEnable();
         //BedFire bedfire = new BedFire();
         //this.getCommand("fbedcheck").setExecutor(new BedFire());
         /*if (getServer().getPluginManager().isPluginEnabled(bedfire)) {
