@@ -11,13 +11,20 @@ public class spigot extends JavaPlugin implements Listener {
         getLogger().info("Hey! This is just for you to know that the plugin is enabled!");
         //BedFire.run();
         //Bukkit.getServer().getPluginManager().registerEvents(new BedFire(), this);
-        this.getServer().getPluginManager().registerEvents(new BedFire(), this);
-        this.getServer().getPluginManager().registerEvents(new LavaBurn(), this);
+        //this.getServer().getPluginManager().registerEvents(new BedFire(), this);
+        //this.getServer().getPluginManager().registerEvents(new LavaBurn(), this);
         BedFire.onEnable();
         LavaBurn.onEnable();
         this.getServer().getPluginManager().registerEvents(new WaterBoots(), this);
         WaterBoots.onEnable();
         this.getCommand("fboot").setExecutor(new WaterBoots());
+        if(this.getServer().getPluginManager().isPluginEnabled("mcMMO")) {
+            this.getServer().getPluginManager().isPluginEnabled("NametagEdit");
+            {
+                this.getServer().getLogger().info("FOUND MCMMO AND NTE, ENABLING AUTO RELOAD");
+                    this.getServer().getPluginManager().registerEvents(new NTEmcMMO(), this);
+            }
+        }
         //this.getServer().getPluginManager().registerEvents(new RidePlayer(), this);
         //RidePlayer.onEnable();
         //BedFire bedfire = new BedFire();
