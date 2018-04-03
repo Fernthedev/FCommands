@@ -21,10 +21,11 @@ public class spigot extends JavaPlugin implements Listener {
         if(this.getServer().getPluginManager().isPluginEnabled("mcMMO")) {
             this.getServer().getPluginManager().isPluginEnabled("NametagEdit");
             {
-                this.getServer().getLogger().info("FOUND MCMMO AND NTE, ENABLING AUTO RELOAD");
-                    this.getServer().getPluginManager().registerEvents(new NTEmcMMO(), this);
+                getLogger().info("FOUND MCMMO AND NAMETAGEDIT IN PLUGINS, ENABLING AUTO RELOAD");
+                this.getServer().getPluginManager().registerEvents(new NTEmcMMO(), this);
             }
         }
+        this.getServer().getPluginManager().registerEvents(new godpearl(), this);
         //this.getServer().getPluginManager().registerEvents(new RidePlayer(), this);
         //RidePlayer.onEnable();
         //BedFire bedfire = new BedFire();
