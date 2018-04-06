@@ -1,10 +1,11 @@
 package io.github.fernplayzz.fcommands.spigotclass;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class spigot extends JavaPlugin implements Listener {
-
+    private boolean useMcMMO;
 
     @Override
     public void onEnable() {
@@ -18,13 +19,22 @@ public class spigot extends JavaPlugin implements Listener {
         this.getServer().getPluginManager().registerEvents(new WaterBoots(), this);
         WaterBoots.onEnable();
         this.getCommand("fboot").setExecutor(new WaterBoots());
-        if(this.getServer().getPluginManager().isPluginEnabled("mcMMO")) {
-            this.getServer().getPluginManager().isPluginEnabled("NametagEdit");
-            {
-                getLogger().info("FOUND MCMMO AND NAMETAGEDIT IN PLUGINS, ENABLING AUTO RELOAD");
-                this.getServer().getPluginManager().registerEvents(new NTEmcMMO(), this);
+        if(this.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
+            getLogger().info("Found Multiverse, checking to see skylands are enabled");
+            if(this.getServer().getPluginManager().isPluginEnabled("SB-Skylands")) {
+                getLogger().info("Found skylands, enabling enderpearl and overworld fall");
+                this.getServer().getPluginManager().registerEvents(new skylands(), this);
             }
         }
+
+        if(Bukkit.getServer().getPluginManager().isPluginEnabled("McMMO")) {
+            hook();
+                Bukkit.getServer().getPluginManager().isPluginEnabled("NametagEdit");
+                {
+                    getLogger().info("FOUND MCMMO AND NAMETAGEDIT IN PLUGINS, ENABLING AUTO RELOAD");
+                    this.getServer().getPluginManager().registerEvents(new NTEmcMMO(), this);
+                }
+            }
         this.getServer().getPluginManager().registerEvents(new godpearl(), this);
         //this.getServer().getPluginManager().registerEvents(new RidePlayer(), this);
         //RidePlayer.onEnable();
@@ -36,6 +46,20 @@ public class spigot extends JavaPlugin implements Listener {
             getLogger().info("ENABLED BEDFIRE!");
         }*/
 
+    }
+    public boolean mcmmoEnabled() {
+        return useMcMMO;
+    }
+    public void hook()
+    {
+        useMcMMO = Bukkit.getServer().getPluginManager().isPluginEnabled("McMMO");
+    }
+
+
+    protected void infolog(String text) {
+        if (!text.isEmpty()) {
+            getLogger().info(text);
+        }
     }
 
 
