@@ -1,10 +1,9 @@
 package io.github.fernplayzz.fcommands.spigotclass;
 
 import org.bukkit.Bukkit;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class spigot extends JavaPlugin implements Listener {
+public class spigot extends JavaPlugin {
     private boolean useMcMMO;
 
     @Override
@@ -22,6 +21,7 @@ public class spigot extends JavaPlugin implements Listener {
         if(this.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
             getLogger().info("Found Multiverse, checking to see skylands are enabled");
             if(this.getServer().getPluginManager().isPluginEnabled("SB-Skylands")) {
+                if(Bukkit.getWorld("skyland") != null)
                 getLogger().info("Found skylands, enabling enderpearl and overworld fall");
                 this.getServer().getPluginManager().registerEvents(new skylands(), this);
             }
