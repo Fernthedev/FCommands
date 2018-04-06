@@ -1,12 +1,12 @@
 package io.github.fernplayzz.fcommands.spigotclass;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.util.Vector;
 
 /**
  *
@@ -14,8 +14,11 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
  *
  */
 public class godpearl implements Listener {
+
+
     // set this one outside any function, but inside the class
     boolean doNotDamageThePlayerOnEnderPearlUse = false;
+    Vector pitch = null;
 
 
 
@@ -23,6 +26,8 @@ public class godpearl implements Listener {
     public void onProjectileLaunch(ProjectileLaunchEvent event)
     {
         doNotDamageThePlayerOnEnderPearlUse = true;
+        Player player = (Player) event.getEntity().getShooter();
+        pitch = player.getLocation().getDirection();
     }
 
     @EventHandler
@@ -34,18 +39,17 @@ public class godpearl implements Listener {
         {
             doNotDamageThePlayerOnEnderPearlUse = true;
             Player player = (Player) event.getEntity().getShooter();
-            Location hitlocation = event.getEntity().getLocation();
-            player.teleport(hitlocation);
+           // Location hitlocation = (Location) event.getEntity().getLocation().getBlock();
+            //player.teleport(hitlocation);
+            //player.getLocation().setDirection(pitch);
         }
     }
 
     @EventHandler
-    public void onEntityDamageEvent (EntityDamageEvent event)
-    {
+    public void onEntityDamageEvent(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player)) { return; }
 
-        if (doNotDamageThePlayerOnEnderPearlUse)
-        {
+        if (doNotDamageThePlayerOnEnderPearlUse) {
             event.setCancelled(true);
             doNotDamageThePlayerOnEnderPearlUse = false;
         }
