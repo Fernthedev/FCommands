@@ -56,12 +56,10 @@ public class skylands implements Listener {
                     int x = Bukkit.getWorld("skyland").getHighestBlockAt(player.getLocation()).getX();
                     int y = Bukkit.getWorld("skyland").getHighestBlockYAt(player.getLocation());
                     int z = Bukkit.getWorld("skyland").getHighestBlockAt(player.getLocation()).getY();
-                    while((y == 0)) {
+                    Random r = new Random();
+                    while((Bukkit.getWorld("skyland").getBlockAt(x,y,z) == null)) {
                         //new spigot().infolog(y + " is the highest level for player " + player);
-                        Random r = new Random();
-                        x = r.nextInt(1000);
-                        z = r.nextInt(1000);
-                        y = Bukkit.getWorld("skyland").getHighestBlockYAt(x,z);
+                        y = 256;
                         //MultiverseCore.addPlayerToTeleportQueue(String.valueOf(world), player.getDisplayName());
                         //player.teleport(goworld)
                         //MultiverseWorld world = wm.get
