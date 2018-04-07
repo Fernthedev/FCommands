@@ -6,7 +6,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.util.Vector;
 
 /**
  *
@@ -18,7 +17,7 @@ public class godpearl implements Listener {
 
     // set this one outside any function, but inside the class
     boolean doNotDamageThePlayerOnEnderPearlUse = false;
-    Vector pitch = null;
+    //Vector pitch = null;
 
 
 
@@ -27,7 +26,7 @@ public class godpearl implements Listener {
     {
         doNotDamageThePlayerOnEnderPearlUse = true;
         Player player = (Player) event.getEntity().getShooter();
-        pitch = player.getLocation().getDirection();
+       // pitch = player.getLocation().getDirection();
     }
 
     @EventHandler
