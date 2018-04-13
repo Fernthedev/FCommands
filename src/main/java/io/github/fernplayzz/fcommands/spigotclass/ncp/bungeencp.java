@@ -23,6 +23,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 
+@SuppressWarnings("CatchMayIgnoreException")
 public class bungeencp extends AbstractNCPHook implements PluginMessageListener,Listener {
     @Override
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
@@ -35,7 +36,7 @@ public class bungeencp extends AbstractNCPHook implements PluginMessageListener,
         if (subChannel.equals("GetServer"))
             spigot.SERVER_NAME = in.readUTF();
 
-        if (subChannel.equals("NoCheatsPlus")) {
+        if (subChannel.equals(spigot.getInstance().getName())) {
 
             // Use the code sample in the 'Response' sections below to read
             // the data.
@@ -58,7 +59,7 @@ public class bungeencp extends AbstractNCPHook implements PluginMessageListener,
 
             // Get the Report Message from the config and replace the variables
             String reportMessage = ChatColor.translateAlternateColorCodes('&', "&c&lNCP ( %server% ) &7»&r &c%player% &7could be using &6%check% &7VL &c%violations%");
-            reportMessage = reportMessage.replaceAll("%player%", report.getPlayer()).replaceAll("%server%", report.getServer()).replaceAll("%check%", report.getCheckType().getName()).replaceAll("%violation%", String.valueOf(Math.round(report.getViolation())));
+            reportMessage = reportMessage.replaceAll("%player%", report.getPlayer()).replaceAll("%server%", report.getServer()).replaceAll("%check%", report.getCheckType().getName());
 
             // Send an admin notification to players with the corresponding permission (only if the player has turned notifications on)
             NCPAPIProvider.getNoCheatPlusAPI().sendAdminNotifyMessage(reportMessage);
@@ -72,8 +73,7 @@ public class bungeencp extends AbstractNCPHook implements PluginMessageListener,
             @Override
             public void run() {
 
-                if (spigot.SERVER_NAME.isEmpty() &&
-                        spigot.getInstance().getServer().getPluginManager().getPlugin("LilyPad-Connect") == null)
+                if (spigot.SERVER_NAME.isEmpty() && spigot.getInstance().getServer().getPluginManager().getPlugin("LilyPad-Connect") == null)
                     messaging.sendRequest(event.getPlayer(), "GetServer");
             }
         }.runTaskLater(spigot.getInstance(), 5L);
@@ -84,6 +84,8 @@ public class bungeencp extends AbstractNCPHook implements PluginMessageListener,
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         spigot.getInstance().checkForStaffMembers();
+        if (spigot.getCooldownManager().hasCooldown(player.getUniqueId()))
+            spigot.getCooldownManager().removeCooldown(player.getUniqueId());
     }
 
 
@@ -104,6 +106,12 @@ public class bungeencp extends AbstractNCPHook implements PluginMessageListener,
         if (spigot.getInstance().isStaffMemberOnline())
             return false;
 
+
+        cooldown cooldown = spigot.getCooldownManager();
+
+        // Player is still on cooldown, return false
+        if (cooldown.hasCooldown(player.getUniqueId()) && !cooldown.isExpired(player.getUniqueId()))
+            return false;
 
         try {
             // Send a report notification to other servers

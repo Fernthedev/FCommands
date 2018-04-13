@@ -4,10 +4,10 @@ import fr.neatmonster.nocheatplus.checks.CheckType;
 import io.github.fernplayzz.fcommands.spigotclass.spigot;
 
 public class playerreport {
-    private String player;
-    private String server;
-    private CheckType check;
-    private double violation;
+    private final String player;
+    private final String server;
+    private final CheckType check;
+    private final double violation;
 
     public playerreport(String player, CheckType check, double violation) {
         this.player = player;
