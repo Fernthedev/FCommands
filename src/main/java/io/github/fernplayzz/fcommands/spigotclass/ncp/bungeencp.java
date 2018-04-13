@@ -73,7 +73,7 @@ public class bungeencp extends AbstractNCPHook implements PluginMessageListener,
             @Override
             public void run() {
 
-                if (spigot.SERVER_NAME.isEmpty() && spigot.getInstance().getServer().getPluginManager().getPlugin("LilyPad-Connect") == null)
+                if (spigot.SERVER_NAME.isEmpty())
                     messaging.sendRequest(event.getPlayer(), "GetServer");
             }
         }.runTaskLater(spigot.getInstance(), 5L);
