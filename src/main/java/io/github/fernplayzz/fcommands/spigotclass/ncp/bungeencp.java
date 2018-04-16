@@ -58,14 +58,14 @@ public class bungeencp extends AbstractNCPHook implements PluginMessageListener,
                 return;
 
             // Get the Report Message from the config and replace the variables
-            String reportMessage = ChatColor.translateAlternateColorCodes('&', "&c&lNCP ( %server% ) &7»&r &c%player% &7could be using &6%check% &7VL &c%violations%");
+            String reportMessage = ChatColor.translateAlternateColorCodes('&', "&c&lNCP ( %server% ) &7»&r &c%player% &7could be using &6%check%");
             reportMessage = reportMessage.replaceAll("%player%", report.getPlayer()).replaceAll("%server%", report.getServer()).replaceAll("%check%", report.getCheckType().getName());
 
             // Send an admin notification to players with the corresponding permission (only if the player has turned notifications on)
             NCPAPIProvider.getNoCheatPlusAPI().sendAdminNotifyMessage(reportMessage);
         }
         }
-    @EventHandler
+        @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         // Fetch the server's name from BungeeCord because Plugin Messaging Channels require a player who sends the message.
         // It seems like it doesn't work without a runnable.
@@ -73,7 +73,6 @@ public class bungeencp extends AbstractNCPHook implements PluginMessageListener,
             @Override
             public void run() {
 
-                if (spigot.SERVER_NAME.isEmpty())
                     messaging.sendRequest(event.getPlayer(), "GetServer");
             }
         }.runTaskLater(spigot.getInstance(), 5L);
