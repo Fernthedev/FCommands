@@ -1,4 +1,4 @@
-package io.github.fernplayzz.fcommands.bungeeclass;
+package io.github.fernthedev.fcommands.bungeeclass;
 
 
 import net.md_5.bungee.api.ChatColor;
@@ -10,23 +10,32 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
+//@SuppressWarnings("unused")
 public class bungee extends Plugin {
 
-    public static File pluginFolder;
+    //public static File pluginFolder;
     static File ipfile;
+    static File seenfile;
     private static Configuration IpDataConfig;
+    private static Configuration seendataConfig;
     private static Configuration configuration;
     private static ConfigurationProvider configp;
     private static Configuration config;
     private static Configuration ipconfig;
+    private static Configuration seenconfig;
     private static File configfile;
+    private static bungee instance;
+
+
+
+
     //public static Configuration config;
    // @Override
    // public void onEnable() {
@@ -38,8 +47,10 @@ public class bungee extends Plugin {
     //}*/
     @Override
    public void onEnable() {
+        instance = this;
         getLogger().info("ENABLED FERNCOMMANDS FOR BUNGEECORD");
         ipfile = new File(getDataFolder(), "ipdata.yml");
+        seenfile = new File(getDataFolder(), "seen.yml");
         configfile = new File(getDataFolder(), "config.yml");
         configp = ConfigurationProvider.getProvider(YamlConfiguration.class);
         if (!getDataFolder().exists()) {
@@ -65,9 +76,15 @@ public class bungee extends Plugin {
             e.printStackTrace();
         }*/
         createipFile();
+        createseenFile();
         File configfile = new File(getProxy().getPluginsFolder().getParentFile(), "config.yml");
         File ipfile = new File(getProxy().getPluginsFolder().getParentFile(), "config.yml");
+        File seenfile = new File(getProxy().getPluginsFolder().getParentFile(), "config.yml");
         getProxy().getPluginManager().registerListener(this, new servermaintenance());
+        //SEEN COMMAND
+        getProxy().getPluginManager().registerCommand(this, new seen());
+        getProxy().getPluginManager().registerListener(this, new seen());
+        //ADVANCEDBAN HOOK
     if(getProxy().getPluginManager().getPlugin("AdvancedBan") !=null) {
         getProxy().getLogger().info("FOUND ADVANCEDBAN! HOOKING IN API");
         try {
@@ -88,6 +105,11 @@ public class bungee extends Plugin {
         getProxy().getLogger().info("ADVANCEDBAN NOT FOUND, DISABLING PUNISHMOTD");
     }
         try {
+            seenconfig = configp.load(new File(getDataFolder(), "seen.yml"));
+        } catch (IOException e) {
+            getLogger().warning("UNABLE TO SAVE SEEN PLAYERS");
+        }
+        try {
             loadFiles("all");
         } catch (IOException e) {
             getProxy().getLogger().warning("Unable to load config and ip files");
@@ -104,22 +126,19 @@ public class bungee extends Plugin {
 
     @Override
     public void onDisable(){
-        Logger log = getProxy().getLogger();
-        /*try {
-            configp.save(config, new File(getDataFolder(), "config.yml"));
-        } catch (IOException e) {
-            log.warning("UNABLE TO SAVE CONFIG");
-        }
-        try {
-            ipconfig = configp.load(ipfile, ipconfig);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            configp.save(ipconfig, ipfile);
-        } catch (IOException e) {
-            log.warning("UNABLE TO SAVE IPS");
-        }*/
+        instance = this;
+        getLogger().info("DISABLED FERNCOMMANDS FOR BUNGEECORD");
+        ipfile = null;
+        seenfile = null;
+        configfile = null;
+        configp = null;
+        instance = null;
+        IpDataConfig = null;
+        seendataConfig = null;
+        configuration = null;
+        config = null;
+        ipconfig = null;
+        seenconfig = null;
     }
 
     File getIpFile() {
@@ -213,6 +232,7 @@ public class bungee extends Plugin {
             e.printStackTrace();
         }
     }
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void createipFile() {
         File IpFile = new File(getDataFolder(), "ipdata.yml");
         if (!IpFile.exists()) {
@@ -224,7 +244,26 @@ public class bungee extends Plugin {
         }
     }
 
-    void loadFiles(String which) throws IOException {
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private void createseenFile() {
+        File SeenFile = new File(getDataFolder(), "seen.yml");
+        if (!SeenFile.exists()) {
+            try {
+                SeenFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to create configuration file", e);
+            }
+        }
+    }
+
+
+    @SuppressWarnings("RedundantThrows")
+    /**
+     * Method for loading config files
+     * @param which Which file to load (seen,config,ip,all)
+     */
+    protected void loadFiles(String which) throws IOException {
+        //CONFIG
         if (configfile.exists()) {
             if (which.equals("config") || which.equals("all")) {
                 try {
@@ -235,12 +274,30 @@ public class bungee extends Plugin {
                 }
                 ProxyServer.getInstance().getLogger().info("Config was reloaded  " + which);
             }
-        } else if (new File(getDataFolder(), "config.yml").exists()) {
+        } else{
             ProxyServer.getInstance().getLogger().warning("Tried to reload config, although file doesn't exist");
         }
+
+        //SEEN
+        if (seenfile.exists()) {
+            if (which.equals("seen") || which.equals("all")) {
+                try {
+                    seenconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(seenfile);
+                } catch (IOException e) {
+                    getProxy().getLogger().warning("failed to load seen config");
+                    e.printStackTrace();
+                }
+                ProxyServer.getInstance().getLogger().info("Seen Config was reloaded  " + which);
+            }
+        } else{
+            ProxyServer.getInstance().getLogger().warning("Tried to reload config, although file doesn't exist");
+            ProxyServer.getInstance().getLogger().warning("CREATING SEEN FILE!");
+            createseenFile();
+        }
+
+        //IP
         if (ipfile.exists()) {
             if (which.equals("ip") || which.equals("all")) {
-
                 try {
                     ipconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
                 } catch (IOException e) {
@@ -267,4 +324,39 @@ public class bungee extends Plugin {
             }
         }, 3L, TimeUnit.SECONDS);
     }
+
+
+    public File getSeenfile() {
+        return seenfile;
+    }
+
+    public void setSeenfile(File seenfile) {
+        bungee.seenfile = seenfile;
+    }
+
+    public Configuration getSeendataConfig() {
+        return seendataConfig;
+    }
+
+    public void setSeendataConfig(Configuration seendataConfig) {
+        bungee.seendataConfig = seendataConfig;
+    }
+
+    public Configuration getSeenconfig() {
+        return seenconfig;
+    }
+
+    public void setSeenconfig(Configuration seenconfig) {
+        bungee.seenconfig = seenconfig;
+    }
+
+    public void setInstance(bungee instance) {
+        bungee.instance = instance;
+    }
+
+    @Nonnull
+    public static bungee getInstance() {
+        return instance;
+    }
+
 }

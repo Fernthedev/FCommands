@@ -1,4 +1,4 @@
-package io.github.fernplayzz.fcommands.bungeeclass;
+package io.github.fernthedev.fcommands.bungeeclass;
 
 
 import net.md_5.bungee.api.CommandSender;
@@ -25,12 +25,13 @@ public class reloadconfig extends Command {
         } else {
             if (strings[0].equalsIgnoreCase("reload")) {
                     if (!(strings.length == 2)) {
-                        sender.sendMessage(new bungee().message("&cNo arguments recieved(All,Config,Ip)"));
+                        sender.sendMessage(new bungee().message("&cNo arguments recieved(All,Config,Ip,Seen)"));
                     }else{
                         strings[1] = strings[1].toLowerCase();
                         if (strings[1].equals("all") ||
                                 strings[1].equals("ip") ||
-                                strings[1].equals("config")) {
+                                strings[1].equals("config") ||
+                        strings[1].equals("seen")) {
                             try {
                                 new bungee().loadFiles(strings[1]);
                             } catch (IOException e) {

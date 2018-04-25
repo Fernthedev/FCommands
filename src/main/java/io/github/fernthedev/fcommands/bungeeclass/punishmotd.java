@@ -1,4 +1,4 @@
-package io.github.fernplayzz.fcommands.bungeeclass;
+package io.github.fernthedev.fcommands.bungeeclass;
 
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
@@ -21,17 +21,17 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static io.github.fernplayzz.fcommands.bungeeclass.bungee.ipfile;
+import static io.github.fernthedev.fcommands.bungeeclass.bungee.ipfile;
 
 public class punishmotd implements Listener {
-    private static File pluginFolder = ProxyServer.getInstance().getPluginsFolder();
+    private static final File pluginFolder = ProxyServer.getInstance().getPluginsFolder();
     private static Configuration IpDataConfig = new bungee().getIpDataConfig();
     private static Configuration configuration = new bungee().getConfiguration();
     private static ConfigurationProvider configp = new bungee().getConfigp();
     //public static Plugin plugin;
-    private ProxyServer getProxy = ProxyServer.getInstance();
+    private final ProxyServer getProxy = ProxyServer.getInstance();
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation", "InfiniteLoopStatement"})
     @EventHandler(priority = EventPriority.HIGH)
     public void motdcheck(ProxyPingEvent eping) {
         Boolean ipfileloaded;
@@ -59,8 +59,13 @@ public class punishmotd implements Listener {
                 //getProxy.getLogger().info("detected players: " + players);
                // getProxy.getLogger().info("192.168.2.11's players " + ipconfig.getStringList("192 168 2 11"));
             } else {
+                if(players.toArray().length == 1) {
+                    getProxy.getLogger().info("Pinged by " + hostAddress + " and uuid is " + players.toString());
+                } else if(players.toArray().length >= 1) {
+                    getProxy.getLogger().info("Pinged by " + hostAddress + " and uuids are " + players.toString());
+                }
                 for (String key : players) {
-                    getProxy.getLogger().info("Pinged by " + hostAddress + " and uuid is " + key);
+                    //getProxy.getLogger().info("Pinged by " + hostAddress + " and uuid is " + key);
                     if (PunishmentManager.get().isBanned(key)) {
                         PunishmentManager.get().getBan(key);
                         //PERM BAN
@@ -130,7 +135,7 @@ public class punishmotd implements Listener {
 
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation", "ResultOfMethodCallIgnored"})
     public void configip() {
         Logger log = getProxy.getLogger();
         File ipFile = new File(pluginFolder, "IPData.yml");
@@ -151,7 +156,7 @@ public class punishmotd implements Listener {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "deprecation"})
     @EventHandler
     public void onLoginIp(PostLoginEvent event) {
         Logger log = getProxy.getLogger();
