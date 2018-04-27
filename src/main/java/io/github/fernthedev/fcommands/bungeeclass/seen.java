@@ -1,8 +1,10 @@
 package io.github.fernthedev.fcommands.bungeeclass;
 
-import me.leoko.advancedban.manager.UUIDManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Command;
@@ -15,10 +17,12 @@ import net.md_5.bungee.event.EventHandler;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 public class seen extends Command implements Listener {
@@ -53,11 +57,14 @@ public class seen extends Command implements Listener {
             } catch (IOException e) {
                 getLogger.warning("unable to load seen config");
             }
-            String UUID = UUIDManager.get().getUUID(ptarget);
+            //String UUID = UUIDManager.get().getUUID(ptarget);
+            UUID UUIDE = UUID.nameUUIDFromBytes(("OfflinePlayer:" + ptarget).getBytes(StandardCharsets.UTF_8));
+            String UUID = UUIDE.toString();
+            //String UUID = ProxyServer.getInstance().getPlayer(ptarget).getUniqueId().toString();
             if (ProxyServer.getInstance().getPlayer(ptarget) != null) {
                 sender.sendMessage(bungeee.message("&aPlayer &2" + ptarget + " &awas found. Player is currently online on server: " + ProxyServer.getInstance().getPlayer(ptarget).getServer().getInfo().getName()));
             }else{
-            if (UUID == null) {
+            if (UUID.isEmpty() || UUID == null) {
                 sender.sendMessage(bungeee.message("&cPlayer doesn't exist. You sure you typed that right?"));
             }else{
 
@@ -72,9 +79,12 @@ public class seen extends Command implements Listener {
                         if (time == null) {
                             time = "&cNo time shown";
                         }
+                        TextComponent messageserver = new TextComponent(bungeee.message("&bLast Server On: &3" + server));
+                        messageserver.setClickEvent( new ClickEvent( ClickEvent.Action.RUN_COMMAND, "/" + server));
+                        messageserver.setHoverEvent( new HoverEvent( HoverEvent.Action.SHOW_TEXT,bungeee.message("&aClick to head to server. &2(" + server + ")")));
                         sender.sendMessage(bungeee.message("&aPlayer &2" + ptarget + " &awas found. Here is the info of player's last login:"));
-                        sender.sendMessage(bungeee.message("&bLast Server On: &3" + server));
-                        sender.sendMessage(bungeee.message("&9Last time on: &b" + time + "(UTC 24-hour Format)"));
+                        sender.sendMessage(messageserver);
+                        sender.sendMessage(bungeee.message("&9Last time on: &b" + time + "(UTC 12-hour Format)"));
                     } else {
                         sender.sendMessage(bungeee.message("&cPlayer has not played on the server, or info is not found about player."));
                     }
@@ -88,7 +98,9 @@ public class seen extends Command implements Listener {
         Configuration seenconfig = new bungee().getSeenconfig();
         ProxiedPlayer player = e.getPlayer();
         String playere = player.getDisplayName();
-        String UUID = UUIDManager.get().getUUID(playere);
+        //String UUID = UUIDManager.get().getUUID(playere);
+        UUID UUIDE = UUID.nameUUIDFromBytes(("OfflinePlayer:" + playere).getBytes(StandardCharsets.UTF_8));
+        String UUID = UUIDE.toString();
         List<String> seenplist = new ArrayList<>();
         Configuration sconfig = new bungee().getConfig();
         try {
@@ -97,7 +109,7 @@ public class seen extends Command implements Listener {
             getLogger.warning("unable to load seen file");
         }
         Calendar cal = Calendar.getInstance();
-        String time= new SimpleDateFormat("MMM dd HH:mm").format(cal.getTime());
+        String time= new SimpleDateFormat("MMM dd hh:mm aa").format(cal.getTime());
         String server = e.getPlayer().getServer().getInfo().getName();
         //String time2 = new SimpleDateFormat("MM.dd HH:mm").format(date);
         //seenplist.add(time);
