@@ -1,4 +1,4 @@
-package io.github.fernplayzz.fcommands.spigotclass;
+package io.github.fernthedev.fcommands.spigotclass;
 
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;

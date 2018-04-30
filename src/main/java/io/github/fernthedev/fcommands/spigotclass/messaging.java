@@ -1,4 +1,4 @@
-package io.github.fernplayzz.fcommands.spigotclass;
+package io.github.fernthedev.fcommands.spigotclass;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -35,6 +35,7 @@ public class messaging {
     /**
      * {@link #sendRequest(String, String...)}
      */
+    @SuppressWarnings("JavaDoc")
     public static void sendRequest(String message, String... request) throws IOException {
         sendRequest(null, message, request);
     }

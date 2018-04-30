@@ -1,4 +1,4 @@
-package io.github.fernplayzz.fcommands.spigotclass;
+package io.github.fernthedev.fcommands.spigotclass;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 public class WaterBoots implements Listener, CommandExecutor {
     //Another cool idea from Ender
+    @SuppressWarnings("LoopConditionNotUpdatedInsideLoop")
     private static void checkarmor() {
         Bukkit.getLogger().info("LOADED WATER WALKING EVENT");
             for (Player p : Bukkit.getServer().getOnlinePlayers()) {
@@ -55,7 +56,7 @@ public class WaterBoots implements Listener, CommandExecutor {
             /* //if(((main.getType() == Material.DIAMOND_BOOTS) && (offhand.getType() == Material.ICE)) || ((main.getType() == Material.ICE) && (offhand.getType() == Material.DIAMOND_BOOTS)) || ((main.getType() == Material.IRON_BOOTS) && (offhand.getType() == Material.ICE)) || ((main.getType() == Material.ICE) && (offhand.getType() == Material.IRON_BOOTS))) { */
             if(main.getType() == Material.DIAMOND_BOOTS && player.getInventory().contains(Material.ICE) || main.getType() == Material.IRON_BOOTS && player.getInventory().contains(Material.ICE)) {
                 ItemMeta mainlore = main.getItemMeta();
-                ArrayList<String> lore = new ArrayList<String>();
+                ArrayList<String> lore = new ArrayList<>();
                 lore.add(ChatColor.GRAY + "WaterWalk");
                 mainlore.setLore(lore);
                 main.setItemMeta(mainlore);
@@ -73,11 +74,11 @@ public class WaterBoots implements Listener, CommandExecutor {
 
             }else if(main.getType() != Material.DIAMOND_BOOTS || main.getType() != Material.IRON_BOOTS){
                 player.sendMessage("This is not applicable for WaterWalk");
-            }else if(player.getInventory().contains(Material.ICE) == false) {
+            }else if(!player.getInventory().contains(Material.ICE)) {
                 player.sendMessage("You need ice to be able to enchant this");
             }
         }
-        // If the player (or console) uses our command correct, we can return true
+        // If the player (or console) uses our namecolor correct, we can return true
         return true;
     }
 

@@ -1,4 +1,4 @@
-package io.github.fernplayzz.fcommands.spigotclass;
+package io.github.fernthedev.fcommands.spigotclass;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -8,10 +8,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 
+@SuppressWarnings("unused")
 public class BedFire implements Listener {
     //Player players = (Player) Bukkit.getServer().getOnlinePlayers();
     @EventHandler
     public static void onPlayerBedEnter(PlayerBedEnterEvent event) {
+        spigot loginfo = new spigot();
+
         Bukkit.getLogger().info("LOADED BEDFIRE EVENT");
         //for (Player players : Bukkit.getServer().getOnlinePlayers()) {
           /*  if (players.isSleeping()) {

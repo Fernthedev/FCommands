@@ -1,4 +1,4 @@
-package io.github.fernplayzz.fcommands.spigotclass;
+package io.github.fernthedev.fcommands.spigotclass;
 
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
 import org.bukkit.Bukkit;
@@ -10,7 +10,6 @@ public class NTEmcMMO implements Listener {
     @SuppressWarnings("privatation")
     public static void ntereload() {
         Bukkit.getServer().getLogger().info("Reloading nte due to levelup from mcmmo");
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"/nte reload");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"nte reload");
     }
     //@EventHandler

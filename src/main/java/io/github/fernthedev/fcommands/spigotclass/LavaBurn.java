@@ -1,4 +1,4 @@
-package io.github.fernplayzz.fcommands.spigotclass;
+package io.github.fernthedev.fcommands.spigotclass;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -12,6 +12,7 @@ import java.util.Random;
 
 public class LavaBurn implements Listener {
     //Idea from Ender. Cool guy :D
+    @SuppressWarnings({"deprecation", "EqualsBetweenInconvertibleTypes"})
     @EventHandler
     public static void onPlayerPickupItem(PlayerPickupItemEvent event) {
         //LAVA

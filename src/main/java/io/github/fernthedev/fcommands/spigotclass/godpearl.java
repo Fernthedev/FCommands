@@ -1,4 +1,4 @@
-package io.github.fernplayzz.fcommands.spigotclass;
+package io.github.fernthedev.fcommands.spigotclass;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,7 +25,7 @@ public class godpearl implements Listener {
     public void onProjectileLaunch(ProjectileLaunchEvent event)
     {
         doNotDamageThePlayerOnEnderPearlUse = true;
-        Player player = (Player) event.getEntity().getShooter();
+        //Player player = (Player) event.getEntity().getShooter();
        // pitch = player.getLocation().getDirection();
     }
 
