@@ -1,9 +1,22 @@
 name: FernCommands
 version: 1.0
-main: io.github.fernplayzz.fcommands.spigotclass.spigot
-#author: fernplayzz
+main: io.github.fernthedev.fcommands.spigotclass.spigot
+author: fernthedev
 description: Commands for the ferns out there :P
 commands:
    fboot:
       description: Crafts water walking boots
       usage: /fboot
+#   syncyt:
+#      description: This allows you to sync your youtube rank if it meets the requirements
+#      usage: /syncyt [channelid]
+   craftrb:
+      description: Used for crafting bow with riding. Requires bow in hand and atleast one enderpearl.
+      usage: /craftrb
+   fern:
+      description: Used for managing the fern plugin.
+      usage: /fern
+   namecolor:
+      description: Used for changing nametag and chat name color
+      usage: /namecolor
+softdepend: [NoCheatPlus,McMMO,SB-Skylands,Multiverse-Core]
