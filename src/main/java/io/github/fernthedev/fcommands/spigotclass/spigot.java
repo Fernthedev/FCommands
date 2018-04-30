@@ -258,7 +258,8 @@ public class spigot extends JavaPlugin {
 
         if(config.getBoolean("NameColor")) {
             if(isVault || isNTE) {
-             this.getServer().getPluginManager().registerEvents(new namecolor(),this );
+             this.getServer().getPluginManager().registerEvents(new namecolor(),this);
+             this.getCommand("namecolor").setExecutor(new namecolor());
             }
         }
     }
