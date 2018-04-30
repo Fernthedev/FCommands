@@ -19,10 +19,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class seen extends Command implements Listener {
@@ -48,7 +45,7 @@ public class seen extends Command implements Listener {
     public void execute(CommandSender sender, String[] strings) {
         Configuration seenconfig = new bungee().getSeenconfig();
         if (strings.length == 0) {
-            sender.sendMessage(new bungee().message("&cPlease use the command as followed: /seen <player>"));
+            sender.sendMessage(new bungee().message("&cPlease use the namecolor as followed: /seen <player>"));
 
         } else {
             String ptarget = strings[0];
@@ -109,7 +106,7 @@ public class seen extends Command implements Listener {
             getLogger.warning("unable to load seen file");
         }
         Calendar cal = Calendar.getInstance();
-        String time= new SimpleDateFormat("MMM dd hh:mm aa").format(cal.getTime());
+        String time= new SimpleDateFormat("MMM dd hh:mm aa").format(new Date());
         String server = e.getPlayer().getServer().getInfo().getName();
         //String time2 = new SimpleDateFormat("MM.dd HH:mm").format(date);
         //seenplist.add(time);

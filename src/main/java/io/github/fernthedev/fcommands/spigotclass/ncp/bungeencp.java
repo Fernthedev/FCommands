@@ -1,4 +1,4 @@
-package io.github.fernplayzz.fcommands.spigotclass.ncp;
+package io.github.fernthedev.fcommands.spigotclass.ncp;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
@@ -7,8 +7,8 @@ import fr.neatmonster.nocheatplus.NCPAPIProvider;
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.checks.access.IViolationInfo;
 import fr.neatmonster.nocheatplus.hooks.AbstractNCPHook;
-import io.github.fernplayzz.fcommands.spigotclass.messaging;
-import io.github.fernplayzz.fcommands.spigotclass.spigot;
+import io.github.fernthedev.fcommands.spigotclass.messaging;
+import io.github.fernthedev.fcommands.spigotclass.spigot;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -57,9 +57,17 @@ public class bungeencp extends AbstractNCPHook implements PluginMessageListener,
             if (report == null)
                 return;
 
+            String violation;
+            if(report.getViolation() <= 10) {
+                violation = "&a%violation%";
+            } else if(report.getViolation() >10 && report.getViolation() <= 20) {
+                violation = "&6%violation%";
+            }else{
+                violation = "&c%violation%";
+            }
             // Get the Report Message from the config and replace the variables
-            String reportMessage = ChatColor.translateAlternateColorCodes('&', "&c&lNCP ( %server% ) &7»&r &c%player% &7could be using &6%check%");
-            reportMessage = reportMessage.replaceAll("%player%", report.getPlayer()).replaceAll("%server%", report.getServer()).replaceAll("%check%", report.getCheckType().getName());
+            String reportMessage = ChatColor.translateAlternateColorCodes('&', "&c&lNCP ( %server% ) &7»&r &c%player% &7could be using &6%check% &7VL " + violation);
+            reportMessage = reportMessage.replaceAll("%player%", report.getPlayer()).replaceAll("%server%", report.getServer()).replaceAll("%check%", report.getCheckType().getName()).replaceAll("%violation%", String.valueOf(report.getViolation()));
 
             // Send an admin notification to players with the corresponding permission (only if the player has turned notifications on)
             NCPAPIProvider.getNoCheatPlusAPI().sendAdminNotifyMessage(reportMessage);

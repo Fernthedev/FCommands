@@ -1,5 +1,6 @@
-package io.github.fernplayzz.fcommands.spigotclass.ncp;
+package io.github.fernthedev.fcommands.spigotclass.ncp;
 
+@SuppressWarnings("unused")
 public class expiration {
 
     private long expiration = 0;

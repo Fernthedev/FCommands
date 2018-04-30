@@ -1,7 +1,7 @@
-package io.github.fernplayzz.fcommands.spigotclass.ncp;
+package io.github.fernthedev.fcommands.spigotclass.ncp;
 
 import fr.neatmonster.nocheatplus.checks.CheckType;
-import io.github.fernplayzz.fcommands.spigotclass.spigot;
+import io.github.fernthedev.fcommands.spigotclass.spigot;
 
 public class playerreport {
     private final String player;

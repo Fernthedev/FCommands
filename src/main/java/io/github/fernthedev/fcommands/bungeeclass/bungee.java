@@ -57,17 +57,19 @@ public class bungee extends Plugin {
             boolean mkdir = getDataFolder().mkdir();
         }
 
-        File file = new File(getDataFolder(), "config.yml");
+        File file = new File(getDataFolder(), "configb.yml");
 
 
         if (!file.exists()) {
-            try (InputStream in = getResourceAsStream("config.yml")) {
+            try (InputStream in = getResourceAsStream("configb.yml")) {
                 Files.copy(in, file.toPath());
+                file.renameTo(new File("config.yml"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
            // config.getKeys().add("Motd:");
         }
+
 
         /*try {
             config = configp.load(configfile);

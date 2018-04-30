@@ -1,9 +1,10 @@
-package io.github.fernplayzz.fcommands.spigotclass.ncp;
+package io.github.fernthedev.fcommands.spigotclass.ncp;
 
 
 import java.io.Serializable;
 import java.util.Date;
 
+@SuppressWarnings("unused")
 public class duration implements Comparable<duration>, Serializable {
     private static final long serialVersionUID = -8834522925774502711L;
     public static final duration ZERO = new duration(0, Unit.MILLISECOND);
@@ -120,6 +121,7 @@ public class duration implements Comparable<duration>, Serializable {
         return o instanceof duration && toMilliseconds() == ((duration) o).toMilliseconds();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public int hashCode() {
         return new Long(toMilliseconds()).hashCode();

@@ -1,10 +1,11 @@
-package io.github.fernplayzz.fcommands.spigotclass.ncp;
+package io.github.fernthedev.fcommands.spigotclass.ncp;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 
+@SuppressWarnings("unused")
 public class cooldown {
     private final Map<UUID, expiration> cooldown = new HashMap<UUID, expiration>();
 
