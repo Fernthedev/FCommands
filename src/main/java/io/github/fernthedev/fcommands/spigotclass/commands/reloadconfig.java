@@ -11,6 +11,12 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import java.io.IOException;
 
 public class reloadconfig implements CommandExecutor {
+    private static reloadconfig ourInstance = new reloadconfig();
+
+    public static reloadconfig getInstance() {
+        return ourInstance;
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if(args.length == 0) {
@@ -50,4 +56,6 @@ public class reloadconfig implements CommandExecutor {
         return ChatColor.translateAlternateColorCodes('&',message);
 
     }
+
+
 }

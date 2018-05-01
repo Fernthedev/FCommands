@@ -53,7 +53,7 @@ public class WaterBoots implements Listener, CommandExecutor {
             ItemStack main = player.getInventory().getItemInMainHand();
             //ItemStack offhand = (ItemStack) player.getInventory().getBoots();
            // ItemStack inv = (ItemStack) player.getInventory();
-            /* //if(((main.getType() == Material.DIAMOND_BOOTS) && (offhand.getType() == Material.ICE)) || ((main.getType() == Material.ICE) && (offhand.getType() == Material.DIAMOND_BOOTS)) || ((main.getType() == Material.IRON_BOOTS) && (offhand.getType() == Material.ICE)) || ((main.getType() == Material.ICE) && (offhand.getType() == Material.IRON_BOOTS))) { */
+            /* //if(((fernmain.getType() == Material.DIAMOND_BOOTS) && (offhand.getType() == Material.ICE)) || ((fernmain.getType() == Material.ICE) && (offhand.getType() == Material.DIAMOND_BOOTS)) || ((fernmain.getType() == Material.IRON_BOOTS) && (offhand.getType() == Material.ICE)) || ((fernmain.getType() == Material.ICE) && (offhand.getType() == Material.IRON_BOOTS))) { */
             if(main.getType() == Material.DIAMOND_BOOTS && player.getInventory().contains(Material.ICE) || main.getType() == Material.IRON_BOOTS && player.getInventory().contains(Material.ICE)) {
                 ItemMeta mainlore = main.getItemMeta();
                 ArrayList<String> lore = new ArrayList<>();
@@ -62,7 +62,7 @@ public class WaterBoots implements Listener, CommandExecutor {
                 main.setItemMeta(mainlore);
                 player.getInventory().remove(Material.ICE);
                /* } else if (offhand.getType() == Material.ICE) {
-                    ItemMeta mainl = main.getItemMeta();
+                    ItemMeta mainl = fernmain.getItemMeta();
                     ArrayList<String> mainlore = new ArrayList<String>();
                     mainlore.add("Waterfall");
                     mainl.setLore(mainlore);

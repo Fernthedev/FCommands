@@ -29,7 +29,7 @@ public class FilesManager {
             if(configfile.exists()) {
                 config.load(new File(spigot.getInstance().getDataFolder(),"config.yml"));
             }else{
-                createFile();
+                //createFile();
                 FilesManager.getInstance().setDefault();
             }
         }

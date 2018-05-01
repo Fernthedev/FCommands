@@ -3,7 +3,7 @@ package io.github.fernthedev.fcommands.spigotclass;
 import com.google.gson.Gson;
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPHookManager;
-import io.github.fernthedev.fcommands.spigotclass.commands.reloadconfig;
+import io.github.fernthedev.fcommands.spigotclass.commands.fernmain;
 import io.github.fernthedev.fcommands.spigotclass.gui.namecolor;
 import io.github.fernthedev.fcommands.spigotclass.ncp.bungeencp;
 import io.github.fernthedev.fcommands.spigotclass.ncp.cooldown;
@@ -97,14 +97,15 @@ public class spigot extends JavaPlugin {
             setupEconomy();
             setupPermissions();
             setupChat();
+            getLogger().info("HOOKED VAULT ECONOMY PERMISSIONS AND CHAT");
         }
 
         /*
          Checks for NametagEdit
          */
-        isNTE = false;
-        if(this.getServer().getPluginManager().isPluginEnabled("NamegagEdit"))
-            isNTE = true;
+        isNTE = this.getServer().getPluginManager().isPluginEnabled("NametagEdit");
+        if(isNTE)
+            getLogger().info("HOOKED NAMETAGEDIT API");
     }
 
 
@@ -206,12 +207,22 @@ public class spigot extends JavaPlugin {
             this.getServer().getPluginManager().registerEvents(new ridebow(), this);
             this.getCommand("craftrb").setExecutor(new ridebow());
         }
-        this.getCommand("fern").setExecutor(new reloadconfig());
+
+
+        /*
+        REGISTERING DEFAULT COMMANDS
+         */
+        //this.getCommand("fern").setExecutor(new reloadconfig());
+        //this.getCommand("fern").setExecutor(new hooks());
+        this.getCommand("fern").setExecutor(new fernmain());
+
+
         /*
         This allows you to recieve NCP notifications on other servers using bungeecord messaging
          */
         if (config.getBoolean("BungeeNCP"))
-            if (this.getServer().getPluginManager().getPlugin("NoCheatPlus") != null) {
+            //if (this.getServer().getPluginManager().getPlugin("NoCheatPlus") != null) {
+            if(isNCPEnabled()) {
                 NCPHookManager.addHook(CheckType.values(), new bungeencp());
                 this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new bungeencp());
                 this.getServer().getPluginManager().registerEvents(new bungeencp(), this);
@@ -257,12 +268,16 @@ public class spigot extends JavaPlugin {
         }
 
         if(config.getBoolean("NameColor")) {
-            if(isVault || isNTE) {
+            if((isVault && getChat().isEnabled()) || isNTE) {
              this.getServer().getPluginManager().registerEvents(new namecolor(),this);
              this.getCommand("namecolor").setExecutor(new namecolor());
+            }else{
+                getLogger().warning("Tried to start NameColor, but no compatible chat formatter (Vault) or nametag changer (NametagEdit) has been found. To work it needs one of these");
             }
         }
     }
+
+    //CHECK IF COMPATIBLE PLUGINS ARE ENABLED
 
     public boolean isVaultEnabled() {
         return isVault;
@@ -270,6 +285,18 @@ public class spigot extends JavaPlugin {
     public boolean isNTEEnabled() {
         return isNTE;
     }
+
+    public boolean isNCPEnabled() {
+        return Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus");
+    }
+
+
+
+
+
+
+
+
 
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
@@ -304,5 +331,8 @@ public class spigot extends JavaPlugin {
 
     public static Chat getChat() {
         return chat;
+    }
+        public static String message(String message) {
+        return ChatColor.translateAlternateColorCodes('&',message);
     }
 }

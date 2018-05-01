@@ -19,4 +19,4 @@ commands:
    namecolor:
       description: Used for changing nametag and chat name color
       usage: /namecolor
-softdepend: [NoCheatPlus,McMMO,SB-Skylands,Multiverse-Core]
+softdepend: [NoCheatPlus,McMMO,SB-Skylands,Multiverse-Core,NametagEdit,Vault]
