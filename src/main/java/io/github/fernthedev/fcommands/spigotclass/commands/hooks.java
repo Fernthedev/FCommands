@@ -29,7 +29,7 @@ public class hooks implements CommandExecutor {
                         sender.sendMessage(spigot.message("&b(Vault) Economy:&cUnhooked"));
                     }
                     if (spigot.getPermissions().isEnabled()) {
-                        sender.sendMessage(spigot.message("b(Vault) Permissions:&aHooked"));
+                        sender.sendMessage(spigot.message("&b(Vault) Permissions:&aHooked"));
                     } else {
                         sender.sendMessage(spigot.message("&b(Vault) Permissions:&cUnhooked"));
                     }
