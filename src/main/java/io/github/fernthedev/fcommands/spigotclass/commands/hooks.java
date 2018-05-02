@@ -34,7 +34,7 @@ public class hooks implements CommandExecutor {
                         sender.sendMessage(spigot.message("&b(Vault) Permissions:&cUnhooked"));
                     }
                 } else {
-                    sender.sendMessage(spigot.message("&bVault:Unhooked"));
+                    sender.sendMessage(spigot.message("&bVault:&cUnhooked"));
                 }
 
                 if (spigot.getInstance().isNTEEnabled()) {
