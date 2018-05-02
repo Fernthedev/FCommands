@@ -257,7 +257,7 @@ public class spigot extends JavaPlugin {
         /*
         This adds the skylands using SB-Skyland or any world you want and MultiVerse
         */
-        if(config.getBoolean("skylands"))
+        if(config.getBoolean("Skylands"))
         if (this.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
             getLogger().info("Found Multiverse, checking to see skylands are enabled");
             if (this.getServer().getPluginManager().isPluginEnabled("SB-Skylands")) {
