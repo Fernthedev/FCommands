@@ -84,6 +84,13 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
+        <!-- WATERFALL -->
+        <dependency>
+            <groupId>io.github.waterfallmc</groupId>
+            <artifactId>waterfall-api</artifactId>
+            <version>1.12-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- BUNGEE JAVADOC -->
         <dependency>
             <groupId>net.md-5</groupId>
