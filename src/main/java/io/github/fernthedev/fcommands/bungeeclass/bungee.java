@@ -151,10 +151,6 @@ public class bungee extends Plugin {
         bungee.config = config;
     }
 
-    public File getConfigfile() {
-        return configfile;
-    }
-
     static File getIpfile() {
         return ipfile;
     }

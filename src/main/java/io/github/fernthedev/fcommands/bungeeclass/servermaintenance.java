@@ -4,7 +4,6 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.connection.PendingConnection;
-import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.config.Configuration;
@@ -62,11 +61,6 @@ public class servermaintenance implements Listener {
         }
 
     }*/
-
-    @EventHandler
-    public void prelogin(PreLoginEvent prelogin) {
-        //lobbycheck();
-    }
 
     /*@EventHandler
     public void login(LoginEvent login) {

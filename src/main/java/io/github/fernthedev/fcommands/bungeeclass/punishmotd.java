@@ -28,7 +28,6 @@ public class punishmotd implements Listener {
     private static ConfigurationProvider configp = new bungee().getConfigp();
     //public static Plugin plugin;
     private final ProxyServer getProxy = ProxyServer.getInstance();
-    private File ipfile;
 
     @SuppressWarnings({"deprecation", "InfiniteLoopStatement"})
     @EventHandler(priority = EventPriority.HIGH)
@@ -160,7 +159,7 @@ public class punishmotd implements Listener {
     public void onLoginIp(PostLoginEvent event) {
         Logger log = getProxy.getLogger();
         String player = event.getPlayer().getUUID();
-        ipfile = bungee.getIpfile();
+        File ipfile = bungee.getIpfile();
         //String player = playerp.toString();
         String ip = event.getPlayer().getAddress().getHostString().replaceAll("\\.", " ");
         //ip.replaceAll("\\.", " ");
@@ -205,7 +204,7 @@ public class punishmotd implements Listener {
             //ipconfig.getStringList(ip).add(player);
                 //config.set(ip,ipplayer);
                 try {
-                    ConfigurationProvider.getProvider(YamlConfiguration.class).save(ipconfig,ipfile);
+                    ConfigurationProvider.getProvider(YamlConfiguration.class).save(ipconfig, ipfile);
                     //ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, configfile);
                 } catch (IOException e) {
                     e.printStackTrace();

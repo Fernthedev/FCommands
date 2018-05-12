@@ -16,7 +16,6 @@ public class fileconfig {
     private static File configfile;
     private static File ipfile;
     private static File seenfile;
-    private static ConfigurationProvider configp;
     private static fileconfig thisinstance;
 
     /**
@@ -27,7 +26,7 @@ public class fileconfig {
         ipfile = new File(bungee.getInstance().getDataFolder(), "ipdata.yml");
         seenfile = new File(bungee.getInstance().getDataFolder(), "seen.yml");
         configfile = new File(bungee.getInstance().getDataFolder(), "config.yml");
-        configp = ConfigurationProvider.getProvider(YamlConfiguration.class);
+        ConfigurationProvider configp = ConfigurationProvider.getProvider(YamlConfiguration.class);
         try {
             loadFiles("all");
         } catch (IOException e) {

@@ -63,7 +63,7 @@ public class seen extends Command implements Listener {
             if (ProxyServer.getInstance().getPlayer(ptarget) != null) {
                 sender.sendMessage(bungeee.message("&aPlayer &2" + ptarget + " &awas found. Player is currently online on server: " + ProxyServer.getInstance().getPlayer(ptarget).getServer().getInfo().getName()));
             }else{
-            if (UUID.isEmpty() || UUID == null) {
+            if (UUID.isEmpty()) {
                 sender.sendMessage(bungeee.message("&cPlayer doesn't exist. You sure you typed that right?"));
             }else{
 
@@ -72,10 +72,10 @@ public class seen extends Command implements Listener {
                         String server = seenplist.get(1);
                         String time = seenplist.get(0);
                         time = time.replace(".", ":");
-                        if (server == null) {
+                        if (server.equals("")) {
                             server = "&cNo Server found";
                         }
-                        if (time == null) {
+                        if (time.equals("")) {
                             time = "&cNo time shown";
                         }
                         TextComponent messageserver = new TextComponent(bungeee.message("&bLast Server On: &3" + server));
