@@ -335,4 +335,11 @@ public class spigot extends JavaPlugin {
         public static String message(String message) {
         return ChatColor.translateAlternateColorCodes('&',message);
     }
+
+
+    public static boolean hasVaultPermission(Player p,String Permissione) {
+        if(isVault && getPermissions().isEnabled()) {
+            return p.hasPermission(Permissione) || getPermissions().has(p, Permissione);
+        }else return p.hasPermission(Permissione);
+    }
 }
