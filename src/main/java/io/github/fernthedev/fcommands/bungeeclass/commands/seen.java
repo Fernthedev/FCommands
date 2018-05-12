@@ -1,5 +1,7 @@
-package io.github.fernthedev.fcommands.bungeeclass;
+package io.github.fernthedev.fcommands.bungeeclass.commands;
 
+import io.github.fernthedev.fcommands.bungeeclass.bungee;
+import io.github.fernthedev.fcommands.bungeeclass.fileconfig;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -101,7 +103,7 @@ public class seen extends Command implements Listener {
         List<String> seenplist = new ArrayList<>();
         Configuration sconfig = new bungee().getConfig();
         try {
-            bungeee.loadFiles("seen");
+            fileconfig.getInstance().loadFiles("seen");
         } catch (IOException e1) {
             getLogger.warning("unable to load seen file");
         }

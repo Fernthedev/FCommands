@@ -145,7 +145,7 @@ public class servermaintenance implements Listener {
         boolean online = this.lobbycheck();
         if (online) {
             try {
-                new bungee().loadFiles("config");
+                new fileconfig().loadFiles("config");
             } catch (IOException e) {
                 getProxy.getLogger().warning("Unable to load config");
             }

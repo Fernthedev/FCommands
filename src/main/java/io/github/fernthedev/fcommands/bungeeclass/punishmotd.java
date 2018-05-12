@@ -21,15 +21,14 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static io.github.fernthedev.fcommands.bungeeclass.bungee.ipfile;
-
 public class punishmotd implements Listener {
     private static final File pluginFolder = ProxyServer.getInstance().getPluginsFolder();
-    private static Configuration IpDataConfig = new bungee().getIpDataConfig();
+   // private static Configuration IpDataConfig = new bungee().getIpDataConfig();
     private static Configuration configuration = new bungee().getConfiguration();
     private static ConfigurationProvider configp = new bungee().getConfigp();
     //public static Plugin plugin;
     private final ProxyServer getProxy = ProxyServer.getInstance();
+    private File ipfile;
 
     @SuppressWarnings({"deprecation", "InfiniteLoopStatement"})
     @EventHandler(priority = EventPriority.HIGH)
@@ -42,7 +41,7 @@ public class punishmotd implements Listener {
         List<String> players = ipconfig.getStringList(hostAddress);
         try {
             //ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
-            new bungee().loadFiles("ip");
+            new fileconfig().loadFiles("ip");
             //ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, configfile);
             ipfileloaded = true;
         } catch (IOException e) {
@@ -161,6 +160,7 @@ public class punishmotd implements Listener {
     public void onLoginIp(PostLoginEvent event) {
         Logger log = getProxy.getLogger();
         String player = event.getPlayer().getUUID();
+        ipfile = bungee.getIpfile();
         //String player = playerp.toString();
         String ip = event.getPlayer().getAddress().getHostString().replaceAll("\\.", " ");
         //ip.replaceAll("\\.", " ");
