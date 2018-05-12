@@ -36,7 +36,7 @@ public class ridebow implements Listener,CommandExecutor {
                  double telepy = arrow.getLocation().getY();
                  double telepz = arrow.getLocation().getZ();
                  Player player = (Player) arrow.getMetadata("teleport").get(0).value();
-                 spigot.getInstance().getLogger().info(player + " shot an arrow with metadata ");
+                 FernCommands.getInstance().getLogger().info(player + " shot an arrow with metadata ");
                  World telepworld = arrow.getWorld();
                  player.teleport(new Location(telepworld,telepx,telepy,telepz));
                  arrow.remove();
@@ -59,18 +59,18 @@ public class ridebow implements Listener,CommandExecutor {
 
     @EventHandler
     public void onShoot(EntityShootBowEvent e) {
-        //spigot.getInstance().getLogger().info(e.getEntity() + " SHOT AN ARROW");
+        //FernCommands.getInstance().getLogger().info(e.getEntity() + " SHOT AN ARROW");
         if (e.getEntity() instanceof Player) {
             Player player = (Player) e.getEntity();
             if (player.getInventory().getItemInMainHand().getType() == Material.BOW && player.isSneaking()) {
-                //spigot.getInstance().getLogger().info("is sneaking and shot bow");
+                //FernCommands.getInstance().getLogger().info("is sneaking and shot bow");
                 //List<String> lore = player.getItemOnCursor().getItemMeta().getLore();
                 boolean haslo = false;
                 if(player.getInventory().getItemInMainHand().getItemMeta().hasLore())
                     haslo = true;
                 if(haslo) {
                     if (player.getInventory().getItemInMainHand().getItemMeta().getLore().contains(ChatColor.GRAY + "Riding") && player.getInventory().contains(Material.ENDER_PEARL)) {
-                        //spigot.getInstance().getLogger().info("has lore and shot");
+                        //FernCommands.getInstance().getLogger().info("has lore and shot");
                         //e.getProjectile().addPassenger(player);'
                //         //teleport = true;
            //          //   pl = player;
@@ -82,7 +82,7 @@ public class ridebow implements Listener,CommandExecutor {
                             arrow = (Arrow) e.getProjectile();
                         }
                         if(arrow != null)
-                            arrow.setMetadata("teleport", new FixedMetadataValue(spigot.getInstance(), player));
+                            arrow.setMetadata("teleport", new FixedMetadataValue(FernCommands.getInstance(), player));
 
                         boolean creative = false;
                         if (player.getGameMode() != GameMode.CREATIVE || player.getGameMode() != GameMode.SPECTATOR)
@@ -93,7 +93,7 @@ public class ridebow implements Listener,CommandExecutor {
                             ItemStack[] inv = player.getInventory().getContents();
                             for (ItemStack item : inv) {
                                 //sender.sendMessage(item + " is in your inventory");
-                                //spigot.getInstance().getLogger().info(item + "is in " + player + "'s inventory");
+                                //FernCommands.getInstance().getLogger().info(item + "is in " + player + "'s inventory");
                                 if (item.getType() == Material.ENDER_PEARL) {
                                     amount = item.getAmount();
                                     enderpearl = item;
@@ -124,7 +124,7 @@ public class ridebow implements Listener,CommandExecutor {
                                 }
                             }
 
-                        }.runTaskTimer(spigot.getInstance(), 0L, 5L);
+                        }.runTaskTimer(FernCommands.getInstance(), 0L, 5L);
                         }
                                // arrow.playEffect(EntityEffect.FIREWORK_EXPLODE);
                         //player.spawnParticle(Particle.SPELL,player.getLocation(),200);
@@ -168,7 +168,7 @@ public class ridebow implements Listener,CommandExecutor {
                                 }
                                 for (ItemStack item : inv) {
                                     //sender.sendMessage(item + " is in your inventory");
-                                    //spigot.getInstance().getLogger().info(item + "is in " + player + "'s inventory");
+                                    //FernCommands.getInstance().getLogger().info(item + "is in " + player + "'s inventory");
                                     if (item.getType() == Material.ENDER_PEARL) {
                                         amount = item.getAmount();
                                         enderpearl = item;
@@ -188,7 +188,7 @@ public class ridebow implements Listener,CommandExecutor {
                                     }
                                     bow.setItemMeta(mainlore);
                                     sender.sendMessage(ChatColor.GREEN + "Enchanted bow with riding successfully");
-                                    spigot.getInstance().getLogger().info("Successfully enchanted bow with riding");
+                                    FernCommands.getInstance().getLogger().info("Successfully enchanted bow with riding");
                                     return true;
                                 }
                             } else {

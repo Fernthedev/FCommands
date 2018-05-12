@@ -30,7 +30,7 @@ public class messaging {
             player = getRandomPlayer();
         out.writeUTF(request);
         if (player != null)
-            player.sendPluginMessage(spigot.getInstance(), "BungeeCord", out.toByteArray());
+            player.sendPluginMessage(FernCommands.getInstance(), "BungeeCord", out.toByteArray());
     }
     /**
      * {@link #sendRequest(String, String...)}
@@ -65,7 +65,7 @@ public class messaging {
             player = getRandomPlayer();
 
         if (player != null)
-            player.sendPluginMessage(spigot.getInstance(), "BungeeCord", out.toByteArray());
+            player.sendPluginMessage(FernCommands.getInstance(), "BungeeCord", out.toByteArray());
     }
 
 

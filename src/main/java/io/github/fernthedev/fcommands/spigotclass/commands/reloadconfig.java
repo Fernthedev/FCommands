@@ -1,7 +1,7 @@
 package io.github.fernthedev.fcommands.spigotclass.commands;
 
+import io.github.fernthedev.fcommands.spigotclass.FernCommands;
 import io.github.fernthedev.fcommands.spigotclass.FilesManager;
-import io.github.fernthedev.fcommands.spigotclass.spigot;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -32,10 +32,10 @@ public class reloadconfig implements CommandExecutor {
                                 FilesManager.getInstance().reloadConfig(which);
                             } catch (IOException e) {
                                 sender.sendMessage(message("&cUnable to reload config (" + which + ")"));
-                                spigot.getInstance().getLogger().warning(message("&cUnable to reload config (" + which + ")"));
+                                FernCommands.getInstance().getLogger().warning(message("&cUnable to reload config (" + which + ")"));
                             } catch (InvalidConfigurationException e) {
                                 sender.sendMessage(message("&cUnable to reload config (" + which + ") due to invalid syntax"));
-                                spigot.getInstance().getLogger().warning(message("&cUnable to reload config (" + which + ") due to invalid syntax"));
+                                FernCommands.getInstance().getLogger().warning(message("&cUnable to reload config (" + which + ") due to invalid syntax"));
                             }
                             sender.sendMessage(message("&aSuccessfully reloaded config " + which));
                         } else {

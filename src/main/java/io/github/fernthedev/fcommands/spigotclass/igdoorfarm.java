@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 import java.util.logging.Logger;
 
 public class igdoorfarm implements Listener {
-    private Logger log = spigot.getInstance().getServer().getLogger();
+    private Logger log = FernCommands.getInstance().getServer().getLogger();
 
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent e) {

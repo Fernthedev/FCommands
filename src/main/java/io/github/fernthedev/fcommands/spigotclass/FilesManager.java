@@ -18,8 +18,8 @@ public class FilesManager {
     private FilesManager() {
         ourInstance = this;
     }
-    FileConfiguration config = spigot.getInstance().getConfig();
-    private File configfile = new File(spigot.getInstance().getDataFolder(), "config.yml");
+    FileConfiguration config = FernCommands.getInstance().getConfig();
+    private File configfile = new File(FernCommands.getInstance().getDataFolder(), "config.yml");
     /**
      *
      * @param which Which config to reload, such as (config,all)
@@ -27,7 +27,7 @@ public class FilesManager {
     public void reloadConfig(String which) throws IOException, InvalidConfigurationException {
         if(which.equals("all") || which.equals("config")) {
             if(configfile.exists()) {
-                config.load(new File(spigot.getInstance().getDataFolder(),"config.yml"));
+                config.load(new File(FernCommands.getInstance().getDataFolder(),"config.yml"));
             }else{
                 //createFile();
                 FilesManager.getInstance().setDefault();
@@ -36,7 +36,7 @@ public class FilesManager {
     }
 
     public void createFile(){
-        File file = new File(spigot.getInstance().getDataFolder(), "players.yml");
+        File file = new File(FernCommands.getInstance().getDataFolder(), "players.yml");
         if(!file.exists()){
             try {
                 file.createNewFile();
@@ -48,8 +48,8 @@ public class FilesManager {
 
     public void setDefault() {
         ourInstance = this;
-        //FileConfiguration config = spigot.getInstance().getConfig();
-        spigot.getInstance().getConfig().set("nodmgepearl",false);
+        //FileConfiguration config = FernCommands.getInstance().getConfig();
+        FernCommands.getInstance().getConfig().set("nodmgepearl",false);
         config.set("NoIgDoorFarm",false);
         config.set("tpbow",false);
         config.set("BungeeNCP",true);
@@ -57,20 +57,20 @@ public class FilesManager {
         config.set("ItemBurn",false);
         config.set("Skylands",false);
         config.set("NameColor",false);
-        spigot.getInstance().saveConfig();
+        FernCommands.getInstance().saveConfig();
     }
 
     private void createConfig() {
         try {
-            if (!spigot.getInstance().getDataFolder().exists()) {
-                spigot.getInstance().getDataFolder().mkdirs();
+            if (!FernCommands.getInstance().getDataFolder().exists()) {
+                FernCommands.getInstance().getDataFolder().mkdirs();
             }
-            File file = new File(spigot.getInstance().getDataFolder(), "config.yml");
+            File file = new File(FernCommands.getInstance().getDataFolder(), "config.yml");
             if (!file.exists()) {
-                spigot.getInstance().getLogger().info("Config.yml not found, creating!");
-                spigot.getInstance().saveDefaultConfig();
+                FernCommands.getInstance().getLogger().info("Config.yml not found, creating!");
+                FernCommands.getInstance().saveDefaultConfig();
             } else {
-                spigot.getInstance().getLogger().info("Config.yml found, loading!");
+                FernCommands.getInstance().getLogger().info("Config.yml found, loading!");
             }
         } catch (Exception e) {
             e.printStackTrace();

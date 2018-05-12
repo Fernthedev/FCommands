@@ -7,8 +7,8 @@ import fr.neatmonster.nocheatplus.NCPAPIProvider;
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.checks.access.IViolationInfo;
 import fr.neatmonster.nocheatplus.hooks.AbstractNCPHook;
+import io.github.fernthedev.fcommands.spigotclass.FernCommands;
 import io.github.fernthedev.fcommands.spigotclass.messaging;
-import io.github.fernthedev.fcommands.spigotclass.spigot;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,9 +34,9 @@ public class bungeencp extends AbstractNCPHook implements PluginMessageListener,
         String subChannel = in.readUTF();
 
         if (subChannel.equals("GetServer"))
-            spigot.SERVER_NAME = in.readUTF();
+            FernCommands.SERVER_NAME = in.readUTF();
 
-        if (subChannel.equals(spigot.getInstance().getName())) {
+        if (subChannel.equals(FernCommands.getInstance().getName())) {
 
             // Use the code sample in the 'Response' sections below to read
             // the data.
@@ -48,7 +48,7 @@ public class bungeencp extends AbstractNCPHook implements PluginMessageListener,
 
             try {
                 // Transform the JSON-String back to the PlayerReport class
-                report = spigot.getGson().fromJson(msgIn.readUTF(), playerreport.class);
+                report = FernCommands.getGson().fromJson(msgIn.readUTF(), playerreport.class);
             } catch (JsonSyntaxException | IOException e) {
                 e.printStackTrace();
             }
@@ -83,38 +83,38 @@ public class bungeencp extends AbstractNCPHook implements PluginMessageListener,
 
                     messaging.sendRequest(event.getPlayer(), "GetServer");
             }
-        }.runTaskLater(spigot.getInstance(), 5L);
-        spigot.getInstance().checkForStaffMembers();
+        }.runTaskLater(FernCommands.getInstance(), 5L);
+        FernCommands.getInstance().checkForStaffMembers();
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        spigot.getInstance().checkForStaffMembers();
-        if (spigot.getCooldownManager().hasCooldown(player.getUniqueId()))
-            spigot.getCooldownManager().removeCooldown(player.getUniqueId());
+        FernCommands.getInstance().checkForStaffMembers();
+        if (FernCommands.getCooldownManager().hasCooldown(player.getUniqueId()))
+            FernCommands.getCooldownManager().removeCooldown(player.getUniqueId());
     }
 
 
     @Override
     public String getHookName() {
-        return spigot.getInstance().getDescription().getName();
+        return FernCommands.getInstance().getDescription().getName();
     }
 
     @Override
     public String getHookVersion() {
-        return spigot.getInstance().getDescription().getVersion();
+        return FernCommands.getInstance().getDescription().getVersion();
     }
 
 
     @Override
     public boolean onCheckFailure(CheckType checkType, Player player, IViolationInfo info) {
 
-        if (spigot.getInstance().isStaffMemberOnline())
+        if (FernCommands.getInstance().isStaffMemberOnline())
             return false;
 
 
-        cooldown cooldown = spigot.getCooldownManager();
+        cooldown cooldown = FernCommands.getCooldownManager();
 
         // Player is still on cooldown, return false
         if (cooldown.hasCooldown(player.getUniqueId()) && !cooldown.isExpired(player.getUniqueId()))
@@ -122,7 +122,7 @@ public class bungeencp extends AbstractNCPHook implements PluginMessageListener,
 
         try {
             // Send a report notification to other servers
-            messaging.sendRequest(player, spigot.getGson().toJson(new playerreport(player.getName(), checkType, info.getTotalVl())), "Forward", "ONLINE", spigot.getInstance().getName());
+            messaging.sendRequest(player, FernCommands.getGson().toJson(new playerreport(player.getName(), checkType, info.getTotalVl())), "Forward", "ONLINE", FernCommands.getInstance().getName());
         } catch (IOException e) {
         }
         /*try {

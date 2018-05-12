@@ -1,6 +1,6 @@
 package io.github.fernthedev.fcommands.spigotclass.commands;
 
-import io.github.fernthedev.fcommands.spigotclass.spigot;
+import io.github.fernthedev.fcommands.spigotclass.FernCommands;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,36 +16,36 @@ public class hooks implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (args.length != 0 && (args[0].equals("hooks"))) {
         if(sender.hasPermission("fernc.hooks")) {
-                if (spigot.getInstance().isVaultEnabled()) {
-                    sender.sendMessage(spigot.message("&bVault:&aHooked"));
-                    if (spigot.getChat().isEnabled()) {
-                        sender.sendMessage(spigot.message("&b(Vault) Chat:&aHooked"));
+                if (FernCommands.getInstance().isVaultEnabled()) {
+                    sender.sendMessage(FernCommands.message("&bVault:&aHooked"));
+                    if (FernCommands.getChat().isEnabled()) {
+                        sender.sendMessage(FernCommands.message("&b(Vault) Chat:&aHooked"));
                     } else {
-                        sender.sendMessage(spigot.message("&b(Vault) Chat:&cUnhooked"));
+                        sender.sendMessage(FernCommands.message("&b(Vault) Chat:&cUnhooked"));
                     }
-                    if (spigot.getEconomy().isEnabled()) {
-                        sender.sendMessage(spigot.message("&b(Vault) Economy:&aHooked"));
+                    if (FernCommands.getEconomy().isEnabled()) {
+                        sender.sendMessage(FernCommands.message("&b(Vault) Economy:&aHooked"));
                     } else {
-                        sender.sendMessage(spigot.message("&b(Vault) Economy:&cUnhooked"));
+                        sender.sendMessage(FernCommands.message("&b(Vault) Economy:&cUnhooked"));
                     }
-                    if (spigot.getPermissions().isEnabled()) {
-                        sender.sendMessage(spigot.message("&b(Vault) Permissions:&aHooked"));
+                    if (FernCommands.getPermissions().isEnabled()) {
+                        sender.sendMessage(FernCommands.message("&b(Vault) Permissions:&aHooked"));
                     } else {
-                        sender.sendMessage(spigot.message("&b(Vault) Permissions:&cUnhooked"));
+                        sender.sendMessage(FernCommands.message("&b(Vault) Permissions:&cUnhooked"));
                     }
                 } else {
-                    sender.sendMessage(spigot.message("&bVault:&cUnhooked"));
+                    sender.sendMessage(FernCommands.message("&bVault:&cUnhooked"));
                 }
 
-                if (spigot.getInstance().isNTEEnabled()) {
-                    sender.sendMessage(spigot.message("&bNametagEdit:&aHooked"));
+                if (FernCommands.getInstance().isNTEEnabled()) {
+                    sender.sendMessage(FernCommands.message("&bNametagEdit:&aHooked"));
                 } else {
-                    sender.sendMessage(spigot.message("&bNametagEdit:&cUnhooked"));
+                    sender.sendMessage(FernCommands.message("&bNametagEdit:&cUnhooked"));
                 }
-                if (spigot.getInstance().isNCPEnabled()) {
-                    sender.sendMessage(spigot.message("&bNoCheatPlus:&aHooked"));
+                if (FernCommands.getInstance().isNCPEnabled()) {
+                    sender.sendMessage(FernCommands.message("&bNoCheatPlus:&aHooked"));
                 } else {
-                    sender.sendMessage(spigot.message("&bNoCheatPlus:&cUnhooked"));
+                    sender.sendMessage(FernCommands.message("&bNoCheatPlus:&cUnhooked"));
                 }
             }
         }

@@ -13,7 +13,7 @@ public class BedFire implements Listener {
     //Player players = (Player) Bukkit.getServer().getOnlinePlayers();
     @EventHandler
     public static void onPlayerBedEnter(PlayerBedEnterEvent event) {
-        spigot loginfo = new spigot();
+        FernCommands loginfo = new FernCommands();
 
         Bukkit.getLogger().info("LOADED BEDFIRE EVENT");
         //for (Player players : Bukkit.getServer().getOnlinePlayers()) {

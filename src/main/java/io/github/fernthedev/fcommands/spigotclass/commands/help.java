@@ -1,6 +1,6 @@
 package io.github.fernthedev.fcommands.spigotclass.commands;
 
-import io.github.fernthedev.fcommands.spigotclass.spigot;
+import io.github.fernthedev.fcommands.spigotclass.FernCommands;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,8 +14,8 @@ public class help implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        sender.sendMessage(spigot.message("&b/fern hooks &f Gets what compatible plugins are hooked with FernCommands"));
-        sender.sendMessage(spigot.message("&b/fern reload &f Reloads config"));
+        sender.sendMessage(FernCommands.message("&b/fern hooks &f Gets what compatible plugins are hooked with FernCommands"));
+        sender.sendMessage(FernCommands.message("&b/fern reload &f Reloads config"));
         return true;
     }
 }

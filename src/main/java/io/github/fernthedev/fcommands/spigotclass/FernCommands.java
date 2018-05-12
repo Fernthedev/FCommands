@@ -23,10 +23,10 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
-public class spigot extends JavaPlugin {
+public class FernCommands extends JavaPlugin {
     private FileConfiguration config;
     private boolean useMcMMO;
-    private static spigot instance;
+    private static FernCommands instance;
     public static String SERVER_NAME;
     private static Gson gson;
     private boolean isStaffMemberOnline = false;
@@ -42,20 +42,12 @@ public class spigot extends JavaPlugin {
         instance = this;
         config = this.getConfig();
         getLogger().info("Hey! This is just for you to know that the plugin is enabled!");
-        //BedFire.run();
-        //Bukkit.getServer().getPluginManager().registerEvents(new BedFire(), this);
-        //this.getServer().getPluginManager().registerEvents(new BedFire(), this);
-        //this.getServer().getPluginManager().registerEvents(new LavaBurn(), this);
         gson = new Gson();
         SERVER_NAME = null;
         cooldown = new cooldown();
-       // BedFire.onEnable();
-      //  LavaBurn.onEnable();
-        //new ridebow().craft();
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         messaging.sendRequest("GetServer");
         registerPlugins();
-        //FilesManager.getInstance().setDefault();
         try {
             FilesManager.getInstance().reloadConfig("all");
         } catch (IOException e) {
@@ -64,23 +56,6 @@ public class spigot extends JavaPlugin {
             getLogger().warning("Invalid Config");
         }
         registerListener();
-        //this.getCommand("fboot").setExecutor(new WaterBoots());
-
-
-
-
-
-
-        //this.getServer().getPluginManager().registerEvents(new RidePlayer(), this);
-        //RidePlayer.onEnable();
-        //BedFire bedfire = new BedFire();
-        //this.getCommand("fbedcheck").setExecutor(new BedFire());
-        /*if (getServer().getPluginManager().isPluginEnabled(bedfire)) {
-            getLogger().info("UNABLE TO START BEDFIRE!");
-        }else{
-            getLogger().info("ENABLED BEDFIRE!");
-        }*/
-
     }
 
 
@@ -122,7 +97,7 @@ public class spigot extends JavaPlugin {
     }
 
     @Nonnull
-    public static spigot getInstance() {
+    public static FernCommands getInstance() {
         return instance;
     }
 
@@ -163,11 +138,6 @@ public class spigot extends JavaPlugin {
             break;
         }
     }
-
-   // @Override
-    // FileConfiguration getConfig() {
-    //    return config;
-   // }
 
     public void setConfig(FileConfiguration config) {
         this.config = config;
@@ -342,4 +312,6 @@ public class spigot extends JavaPlugin {
             return p.hasPermission(Permissione) || getPermissions().has(p, Permissione);
         }else return p.hasPermission(Permissione);
     }
+
+
 }

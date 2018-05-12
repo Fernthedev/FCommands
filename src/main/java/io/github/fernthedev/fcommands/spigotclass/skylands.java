@@ -36,7 +36,7 @@ public class skylands implements Listener {
 
         //thrown = true;
         //if (!(event.getEntity().getShooter() instanceof Player)) { return; }
-        //getMultiverseCore = new spigot().getMultiverseCore();
+        //getMultiverseCore = new FernCommands().getMultiverseCore();
         if (event.getEntity().toString().contentEquals("CraftEnderPearl") || event.getEntity().getType() == EntityType.ENDER_PEARL) {
             //thrown = true;
             Player player = (Player) event.getEntity().getShooter();
@@ -44,7 +44,7 @@ public class skylands implements Listener {
             Entity enderpearl = event.getEntity();
             if (player.getEyeLocation().getY() >= 240 && player.getLocation().getPitch() == -90 && player.getWorld() != Bukkit.getWorld("skyland")) {
                 WorldManager wm = new WorldManager(getMultiverseCore());
-                //new spigot().infolog("Enderpearl launched at 240 or higher and looking straight up");
+                //new FernCommands().infolog("Enderpearl launched at 240 or higher and looking straight up");
                 //WorldManager wm = new WorldManager(getMultiverseCore());
                 //WorldManager wm = new WorldManager(getMultiverseCore());
                 MultiverseWorld world = wm.getMVWorld("skyland");
@@ -76,7 +76,7 @@ public class skylands implements Listener {
 
 
                     //if((Bukkit.getWorld("skyland").getBlockAt(x,y,z).getType() == Material.AIR)) {
-                        //new spigot().infolog(y + " is the highest level for player " + player);
+                        //new FernCommands().infolog(y + " is the highest level for player " + player);
                    //     y = 256;
                         //MultiverseCore.addPlayerToTeleportQueue(String.valueOf(world), player.getDisplayName());
                         //player.teleport(goworld)

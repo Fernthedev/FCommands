@@ -1,7 +1,7 @@
 package io.github.fernthedev.fcommands.spigotclass.gui;
 
 import com.nametagedit.plugin.NametagEdit;
-import io.github.fernthedev.fcommands.spigotclass.spigot;
+import io.github.fernthedev.fcommands.spigotclass.FernCommands;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -252,21 +252,21 @@ public class namecolor implements CommandExecutor, Listener {
 
     private void setPrefix(Player p,String color) {
         boolean fail = false;
-        if(spigot.getInstance().isVaultEnabled() && spigot.getChat().isEnabled()) {
-                spigot.getChat().setPlayerPrefix(p, message(color));
+        if(FernCommands.getInstance().isVaultEnabled() && FernCommands.getChat().isEnabled()) {
+                FernCommands.getChat().setPlayerPrefix(p, message(color));
         }
-        if(spigot.getInstance().isNTEEnabled()) {
+        if(FernCommands.getInstance().isNTEEnabled()) {
             //if(!NametagEdit.getApi().getNametag(p).getPrefix().equals("") || !NametagEdit.getApi().getNametag(p).getPrefix().isEmpty()) {
                 NametagEdit.getApi().setPrefix(p,color);
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"nte player " + p.getName() + " prefix " + color + "");
-                spigot.getInstance().getLogger().info("nte player " + p.getName() + " prefix \"" + color + "\"");
+                FernCommands.getInstance().getLogger().info("nte player " + p.getName() + " prefix \"" + color + "\"");
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"nte reload");
                 //NametagEdit.getApi().reloadNametag(p);
           //  }else{
           //      fail = true;
          //   }
         }
-        spigot.getInstance().getLogger().info(" the length of prefix is " + spigot.getChat().getPlayerPrefix(p).length());
+        FernCommands.getInstance().getLogger().info(" the length of prefix is " + FernCommands.getChat().getPlayerPrefix(p).length());
         //NametagEdit.getApi().setPrefix(p, color);
         //if(fail)
        //     p.sendMessage(message("&cYou already have a prefix, this will replace it. &6(Just put the color code after your prefix to make your name that color)"));
