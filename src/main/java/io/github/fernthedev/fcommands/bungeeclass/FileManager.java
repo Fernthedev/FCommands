@@ -11,27 +11,25 @@ import java.io.InputStream;
 import java.nio.file.Files;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
-public class fileconfig {
+public class FileManager {
 
     private static File configfile;
     private static File ipfile;
     private static File seenfile;
-    private static fileconfig thisinstance;
+    private static FileManager thisinstance;
+    private static Configuration config;
+    private static Configuration ipconfig;
+    private static Configuration seenconfig;
 
     /**
      * The constructor for setting the instance;
      */
-    public fileconfig() {
+    public FileManager() {
         thisinstance = this;
         ipfile = new File(bungee.getInstance().getDataFolder(), "ipdata.yml");
         seenfile = new File(bungee.getInstance().getDataFolder(), "seen.yml");
         configfile = new File(bungee.getInstance().getDataFolder(), "config.yml");
         ConfigurationProvider configp = ConfigurationProvider.getProvider(YamlConfiguration.class);
-        try {
-            loadFiles("all");
-        } catch (IOException e) {
-            bungee.getInstance().getProxy().getLogger().warning("Unable to load config and ip files");
-        }
     }
 
 
@@ -41,10 +39,10 @@ public class fileconfig {
       @param which Which file to load (seen,config,ip,all)
      */
     @SuppressWarnings("RedundantThrows")
-    public void loadFiles(String which) throws IOException {
+    public void loadFiles(String which,boolean silent) throws IOException {
         //CHECK IF PLUGIN FOLDER EXISTS
         if (!bungee.getInstance().getDataFolder().exists()) {
-            boolean mkdir = bungee.getInstance().getDataFolder().mkdir();
+            bungee.getInstance().getDataFolder().mkdir();
         }
 
 
@@ -52,11 +50,12 @@ public class fileconfig {
         //CONFIG
         if (goconfig && configfile.exists()) {
             try {
-                Configuration config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configfile);
+                config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configfile);
             } catch (IOException e) {
                 bungee.getInstance().getProxy().getLogger().warning(ChatColor.RED + "failed to load config");
                 e.printStackTrace();
             }
+            if(!silent)
             bungee.getInstance().getLogger().info("Config was reloaded  " + which);
         }else if(goconfig){
             bungee.getInstance().getLogger().warning("Tried to reload config, although file doesn't exist");
@@ -69,11 +68,12 @@ public class fileconfig {
         boolean goseen = which.equalsIgnoreCase("seen") || which.equalsIgnoreCase("all");
         if (seenfile.exists() && goseen) {
             try {
-                Configuration seenconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(seenfile);
+                seenconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(seenfile);
             } catch (IOException e) {
                 bungee.getInstance().getProxy().getLogger().warning(ChatColor.RED + "failed to load seen config");
                 e.printStackTrace();
             }
+            if(!silent)
             bungee.getInstance().getLogger().info("Seen Config was reloaded  " + which);
         } else if(goseen) {
             bungee.getInstance().getLogger().warning("Tried to reload seen config, although file doesn't exist");
@@ -86,11 +86,12 @@ public class fileconfig {
         if (hooks.getInstance().hasIsAdvancedBan()) {
             if (ipfile.exists() && (which.equals("ip") || which.equals("all"))) {
                 try {
-                    Configuration ipconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
+                    ipconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
                 } catch (IOException e) {
                     bungee.getInstance().getProxy().getLogger().warning(ChatColor.RED + "failed to load ips");
                     e.printStackTrace();
                 }
+                if(!silent)
                 bungee.getInstance().getLogger().info("Ips was reloaded  " + which);
             } else if(goip) {
                 bungee.getInstance().getLogger().warning("Tried to reload ips, although file doesn't exist");
@@ -106,15 +107,11 @@ public class fileconfig {
 
     /**
      * Method for reloading files seperately instead of preset.
-     * @param whichconfig The configuration to use to change setting
+     * //@param whichconfig The configuration to use to change setting
      * @param which What file is associated with the configuration
      */
-    public void loadFile(Configuration whichconfig,File which) {
-        try {
-            whichconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(which);
-        } catch (IOException e) {
-            bungee.getInstance().getLogger().warning("unable to load file, saving anyways");
-        }
+    public void loadFile(File which) throws IOException {
+        Configuration whichconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(which);
         bungee.getInstance().getLogger().info("Loaded " + which + " with configuration " + whichconfig);
     }
 
@@ -161,6 +158,11 @@ public class fileconfig {
             bungee.getInstance().getLogger().warning("unable to load file, saving anyways");
         }*/
         try {
+            loadFile(which);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
             ConfigurationProvider.getProvider(YamlConfiguration.class).save(whichconfig,which);
         } catch (IOException e) {
             e.printStackTrace();
@@ -169,7 +171,7 @@ public class fileconfig {
 
 
 
-    public static fileconfig getInstance() {
+    public static FileManager getInstance() {
         return thisinstance;
     }
 
@@ -177,7 +179,7 @@ public class fileconfig {
 
     public void createConfig() {
         if (!bungee.getInstance().getDataFolder().exists()) {
-            boolean mkdir = bungee.getInstance().getDataFolder().mkdir();
+            bungee.getInstance().getDataFolder().mkdir();
         }
         File file = new File(bungee.getInstance().getDataFolder(), "config.yml");
         if (!file.exists()) {
@@ -188,5 +190,27 @@ public class fileconfig {
             }
             // config.getKeys().add("Motd:");
         }
+    }
+
+    public Configuration getConfig() {
+        return config;
+    }
+
+    public Configuration getIpconfig() {
+        return ipconfig;
+    }
+
+    public Configuration getSeenconfig() {
+        return seenconfig;
+    }
+
+    public static void onDisable() {
+        config = null;
+        configfile = null;
+        ipfile = null;
+        seenfile = null;
+        thisinstance = null;
+        ipconfig = null;
+        seenconfig = null;
     }
 }

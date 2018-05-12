@@ -1,7 +1,7 @@
 package io.github.fernthedev.fcommands.bungeeclass.commands;
 
+import io.github.fernthedev.fcommands.bungeeclass.FileManager;
 import io.github.fernthedev.fcommands.bungeeclass.bungee;
-import io.github.fernthedev.fcommands.bungeeclass.fileconfig;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -17,7 +17,6 @@ import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.event.EventHandler;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -25,17 +24,9 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public class seen extends Command implements Listener {
-    Configuration reload;
-    Configuration seenconfig = new bungee().getSeenconfig();
-    private static final File pluginFolder = ProxyServer.getInstance().getPluginsFolder();
-    private static Configuration seenDataConfig = new bungee().getSeendataConfig();
-    private static Configuration configuration = new bungee().getConfiguration();
-    private static ConfigurationProvider configp = new bungee().getConfigp();
-    //public static Plugin plugin;
-    private final ProxyServer getProxy = ProxyServer.getInstance();
-    private File seenfile = bungee.getInstance().getSeenfile();
-    private Logger getLogger = bungee.getInstance().getLogger();
-    private bungee bungeee = new bungee();
+    private static File seenfile = bungee.getInstance().getSeenfile();
+    private static Logger getLogger = bungee.getInstance().getLogger();
+    private static bungee bungeee = new bungee();
 
 
 
@@ -45,17 +36,18 @@ public class seen extends Command implements Listener {
 
     @Override
     public void execute(CommandSender sender, String[] strings) {
-        Configuration seenconfig = new bungee().getSeenconfig();
+        try {
+            FileManager.getInstance().loadFiles("seen",true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Configuration seenconfig = new FileManager().getSeenconfig();
         if (strings.length == 0) {
-            sender.sendMessage(new bungee().message("&cPlease use the namecolor as followed: /seen <player>"));
+            sender.sendMessage(new bungee().message("&cPlease use the command as followed: /seen <player>"));
 
         } else {
             String ptarget = strings[0];
-            try {
-                ConfigurationProvider.getProvider(YamlConfiguration.class).load(new FileInputStream(seenfile));
-            } catch (IOException e) {
-                getLogger.warning("unable to load seen config");
-            }
+
             //String UUID = UUIDManager.get().getUUID(ptarget);
             UUID UUIDE = UUID.nameUUIDFromBytes(("OfflinePlayer:" + ptarget).getBytes(StandardCharsets.UTF_8));
             String UUID = UUIDE.toString();
@@ -94,20 +86,25 @@ public class seen extends Command implements Listener {
 
     @EventHandler
     public void onLeave(PlayerDisconnectEvent e) {
-        Configuration seenconfig = new bungee().getSeenconfig();
+        try {
+            FileManager.getInstance().loadFiles("seen",true);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        Configuration seenconfig = new FileManager().getSeenconfig();
         ProxiedPlayer player = e.getPlayer();
         String playere = player.getDisplayName();
         //String UUID = UUIDManager.get().getUUID(playere);
         UUID UUIDE = UUID.nameUUIDFromBytes(("OfflinePlayer:" + playere).getBytes(StandardCharsets.UTF_8));
         String UUID = UUIDE.toString();
         List<String> seenplist = new ArrayList<>();
-        Configuration sconfig = new bungee().getConfig();
+//        Configuration sconfig = new FileManager().getConfig();
         try {
-            fileconfig.getInstance().loadFiles("seen");
+            FileManager.getInstance().loadFiles("seen",true);
         } catch (IOException e1) {
             getLogger.warning("unable to load seen file");
         }
-        Calendar cal = Calendar.getInstance();
+        //Calendar cal = Calendar.getInstance();
         String time= new SimpleDateFormat("MMM dd hh:mm aa").format(new Date());
         String server = e.getPlayer().getServer().getInfo().getName();
         //String time2 = new SimpleDateFormat("MM.dd HH:mm").format(date);
@@ -132,6 +129,10 @@ public class seen extends Command implements Listener {
     }
 
 
-
+    public static void onDisable() {
+        seenfile = null;
+        getLogger = null;
+        bungeee = null;
+    }
 
 }

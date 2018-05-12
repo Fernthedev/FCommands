@@ -1,18 +1,16 @@
 package io.github.fernthedev.fcommands.bungeeclass.commands;
 
 
+import io.github.fernthedev.fcommands.bungeeclass.FileManager;
 import io.github.fernthedev.fcommands.bungeeclass.bungee;
-import io.github.fernthedev.fcommands.bungeeclass.fileconfig;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Command;
 
-import javax.security.auth.login.Configuration;
 import java.io.IOException;
 
 public class reloadconfig extends Command {
-    public bungee message;
-    Configuration reload;
+    public static bungee message;
     //String[] args;
     private static reloadconfig ourInstance = new reloadconfig();
 
@@ -32,7 +30,7 @@ public class reloadconfig extends Command {
             String which = strings[1].toLowerCase();
             if (which.equals("all") || which.equals("ip") || which.equals("config") || which.equals("seen")) {
                 try {
-                    fileconfig.getInstance().loadFiles(which);
+                    FileManager.getInstance().loadFiles(which,false);
                 }catch (IOException e) {
                     ProxyServer.getInstance().getLogger().warning("&cUnable to reload files");
                     sender.sendMessage(new bungee().message("&cUnable to reload files"));
@@ -44,6 +42,11 @@ public class reloadconfig extends Command {
                 sender.sendMessage(new bungee().message("&cWrong arguments recieved " + "\"" + which + "\"" + " (All,Config,Ip)"));
             }
         }
+    }
+
+    public static void onDisable() {
+        message = null;
+        ourInstance = null;
     }
 }
 

@@ -7,7 +7,6 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
@@ -25,13 +24,10 @@ public class bungee extends Plugin {
     private static File ipfile;
     private static File seenfile;
    // private static Configuration IpDataConfig;
-    private static Configuration seendataConfig;
-    private static Configuration configuration;
-    private static ConfigurationProvider configp;
-    private static Configuration config;
-    private static Configuration ipconfig;
-    private static Configuration seenconfig;
-    private static File configfile;
+    //private static Configuration configuration;
+    //private static ConfigurationProvider configp;
+
+    //private static File configfile;
     private static bungee instance;
 
 
@@ -41,34 +37,42 @@ public class bungee extends Plugin {
         getLogger().info(ChatColor.BLUE + "ENABLED FERNCOMMANDS FOR BUNGEECORD");
         ipfile = new File(getDataFolder(), "ipdata.yml");
         seenfile = new File(getDataFolder(), "seen.yml");
-        configfile = new File(getDataFolder(), "config.yml");
-        configp = ConfigurationProvider.getProvider(YamlConfiguration.class);
+        //configfile = new File(getDataFolder(), "config.yml");
+        //configp = ConfigurationProvider.getProvider(YamlConfiguration.class);
         new hooks();
-        new fileconfig();
-
-
+        new FileManager();
         if (!getDataFolder().exists()) {
             boolean mkdir = getDataFolder().mkdir();
+            System.out.println(mkdir);
         }
 
-        //File cff = new File("config.yml");
         File file = new File(getDataFolder(), "config.yml");
         if (!file.exists()) {
             try (InputStream in = getResourceAsStream("config.yml")) {
                 Files.copy(in, file.toPath());
-                //boolean success = file.renameTo(cff);
-               // getLogger().info("Config renaming value: " + success + " removing not named config: " + deleted);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             // config.getKeys().add("Motd:");
         }
+        try {
+            FileManager.getInstance().loadFiles("config",false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
-        fileconfig.getInstance().createseenFile();
-        File configfile = new File(getProxy().getPluginsFolder().getParentFile(), "config.yml");
-        File ipfile = new File(getProxy().getPluginsFolder().getParentFile(), "config.yml");
-        File seenfile = new File(getProxy().getPluginsFolder().getParentFile(), "config.yml");
+        //CREATING SEEN FILE
+        FileManager.getInstance().createseenFile();
+        try {
+            FileManager.getInstance().loadFiles("seen",false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //File configfile = new File(getProxy().getPluginsFolder().getParentFile(), "config.yml");
+        //File ipfile = new File(getProxy().getPluginsFolder().getParentFile(), "config.yml");
+        //File seenfile = new File(getProxy().getPluginsFolder().getParentFile(), "config.yml");
 
 
         getProxy().getPluginManager().registerListener(this, new servermaintenance());
@@ -81,9 +85,10 @@ public class bungee extends Plugin {
         if (hooks.getInstance().hasIsAdvancedBan()) {
             getProxy().getLogger().info(ChatColor.GREEN + "FOUND ADVANCEDBAN! HOOKING IN API");
             try {
-                fileconfig.getInstance().createipFile();
-                Configuration IpDataConfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
-                fileconfig.getInstance().loadFile(IpDataConfig, ipfile);
+                FileManager.getInstance().createipFile();
+                //Configuration IpDataConfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
+                //FileManager.getInstance().loadFile(ipfile);
+                FileManager.getInstance().loadFiles("ip",true);
             } catch (IOException e) {
                 getProxy().getLogger().warning("Unable to load ips. ");
             }
@@ -91,6 +96,8 @@ public class bungee extends Plugin {
         } else {
             getProxy().getLogger().info(ChatColor.YELLOW + "ADVANCEDBAN NOT FOUND, DISABLING PUNISHMOTD");
         }
+
+        //MAIN FERN COMMAND MANAGER
         getProxy().getPluginManager().registerCommand(this, new fernmain());
         run();
 
@@ -104,59 +111,17 @@ public class bungee extends Plugin {
         getLogger().info(ChatColor.AQUA + "DISABLED FERNCOMMANDS FOR BUNGEECORD");
         ipfile = null;
         seenfile = null;
-        configfile = null;
-        configp = null;
+        fernmain.onDisable();
+        seen.onDisable();
+        hooks.onDisable();
+        FileManager.onDisable();
         instance = null;
-        //IpDataConfig = null;
-        seendataConfig = null;
-        configuration = null;
-        config = null;
-        ipconfig = null;
-        seenconfig = null;
     }
 
-    File getIpFile() {
+
+
+    public static File getIpfile() {
         return ipfile;
-    }
-
-    void setIpFile(File ipFile) {
-        ipfile = ipFile;
-    }
-
-    //Configuration getIpDataConfig() {
-   //     return IpDataConfig;
-  //  }
-
-  //  void setIpDataConfig(Configuration ipDataConfig) {
-   //     IpDataConfig = ipDataConfig;
-  //  }
-
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        bungee.configuration = configuration;
-    }
-
-    public ConfigurationProvider getConfigp() {
-        return configp;
-    }
-
-    public Configuration getConfig() {
-        return config;
-    }
-
-    public void setConfig(Configuration config) {
-        bungee.config = config;
-    }
-
-    static File getIpfile() {
-        return ipfile;
-    }
-
-    public Configuration getIpconfig() {
-        return ipconfig;
     }
 
 
@@ -169,7 +134,7 @@ public class bungee extends Plugin {
     private void run() {
         getProxy().getScheduler().schedule(this, () -> {
             try {
-                Configuration load = ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
+                ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
             } catch (IOException e) {
                 getLogger().warning("unable to reload config");
             }
@@ -179,14 +144,6 @@ public class bungee extends Plugin {
 
     public File getSeenfile() {
         return seenfile;
-    }
-
-    public Configuration getSeendataConfig() {
-        return seendataConfig;
-    }
-
-    public Configuration getSeenconfig() {
-        return seenconfig;
     }
 
     @Nonnull

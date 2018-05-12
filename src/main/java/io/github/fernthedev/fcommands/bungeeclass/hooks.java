@@ -34,4 +34,9 @@ public class hooks {
         return isAdvancedBanEnabled;
     }
 
+
+    public static void onDisable() {
+        isAdvancedBanEnabled = false;
+        thisInstance = null;
+    }
 }

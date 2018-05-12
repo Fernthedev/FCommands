@@ -28,4 +28,8 @@ public class fernmain extends Command {
             }
         }
     }
+
+    public static void onDisable() {
+        ourInstance = null;
+    }
 }
