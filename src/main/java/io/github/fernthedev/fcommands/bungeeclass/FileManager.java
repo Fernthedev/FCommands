@@ -26,9 +26,9 @@ public class FileManager {
      */
     public FileManager() {
         thisinstance = this;
-        ipfile = new File(bungee.getInstance().getDataFolder(), "ipdata.yml");
-        seenfile = new File(bungee.getInstance().getDataFolder(), "seen.yml");
-        configfile = new File(bungee.getInstance().getDataFolder(), "config.yml");
+        ipfile = new File(FernCommands.getInstance().getDataFolder(), "ipdata.yml");
+        seenfile = new File(FernCommands.getInstance().getDataFolder(), "seen.yml");
+        configfile = new File(FernCommands.getInstance().getDataFolder(), "config.yml");
         ConfigurationProvider configp = ConfigurationProvider.getProvider(YamlConfiguration.class);
     }
 
@@ -41,8 +41,8 @@ public class FileManager {
     @SuppressWarnings("RedundantThrows")
     public void loadFiles(String which,boolean silent) throws IOException {
         //CHECK IF PLUGIN FOLDER EXISTS
-        if (!bungee.getInstance().getDataFolder().exists()) {
-            bungee.getInstance().getDataFolder().mkdir();
+        if (!FernCommands.getInstance().getDataFolder().exists()) {
+            FernCommands.getInstance().getDataFolder().mkdir();
         }
 
 
@@ -52,14 +52,14 @@ public class FileManager {
             try {
                 config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configfile);
             } catch (IOException e) {
-                bungee.getInstance().getProxy().getLogger().warning(ChatColor.RED + "failed to load config");
+                FernCommands.getInstance().getProxy().getLogger().warning(ChatColor.RED + "failed to load config");
                 e.printStackTrace();
             }
             if(!silent)
-            bungee.getInstance().getLogger().info("Config was reloaded  " + which);
+            FernCommands.getInstance().getLogger().info("Config was reloaded  " + which);
         }else if(goconfig){
-            bungee.getInstance().getLogger().warning("Tried to reload config, although file doesn't exist");
-            bungee.getInstance().getLogger().warning("Creating config");
+            FernCommands.getInstance().getLogger().warning("Tried to reload config, although file doesn't exist");
+            FernCommands.getInstance().getLogger().warning("Creating config");
             createConfig();
         }
 
@@ -70,14 +70,14 @@ public class FileManager {
             try {
                 seenconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(seenfile);
             } catch (IOException e) {
-                bungee.getInstance().getProxy().getLogger().warning(ChatColor.RED + "failed to load seen config");
+                FernCommands.getInstance().getProxy().getLogger().warning(ChatColor.RED + "failed to load seen config");
                 e.printStackTrace();
             }
             if(!silent)
-            bungee.getInstance().getLogger().info("Seen Config was reloaded  " + which);
+            FernCommands.getInstance().getLogger().info("Seen Config was reloaded  " + which);
         } else if(goseen) {
-            bungee.getInstance().getLogger().warning("Tried to reload seen config, although file doesn't exist");
-            bungee.getInstance().getLogger().warning("CREATING SEEN FILE!");
+            FernCommands.getInstance().getLogger().warning("Tried to reload seen config, although file doesn't exist");
+            FernCommands.getInstance().getLogger().warning("CREATING SEEN FILE!");
             createseenFile();
         }
 
@@ -88,18 +88,18 @@ public class FileManager {
                 try {
                     ipconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
                 } catch (IOException e) {
-                    bungee.getInstance().getProxy().getLogger().warning(ChatColor.RED + "failed to load ips");
+                    FernCommands.getInstance().getProxy().getLogger().warning(ChatColor.RED + "failed to load ips");
                     e.printStackTrace();
                 }
                 if(!silent)
-                bungee.getInstance().getLogger().info("Ips was reloaded  " + which);
+                FernCommands.getInstance().getLogger().info("Ips was reloaded  " + which);
             } else if(goip) {
-                bungee.getInstance().getLogger().warning("Tried to reload ips, although file doesn't exist");
-                bungee.getInstance().getLogger().warning("CREATING IP FILE!");
+                FernCommands.getInstance().getLogger().warning("Tried to reload ips, although file doesn't exist");
+                FernCommands.getInstance().getLogger().warning("CREATING IP FILE!");
                 createipFile();
             }
         } else {
-            bungee.getInstance().getLogger().warning("Tried to reload/create ips although advancedban isn't loaded, so why load the file?");
+            FernCommands.getInstance().getLogger().warning("Tried to reload/create ips although advancedban isn't loaded, so why load the file?");
         }
 
     }
@@ -112,7 +112,7 @@ public class FileManager {
      */
     public void loadFile(File which) throws IOException {
         Configuration whichconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(which);
-        bungee.getInstance().getLogger().info("Loaded " + which + " with configuration " + whichconfig);
+        FernCommands.getInstance().getLogger().info("Loaded " + which + " with configuration " + whichconfig);
     }
 
 
@@ -120,7 +120,7 @@ public class FileManager {
      * Method for creating seen config
      */
     public void createseenFile() {
-        File SeenFile = new File(bungee.getInstance().getDataFolder(), "seen.yml");
+        File SeenFile = new File(FernCommands.getInstance().getDataFolder(), "seen.yml");
         if (!SeenFile.exists()) {
             try {
                 SeenFile.createNewFile();
@@ -135,7 +135,7 @@ public class FileManager {
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void createipFile() {
-        File IpFile = new File(bungee.getInstance().getDataFolder(), "ipdata.yml");
+        File IpFile = new File(FernCommands.getInstance().getDataFolder(), "ipdata.yml");
         if (!IpFile.exists()) {
             try {
                 IpFile.createNewFile();
@@ -155,7 +155,7 @@ public class FileManager {
         /*try {
             confige = ConfigurationProvider.getProvider(YamlConfiguration.class).load(which);
         } catch (IOException e) {
-            bungee.getInstance().getLogger().warning("unable to load file, saving anyways");
+            FernCommands.getInstance().getLogger().warning("unable to load file, saving anyways");
         }*/
         try {
             loadFile(which);
@@ -178,12 +178,12 @@ public class FileManager {
 
 
     public void createConfig() {
-        if (!bungee.getInstance().getDataFolder().exists()) {
-            bungee.getInstance().getDataFolder().mkdir();
+        if (!FernCommands.getInstance().getDataFolder().exists()) {
+            FernCommands.getInstance().getDataFolder().mkdir();
         }
-        File file = new File(bungee.getInstance().getDataFolder(), "config.yml");
+        File file = new File(FernCommands.getInstance().getDataFolder(), "config.yml");
         if (!file.exists()) {
-            try (InputStream in = bungee.getInstance().getResourceAsStream("config.yml")) {
+            try (InputStream in = FernCommands.getInstance().getResourceAsStream("config.yml")) {
                 Files.copy(in, file.toPath());
             } catch (IOException e) {
                 e.printStackTrace();

@@ -52,7 +52,7 @@ public class servermaintenance implements Listener {
             try {
                 new FileManager().loadFiles("config",true);
             } catch (IOException e) {
-                bungee.getInstance().getLogger().warning("Unable to load config");
+                FernCommands.getInstance().getLogger().warning("Unable to load config");
             }
             Configuration config = new FileManager().getConfig();
             ServerPing pingResponse = eping.getResponse();
@@ -65,7 +65,7 @@ public class servermaintenance implements Listener {
                 String emotd;
                 emotd = motd.toString();
                 if(emotd == null) {
-                    bungee.getInstance().getLogger().warning("Motd is null oh no!");
+                    FernCommands.getInstance().getLogger().warning("Motd is null oh no!");
                 }
                 //ChatColor.translateAlternateColorCodes('&', (String) motd);
                 motd = ((String) motd).replace('&','§');

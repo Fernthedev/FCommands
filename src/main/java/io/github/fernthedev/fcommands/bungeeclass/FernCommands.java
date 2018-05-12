@@ -18,7 +18,7 @@ import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
 
 //@SuppressWarnings("unused")
-public class bungee extends Plugin {
+public class FernCommands extends Plugin {
 
     //public static File pluginFolder;
     private static File ipfile;
@@ -28,7 +28,7 @@ public class bungee extends Plugin {
     //private static ConfigurationProvider configp;
 
     //private static File configfile;
-    private static bungee instance;
+    private static FernCommands instance;
 
 
     @Override
@@ -147,7 +147,7 @@ public class bungee extends Plugin {
     }
 
     @Nonnull
-    public static bungee getInstance() {
+    public static FernCommands getInstance() {
         return instance;
     }
 }

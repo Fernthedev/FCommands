@@ -38,7 +38,7 @@ public class punishmotd implements Listener {
             //ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, configfile);
             ipfileloaded = true;
         } catch (IOException e) {
-            bungee.getInstance().getLogger().warning("Unable to load ips");
+            FernCommands.getInstance().getLogger().warning("Unable to load ips");
             ipfileloaded = false;
         }
         if(ipfileloaded) {
@@ -47,14 +47,14 @@ public class punishmotd implements Listener {
                // getProxy.getLogger().info(key);
           //  }
             if (players.isEmpty()) {
-                bungee.getInstance().getLogger().warning("Unable to find player, new ip?" + hostAddress);
+                FernCommands.getInstance().getLogger().warning("Unable to find player, new ip?" + hostAddress);
                 //getProxy.getLogger().info("detected players: " + players);
                // getProxy.getLogger().info("192.168.2.11's players " + ipconfig.getStringList("192 168 2 11"));
             } else {
                 if(players.toArray().length == 1) {
-                    bungee.getInstance().getLogger().info("Pinged by " + hostAddress + " and uuid is " + players.toString());
+                    FernCommands.getInstance().getLogger().info("Pinged by " + hostAddress + " and uuid is " + players.toString());
                 } else if(players.toArray().length >= 1) {
-                    bungee.getInstance().getLogger().info("Pinged by " + hostAddress + " and uuids are " + players.toString());
+                    FernCommands.getInstance().getLogger().info("Pinged by " + hostAddress + " and uuids are " + players.toString());
                 }
                 for (String key : players) {
                     //getProxy.getLogger().info("Pinged by " + hostAddress + " and uuid is " + key);
@@ -63,7 +63,7 @@ public class punishmotd implements Listener {
                         //PERM BAN
                         String messagee;
                         if (PunishmentManager.get().getBan(key).getType() == PunishmentType.BAN) {
-                            bungee.getInstance().getLogger().info("Player pinged, and is permanently banned" + key);
+                            FernCommands.getInstance().getLogger().info("Player pinged, and is permanently banned" + key);
                             messagee = message("&c&lYOU HAVE BEEN PERMANENTLY BANNED");
                             pingResponse.setDescription(messagee);
                             eping.setResponse(pingResponse);
@@ -131,9 +131,9 @@ public class punishmotd implements Listener {
     @SuppressWarnings({"unchecked", "deprecation"})
     @EventHandler
     public void onLoginIp(PostLoginEvent event) {
-        Logger log = bungee.getInstance().getLogger();
+        Logger log = FernCommands.getInstance().getLogger();
         String player = event.getPlayer().getUUID();
-        File ipfile = bungee.getIpfile();
+        File ipfile = FernCommands.getIpfile();
 
         String ip = event.getPlayer().getAddress().getHostString().replaceAll("\\.", " ");
         log.info("proxy list fern" + ip + " " + player);

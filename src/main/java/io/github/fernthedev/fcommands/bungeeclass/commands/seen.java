@@ -1,7 +1,7 @@
 package io.github.fernthedev.fcommands.bungeeclass.commands;
 
+import io.github.fernthedev.fcommands.bungeeclass.FernCommands;
 import io.github.fernthedev.fcommands.bungeeclass.FileManager;
-import io.github.fernthedev.fcommands.bungeeclass.bungee;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -24,9 +24,9 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public class seen extends Command implements Listener {
-    private static File seenfile = bungee.getInstance().getSeenfile();
-    private static Logger getLogger = bungee.getInstance().getLogger();
-    private static bungee bungeee = new bungee();
+    private static File seenfile = FernCommands.getInstance().getSeenfile();
+    private static Logger getLogger = FernCommands.getInstance().getLogger();
+    private static FernCommands bungeee = new FernCommands();
 
 
 
@@ -43,7 +43,7 @@ public class seen extends Command implements Listener {
         }
         Configuration seenconfig = new FileManager().getSeenconfig();
         if (strings.length == 0) {
-            sender.sendMessage(new bungee().message("&cPlease use the command as followed: /seen <player>"));
+            sender.sendMessage(new FernCommands().message("&cPlease use the command as followed: /seen <player>"));
 
         } else {
             String ptarget = strings[0];
