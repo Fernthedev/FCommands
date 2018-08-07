@@ -24,7 +24,7 @@ public class reloadconfig extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] strings) {
-        if (!(strings.length == 2)) {
+        if (strings.length != 2) {
             sender.sendMessage(new FernCommands().message("&cNo arguments recieved(All,Config,Ip,Seen)"));
         } else {
             String which = strings[1].toLowerCase();

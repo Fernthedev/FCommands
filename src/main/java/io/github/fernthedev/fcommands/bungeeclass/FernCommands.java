@@ -2,6 +2,7 @@ package io.github.fernthedev.fcommands.bungeeclass;
 
 
 import io.github.fernthedev.fcommands.bungeeclass.commands.fernmain;
+import io.github.fernthedev.fcommands.bungeeclass.commands.ip.mainip;
 import io.github.fernthedev.fcommands.bungeeclass.commands.seen;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -23,6 +24,7 @@ public class FernCommands extends Plugin {
     //public static File pluginFolder;
     private static File ipfile;
     private static File seenfile;
+    private static File ipdeletefile;
    // private static Configuration IpDataConfig;
     //private static Configuration configuration;
     //private static ConfigurationProvider configp;
@@ -37,6 +39,7 @@ public class FernCommands extends Plugin {
         getLogger().info(ChatColor.BLUE + "ENABLED FERNCOMMANDS FOR BUNGEECORD");
         ipfile = new File(getDataFolder(), "ipdata.yml");
         seenfile = new File(getDataFolder(), "seen.yml");
+        ipdeletefile = new File(FernCommands.getInstance().getDataFolder(),"ipdelete.yml");
         //configfile = new File(getDataFolder(), "config.yml");
         //configp = ConfigurationProvider.getProvider(YamlConfiguration.class);
         new hooks();
@@ -99,6 +102,7 @@ public class FernCommands extends Plugin {
 
         //MAIN FERN COMMAND MANAGER
         getProxy().getPluginManager().registerCommand(this, new fernmain());
+        getProxy().getPluginManager().registerCommand(this,new mainip());
         run();
 
     }
@@ -141,6 +145,10 @@ public class FernCommands extends Plugin {
         }, 3L, TimeUnit.SECONDS);
     }
 
+
+    public static File getIpdeletefile() {
+        return ipdeletefile;
+    }
 
     public File getSeenfile() {
         return seenfile;

@@ -3,7 +3,10 @@ package io.github.fernthedev.fcommands.bungeeclass;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
 import me.leoko.advancedban.utils.PunishmentType;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ServerPing;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -26,12 +29,14 @@ public class punishmotd implements Listener {
     @SuppressWarnings({"deprecation", "InfiniteLoopStatement"})
     @EventHandler(priority = EventPriority.HIGH)
     public void motdcheck(ProxyPingEvent eping) {
-        Boolean ipfileloaded;
+
+        boolean ipfileloaded;
+
         Configuration ipconfig = new FileManager().getIpconfig();
         ServerPing pingResponse = eping.getResponse();
         String hostAddress = eping.getConnection().getAddress().getHostString();
         hostAddress = hostAddress.replaceAll("\\.", " ");
-        List<String> players = ipconfig.getStringList(hostAddress);
+
         try {
             //ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
             new FileManager().loadFiles("ip",true);
@@ -41,6 +46,9 @@ public class punishmotd implements Listener {
             FernCommands.getInstance().getLogger().warning("Unable to load ips");
             ipfileloaded = false;
         }
+
+        List<String> players = ipconfig.getStringList(hostAddress);
+
         if(ipfileloaded) {
            // for (String key : players) {
                 //getProxy.getLogger().info("just the key below fern");
@@ -61,16 +69,17 @@ public class punishmotd implements Listener {
                     if (PunishmentManager.get().isBanned(key)) {
                         PunishmentManager.get().getBan(key);
                         //PERM BAN
-                        String messagee;
+                        BaseComponent[] messagee;
+
                         if (PunishmentManager.get().getBan(key).getType() == PunishmentType.BAN) {
                             FernCommands.getInstance().getLogger().info("Player pinged, and is permanently banned" + key);
-                            messagee = message("&c&lYOU HAVE BEEN PERMANENTLY BANNED");
-                            pingResponse.setDescription(messagee);
+                            messagee = message("&c&lYOU HAVE BEEN PERMANENTLY BANNED",false);
+                            pingResponse.setDescriptionComponent(messagee[0]);
                             eping.setResponse(pingResponse);
                             //PERM IP_BAN
                         } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.IP_BAN) {
-                            messagee = message("&c&lYOUR IP HAS BEEN PERMANENTLY BANNED");
-                            pingResponse.setDescription(messagee);
+                            messagee = message("&c&lYOUR IP HAS BEEN PERMANENTLY BANNED",false);
+                            pingResponse.setDescriptionComponent(messagee[0]);
                             eping.setResponse(pingResponse);
                             //TEMP BAN
                         } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.TEMP_BAN) {
@@ -85,14 +94,14 @@ public class punishmotd implements Listener {
 
                             SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm:ss");
                             String hms = sdf.format(time);
-                            for(sdf.format(time - 1); ;) {
-                                messagee = message("&c&lYOU HAVE BEEN BANNED UNTIL " + hms);
-                                pingResponse.setDescription(messagee);
-                                String favicon = message("&a&lRemaining " + PunishmentManager.get().getBan(key).getDuration(false));
-                                pingResponse.setFavicon(favicon);
+                            //for(sdf.format(time - 1); ;) {
+                            sdf.format(time-1);
+                                messagee = message("&c&lYOU HAVE BEEN BANNED UNTIL " + hms,false);
+                                pingResponse.setDescriptionComponent(messagee[0]);
+
                                 eping.setResponse(pingResponse);
                                 //TEMP IP_BAN
-                            }
+                          //  }
                         } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.TEMP_IP_BAN) {
                             long time = TimeManager.getTime() + PunishmentManager.get().getBan(key).getEnd();
                           //  String hms = String.format("%02d:%02d:%02d",
@@ -103,10 +112,13 @@ public class punishmotd implements Listener {
                             //                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time)));
                             SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm:ss");
                             String hms = sdf.format(time);
-                            messagee =message("&c&lYOUR IP HAS BEEN BANNED UNTIL " + hms);
-                            String favicon = message("&a&lRemaining " + PunishmentManager.get().getBan(key).getDuration(false));
-                            pingResponse.setDescription(messagee);
-                            pingResponse.setFavicon(favicon);
+                            messagee = message("&c&lYOUR IP HAS BEEN BANNED UNTIL " + hms,false);
+
+
+
+                            pingResponse.setDescriptionComponent(messagee[0]);
+
+
                             eping.setResponse(pingResponse);
 
                         }
@@ -122,9 +134,6 @@ public class punishmotd implements Listener {
        // ProxyServer.getInstance().getLogger().info("This is who pinged ur server: " + uuid + " and the name is: " + Playername + " and also the adress: " + hostAddress);
 
 
-
-
-
     }
 
 
@@ -132,7 +141,7 @@ public class punishmotd implements Listener {
     @EventHandler
     public void onLoginIp(PostLoginEvent event) {
         Logger log = FernCommands.getInstance().getLogger();
-        String player = event.getPlayer().getUUID();
+        String player = event.getPlayer().getUniqueId().toString();
         File ipfile = FernCommands.getIpfile();
 
         String ip = event.getPlayer().getAddress().getHostString().replaceAll("\\.", " ");
@@ -169,8 +178,16 @@ public class punishmotd implements Listener {
         }
     }
 
+    @SuppressWarnings("unused")
     private String message(String text) {
         return text.replace("&","§");
+    }
+
+
+
+    @SuppressWarnings("unused")
+    public BaseComponent[] message(String text,boolean no) {
+        return new ComponentBuilder(ChatColor.translateAlternateColorCodes('&',text)).create();
     }
 
 }

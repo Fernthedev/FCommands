@@ -16,16 +16,19 @@ public class FileManager {
     private static File configfile;
     private static File ipfile;
     private static File seenfile;
+    private static File deleteipfile;
     private static FileManager thisinstance;
     private static Configuration config;
     private static Configuration ipconfig;
     private static Configuration seenconfig;
+    private static Configuration deleteipconfig;
 
     /**
      * The constructor for setting the instance;
      */
     public FileManager() {
         thisinstance = this;
+        deleteipfile = new File(FernCommands.getInstance().getDataFolder(),"ipdelete.yml");
         ipfile = new File(FernCommands.getInstance().getDataFolder(), "ipdata.yml");
         seenfile = new File(FernCommands.getInstance().getDataFolder(), "seen.yml");
         configfile = new File(FernCommands.getInstance().getDataFolder(), "config.yml");
@@ -100,6 +103,28 @@ public class FileManager {
             }
         } else {
             FernCommands.getInstance().getLogger().warning("Tried to reload/create ips although advancedban isn't loaded, so why load the file?");
+        }
+
+        //deleteip
+        //IP
+        boolean goipdelete = which.equalsIgnoreCase("ipdelete") || which.equalsIgnoreCase("all");
+        if (hooks.getInstance().hasIsAdvancedBan()) {
+            if (deleteipfile.exists() && goipdelete) {
+                try {
+                    deleteipconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(deleteipfile);
+                } catch (IOException e) {
+                    FernCommands.getInstance().getProxy().getLogger().warning(ChatColor.RED + "failed to load deleteips");
+                    e.printStackTrace();
+                }
+                if(!silent)
+                    FernCommands.getInstance().getLogger().info("deleteIps was reloaded  " + which);
+            } else if(goipdelete) {
+                FernCommands.getInstance().getLogger().warning("Tried to reload deleteips, although file doesn't exist");
+                FernCommands.getInstance().getLogger().warning("CREATING deleteIP FILE!");
+                createDeleteIp();
+            }
+        } else {
+            FernCommands.getInstance().getLogger().warning("Tried to reload/create deleteips although advancedban isn't loaded, so why load the file?");
         }
 
     }
@@ -192,6 +217,21 @@ public class FileManager {
         }
     }
 
+    /**
+     * Method for creating ipFile
+     */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void createDeleteIp() {
+        File IpFile = new File(FernCommands.getInstance().getDataFolder(), "ipdelete.yml");
+        if (!IpFile.exists()) {
+            try {
+                IpFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to create configuration file", e);
+            }
+        }
+    }
+
     public Configuration getConfig() {
         return config;
     }
@@ -204,11 +244,17 @@ public class FileManager {
         return seenconfig;
     }
 
+    public Configuration getDeleteipconfig() {
+        return deleteipconfig;
+    }
+
     public static void onDisable() {
         config = null;
         configfile = null;
         ipfile = null;
         seenfile = null;
+        deleteipfile = null;
+        deleteipconfig = null;
         thisinstance = null;
         ipconfig = null;
         seenconfig = null;

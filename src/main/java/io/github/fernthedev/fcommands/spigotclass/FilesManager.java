@@ -18,8 +18,13 @@ public class FilesManager {
     private FilesManager() {
         ourInstance = this;
     }
+
+
     FileConfiguration config = FernCommands.getInstance().getConfig();
     private File configfile = new File(FernCommands.getInstance().getDataFolder(), "config.yml");
+
+
+
     /**
      *
      * @param which Which config to reload, such as (config,all)
