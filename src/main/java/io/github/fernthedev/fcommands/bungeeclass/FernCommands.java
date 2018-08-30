@@ -2,8 +2,10 @@ package io.github.fernthedev.fcommands.bungeeclass;
 
 
 import io.github.fernthedev.fcommands.bungeeclass.commands.fernmain;
+import io.github.fernthedev.fcommands.bungeeclass.commands.ip.deleteip;
 import io.github.fernthedev.fcommands.bungeeclass.commands.ip.mainip;
 import io.github.fernthedev.fcommands.bungeeclass.commands.seen;
+import io.github.fernthedev.fcommands.bungeeclass.placeholderapi.AskPlaceHolder;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -100,9 +102,15 @@ public class FernCommands extends Plugin {
             getProxy().getLogger().info(ChatColor.YELLOW + "ADVANCEDBAN NOT FOUND, DISABLING PUNISHMOTD");
         }
 
+        getProxy().getPluginManager().registerListener(this,new AskPlaceHolder());
+        getProxy().registerChannel("GetPlaceHolderAPI");
+        getProxy().registerChannel("PlaceHolderValue");
+        getLogger().info("Registered PlaceHolderAPI channels");
+
         //MAIN FERN COMMAND MANAGER
         getProxy().getPluginManager().registerCommand(this, new fernmain());
         getProxy().getPluginManager().registerCommand(this,new mainip());
+        deleteip.loadTasks();
         run();
 
     }

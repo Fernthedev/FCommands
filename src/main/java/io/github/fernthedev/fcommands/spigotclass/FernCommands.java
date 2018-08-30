@@ -7,6 +7,8 @@ import io.github.fernthedev.fcommands.spigotclass.commands.fernmain;
 import io.github.fernthedev.fcommands.spigotclass.gui.namecolor;
 import io.github.fernthedev.fcommands.spigotclass.ncp.bungeencp;
 import io.github.fernthedev.fcommands.spigotclass.ncp.cooldown;
+import io.github.fernthedev.fcommands.spigotclass.placeholderapi.HookPlaceHolderAPI;
+import io.github.fernthedev.fcommands.spigotclass.placeholderapi.VanishPlaceholder;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -37,6 +39,10 @@ public class FernCommands extends JavaPlugin {
     private static Chat chat = null;
     private static boolean isVault;
     private static boolean isNTE;
+    private static boolean isPlaceHolderAPI;
+
+    private MessageListener messageListener;
+
     @Override
     public void onEnable() {
         instance = this;
@@ -46,6 +52,10 @@ public class FernCommands extends JavaPlugin {
         SERVER_NAME = null;
         cooldown = new cooldown();
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+
+        messageListener = new MessageListener();
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", messageListener);
+
         messaging.sendRequest("GetServer");
         registerPlugins();
         try {
@@ -81,6 +91,15 @@ public class FernCommands extends JavaPlugin {
         isNTE = this.getServer().getPluginManager().isPluginEnabled("NametagEdit");
         if(isNTE)
             getLogger().info("HOOKED NAMETAGEDIT API");
+
+        isPlaceHolderAPI = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
+        if(isPlaceHolderAPI) {
+                //Registering placeholder will be use here
+                new VanishPlaceholder().register();
+                getLogger().info("HOOKED PLACEHOLDERAPI");
+                messageListener.addListener(new HookPlaceHolderAPI());
+            getLogger().info("HOOKED PLACEHOLDERAPI BUNGEE MESSAGING");
+        }
     }
 
 
@@ -160,6 +179,9 @@ public class FernCommands extends JavaPlugin {
         } catch (InvalidConfigurationException e) {
             getLogger().warning("Invalid Config");
         }
+
+
+
         /*
         This disables damage from enderpearls being thrown
          */
@@ -194,7 +216,8 @@ public class FernCommands extends JavaPlugin {
             //if (this.getServer().getPluginManager().getPlugin("NoCheatPlus") != null) {
             if(isNCPEnabled()) {
                 NCPHookManager.addHook(CheckType.values(), new bungeencp());
-                this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new bungeencp());
+                messageListener.addListener(new bungeencp());
+               // this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new bungeencp());
                 this.getServer().getPluginManager().registerEvents(new bungeencp(), this);
                 getLogger().info("FOUND NOCHEATPLUS, ENABLING BUNGEECORD MODE");
             }
@@ -227,13 +250,14 @@ public class FernCommands extends JavaPlugin {
         /*
         This adds the skylands using SB-Skyland or any world you want and MultiVerse
         */
-        if(config.getBoolean("Skylands"))
-        if (this.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
-            getLogger().info("Found Multiverse, checking to see skylands are enabled");
-            if (this.getServer().getPluginManager().isPluginEnabled("SB-Skylands")) {
-                if (Bukkit.getWorld("skyland") != null)
-                    getLogger().info("Found skylands, enabling enderpearl and overworld fall");
-                this.getServer().getPluginManager().registerEvents(new skylands(), this);
+        if(config.getBoolean("Skylands")) {
+            if (this.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
+                getLogger().info("Found Multiverse, checking to see skylands are enabled");
+                if (this.getServer().getPluginManager().isPluginEnabled("SB-Skylands")) {
+                    if (Bukkit.getWorld("skyland") != null)
+                        getLogger().info("Found skylands, enabling enderpearl and overworld fall");
+                    this.getServer().getPluginManager().registerEvents(new skylands(), this);
+                }
             }
         }
 

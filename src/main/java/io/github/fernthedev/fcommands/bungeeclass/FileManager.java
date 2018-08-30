@@ -126,7 +126,10 @@ public class FileManager {
         } else {
             FernCommands.getInstance().getLogger().warning("Tried to reload/create deleteips although advancedban isn't loaded, so why load the file?");
         }
+    }
 
+    public void loadFiles(WhichFile file,boolean silent) throws IOException {
+        loadFiles(file.toString(),silent);
     }
 
 
@@ -259,4 +262,24 @@ public class FileManager {
         ipconfig = null;
         seenconfig = null;
     }
+
+    public enum WhichFile {
+        IP("ip")
+        ,CONFIG("config"),SEEN("seen"),DELETEIP("ipdelete"),ALL("all");
+
+        private String value;
+
+        WhichFile(String value){
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
+
+
+
+
 }

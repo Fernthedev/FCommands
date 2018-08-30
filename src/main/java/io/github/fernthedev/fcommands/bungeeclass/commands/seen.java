@@ -2,6 +2,8 @@ package io.github.fernthedev.fcommands.bungeeclass.commands;
 
 import io.github.fernthedev.fcommands.bungeeclass.FernCommands;
 import io.github.fernthedev.fcommands.bungeeclass.FileManager;
+import io.github.fernthedev.fcommands.bungeeclass.MessageRunnable;
+import io.github.fernthedev.fcommands.bungeeclass.placeholderapi.AskPlaceHolder;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -20,7 +22,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 public class seen extends Command implements Listener {
@@ -37,7 +42,7 @@ public class seen extends Command implements Listener {
     @Override
     public void execute(CommandSender sender, String[] strings) {
         try {
-            FileManager.getInstance().loadFiles("seen",true);
+            FileManager.getInstance().loadFiles("seen", true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -53,11 +58,47 @@ public class seen extends Command implements Listener {
             String UUID = UUIDE.toString();
             //String UUID = ProxyServer.getInstance().getPlayer(ptarget).getUniqueId().toString();
             if (ProxyServer.getInstance().getPlayer(ptarget) != null) {
-                sender.sendMessage(bungeee.message("&aPlayer &2" + ptarget + " &awas found. Player is currently online on server: " + ProxyServer.getInstance().getPlayer(ptarget).getServer().getInfo().getName()));
-            }else{
-            if (UUID.isEmpty()) {
-                sender.sendMessage(bungeee.message("&cPlayer doesn't exist. You sure you typed that right?"));
-            }else{
+                getLogger.info("Requesting if " + ProxyServer.getInstance().getPlayer(ptarget).getDisplayName() + " is vanished");
+                AskPlaceHolder askPlaceHolder = new AskPlaceHolder(ProxyServer.getInstance().getPlayer(ptarget), "%fvanish_isvanished%");
+
+                askPlaceHolder.setRunnable(new MessageRunnable() {
+                    @Override
+                    public void run() {
+                        super.run();
+                        getLogger.info("Player " + ProxyServer.getInstance().getPlayer(ptarget).getDisplayName() + " is " + askPlaceHolder.getPlaceHolderResult() + " and is replaced is " + askPlaceHolder.isPlaceHolderReplaced());
+                        getLogger.info("The player was " + askPlaceHolder.getPlaceHolderResult());
+                        if (!askPlaceHolder.isPlaceHolderReplaced() || askPlaceHolder.getPlaceHolderResult() == null) {
+                            sender.sendMessage(bungeee.message("&cThere was an error trying to find this player. Please try again later"));
+                        } else {
+                            if (askPlaceHolder.getPlaceHolderResult().equalsIgnoreCase("vanished") && !sender.hasPermission("sv.see")) {
+                                sender.sendMessage(bungeee.message("&cThere was an error trying to find this player. Please try again later"));
+                            } else {
+                                sender.sendMessage(bungeee.message("&aPlayer &2" + ptarget + " &awas found. Player is currently online on server: " + ProxyServer.getInstance().getPlayer(ptarget).getServer().getInfo().getName()));
+                            }
+                        }
+                    }
+                });
+
+
+
+
+                /*
+                getLogger.info("Player " + ProxyServer.getInstance().getPlayer(ptarget).getDisplayName() + " is " + askPlaceHolder.getPlaceHolderResult() + " and is replaced is " + askPlaceHolder.isPlaceHolderReplaced());
+
+                if(!askPlaceHolder.isPlaceHolderReplaced() || askPlaceHolder.getPlaceHolderResult() == null) {
+                    sender.sendMessage(bungeee.message("&cThere was an error trying to find this player. Please try again later"));
+                }else{
+                    if (askPlaceHolder.getPlaceHolderResult().equalsIgnoreCase("vanished") && !sender.hasPermission("sv.see")) {
+                        sender.sendMessage(bungeee.message("&cThere was an error trying to find this player. Please try again later"));
+                    } else {
+                        sender.sendMessage(bungeee.message("&aPlayer &2" + ptarget + " &awas found. Player is currently online on server: " + ProxyServer.getInstance().getPlayer(ptarget).getServer().getInfo().getName()));
+                    }
+                }*/
+
+            } else {
+                if (UUID.isEmpty()) {
+                    sender.sendMessage(bungeee.message("&cPlayer doesn't exist. You sure you typed that right?"));
+                } else {
 
                     List<String> seenplist = seenconfig.getStringList(UUID);
                     if (!seenplist.isEmpty()) {
@@ -71,8 +112,8 @@ public class seen extends Command implements Listener {
                             time = "&cNo time shown";
                         }
                         TextComponent messageserver = new TextComponent(bungeee.message("&bLast Server On: &3" + server));
-                        messageserver.setClickEvent( new ClickEvent( ClickEvent.Action.RUN_COMMAND, "/" + server));
-                        messageserver.setHoverEvent( new HoverEvent( HoverEvent.Action.SHOW_TEXT,bungeee.message("&aClick to head to server. &2(" + server + ")")));
+                        messageserver.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + server));
+                        messageserver.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, bungeee.message("&aClick to head to server. &2(" + server + ")")));
                         sender.sendMessage(bungeee.message("&aPlayer &2" + ptarget + " &awas found. Here is the info of player's last login:"));
                         sender.sendMessage(messageserver);
                         sender.sendMessage(bungeee.message("&9Last time on: &b" + time + "(UTC 12-hour Format)"));
