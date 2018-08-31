@@ -4,7 +4,6 @@ package io.github.fernthedev.fcommands.bungeeclass.placeholderapi;
 import io.github.fernthedev.fcommands.bungeeclass.FernCommands;
 import io.github.fernthedev.fcommands.bungeeclass.MessageRunnable;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -47,9 +46,7 @@ public class AskPlaceHolder implements Listener {
         return placeHolderValue;
     }
 
-    public boolean isChecked() {
-        return checked;
-    }
+
 
 
 
@@ -67,6 +64,15 @@ public class AskPlaceHolder implements Listener {
             out.writeUTF("GetPlaceHolderAPI"); //SUBCHANNEL
 
             uuid = UUID.randomUUID().toString();
+            if(!instances.isEmpty()) {
+                for(AskPlaceHolder askPlaceHolder : instances) {
+                    while(askPlaceHolder.uuid.equals(uuid)) {
+                        uuid = UUID.randomUUID().toString();
+                    }
+                }
+            }
+
+
             getLogger().info("Current uuid is " + uuid);
 
             out.writeUTF(placeHolderValue); //MESSAGE 1 (placeholder requested)
@@ -105,8 +111,8 @@ public class AskPlaceHolder implements Listener {
     public void onPluginMessage(PluginMessageEvent ev) {
         if (ev.getTag().equalsIgnoreCase("Bungeecord")) {
             getLogger().info("It is a bungeecord message");
-            getLogger().info("Sender is " + ev.getSender());
-            FernCommands.getInstance().getLogger().info("Requested message from " + ev.getSender().getAddress());
+            //getLogger().info("Sender is " + ev.getSender());
+            //FernCommands.getInstance().getLogger().info("Requested message from " + ev.getSender().getAddress());
             if (ev.getSender() instanceof Server) {
                 FernCommands.getInstance().getLogger().info("It is from current server.");
                 ByteArrayInputStream stream = new ByteArrayInputStream(ev.getData());
@@ -115,22 +121,27 @@ public class AskPlaceHolder implements Listener {
                     String channel = in.readUTF(); // channel we delivered
                     String server = in.readUTF();
                     String subchannel = in.readUTF();
-                    String placeholder = in.readUTF();
-                    String uuide = in.readUTF();
 
-                    getLogger().info("Channel is " + channel + " and server is" + server + " and subchannel is " + subchannel + " and placeholder is " + placeholder);
                     if (channel.equalsIgnoreCase("Forward") && subchannel.equalsIgnoreCase("PlaceHolderValue")) {
+
+                        String placeholder = in.readUTF();
+                        String uuide = in.readUTF();
+
+                        getLogger().info("Channel is " + channel + " and server is" + server + " and subchannel is " + subchannel + " and placeholder is " + placeholder);
+
                         getLogger().info("The message is for a placeholder. Running code!");
 
                         AskPlaceHolder instance = null;
-
-                        for(AskPlaceHolder askPlaceHolder : instances) {
-                            //getLogger().info("A uuid is" + askPlaceHolder.uuid);
-                            if(askPlaceHolder.uuid.equals(uuide)) {
-                                instance = askPlaceHolder;
+                        if(!instances.isEmpty()) {
+                            for (AskPlaceHolder askPlaceHolder : instances) {
+                                //getLogger().info("A uuid is" + askPlaceHolder.uuid);
+                                if (askPlaceHolder.uuid.equals(uuide)) {
+                                    instance = askPlaceHolder;
+                                }
                             }
+                        }else{
+                         getLogger().info("There were no instances");
                         }
-
                         if(instance != null) {
                             instance.placeHolderValue = placeholder;
                             instance.placeHolderReplaced = !instance.placeHolderValue.equals(instance.oldPlaceValue);
@@ -159,6 +170,7 @@ public class AskPlaceHolder implements Listener {
         instances.remove(askPlaceHolder);
     }
 
+    @SuppressWarnings("unused")
     private void removeInstance() {
         getLogger().info("Removed an instance from themselves to the list");
         instances.remove(this);
@@ -167,6 +179,7 @@ public class AskPlaceHolder implements Listener {
     private void cancelTask() {
         getLogger().info("Task cancelled");
         taske.cancel();
+        taske.purge();
     }
 
     public void runTask() {
@@ -185,11 +198,11 @@ public class AskPlaceHolder implements Listener {
                             counted++;
                         }
                     } else {
+                        cancelTask();
                         if(player != null) {
                             player.sendMessage(FernCommands.getInstance().message("&cThere was an error trying to run this command."));
                         }
                         getLogger().info("There was an error trying to run this command.");
-                        cancelTask();
                     }
                 }
 
@@ -203,7 +216,8 @@ public class AskPlaceHolder implements Listener {
         return FernCommands.getInstance().getLogger();
     }
 
-
+    /*
+    @SuppressWarnings("Unused")
     public void sendToBukkit(String channel, String message, ServerInfo server) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(stream);
@@ -214,5 +228,5 @@ public class AskPlaceHolder implements Listener {
             e.printStackTrace();
         }
         server.sendData("Return", stream.toByteArray());
-    }
+    }*/
 }
