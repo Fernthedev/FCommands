@@ -67,8 +67,10 @@ public class ShowIp extends Command {
             p.sendMessage(messager("&bAccounts:"));
             if(!deleteipconfig.getSection(ip).getBoolean("isToDelete") || deleteipconfig.getSection(ip) == null) {
                 for (String player : players) {
-                    if(player != null) {
-                        String playername = ProxyServer.getInstance().getPlayer(player).getDisplayName();
+                    ProxiedPlayer player1 = ProxyServer.getInstance().getPlayer(player);
+                    if(player1 != null) {
+                        String playername = player1.getDisplayName();
+
                         p.sendMessage(messager("&9-&3" + playername));
                     }
                 }

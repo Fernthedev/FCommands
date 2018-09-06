@@ -25,7 +25,6 @@ public class AskPlaceHolder implements Listener {
 
     private String oldPlaceValue;
 
-    private int counted;
     private Timer taske;
 
     private MessageRunnable runnable;
@@ -66,8 +65,10 @@ public class AskPlaceHolder implements Listener {
             uuid = UUID.randomUUID().toString();
             if(!instances.isEmpty()) {
                 for(AskPlaceHolder askPlaceHolder : instances) {
-                    while(askPlaceHolder.uuid.equals(uuid)) {
-                        uuid = UUID.randomUUID().toString();
+                    if(askPlaceHolder.uuid != null) {
+                        while (askPlaceHolder.uuid.equals(uuid)) {
+                            uuid = UUID.randomUUID().toString();
+                        }
                     }
                 }
             }
@@ -119,44 +120,56 @@ public class AskPlaceHolder implements Listener {
                 DataInputStream in = new DataInputStream(stream);
                 try {
                     String channel = in.readUTF(); // channel we delivered
-                    String server = in.readUTF();
-                    String subchannel = in.readUTF();
+                    String server;
+                    String subchannel;
+                    if (in.available() > 0) {
+                        server = in.readUTF();
+                    }else{
+                        server = null;
+                    }
 
-                    if (channel.equalsIgnoreCase("Forward") && subchannel.equalsIgnoreCase("PlaceHolderValue")) {
+                    if(in.available() > 0) {
+                        subchannel = in.readUTF();
+                    }else{
+                        subchannel = null;
+                    }
+                    if(subchannel != null && server != null) {
+                        if (channel.equalsIgnoreCase("Forward") && subchannel.equalsIgnoreCase("PlaceHolderValue")) {
 
-                        String placeholder = in.readUTF();
-                        String uuide = in.readUTF();
+                            String placeholder = in.readUTF();
+                            String uuide = in.readUTF();
 
-                        getLogger().info("Channel is " + channel + " and server is" + server + " and subchannel is " + subchannel + " and placeholder is " + placeholder);
+                            getLogger().info("Channel is " + channel + " and server is" + server + " and subchannel is " + subchannel + " and placeholder is " + placeholder);
 
-                        getLogger().info("The message is for a placeholder. Running code!");
+                            getLogger().info("The message is for a placeholder. Running code!");
 
-                        AskPlaceHolder instance = null;
-                        if(!instances.isEmpty()) {
-                            for (AskPlaceHolder askPlaceHolder : instances) {
-                                //getLogger().info("A uuid is" + askPlaceHolder.uuid);
-                                if (askPlaceHolder.uuid.equals(uuide)) {
-                                    instance = askPlaceHolder;
+                            AskPlaceHolder instance = null;
+                            if (!instances.isEmpty()) {
+                                for (AskPlaceHolder askPlaceHolder : instances) {
+                                    //getLogger().info("A uuid is" + askPlaceHolder.uuid);
+                                    if (askPlaceHolder.uuid.equals(uuide)) {
+                                        instance = askPlaceHolder;
+                                    }
                                 }
-                            }
-                        }else{
-                         getLogger().info("There were no instances");
-                        }
-                        if(instance != null) {
-                            instance.placeHolderValue = placeholder;
-                            instance.placeHolderReplaced = !instance.placeHolderValue.equals(instance.oldPlaceValue);
-                            instance.checked = true;
-                            if (instance.runnableset) {
-                                getLogger().info("Runnable is set");
                             } else {
-                                getLogger().info("Runnable is not set");
+                                getLogger().info("There were no instances");
                             }
-                            instance.runTask();
-                            removeInstance(instance);
-                        }else{
-                            getLogger().info(ChatColor.RED + "The incoming message was not expected. From an attacker?");
+                            if (instance != null) {
+                                instance.placeHolderValue = placeholder;
+                                instance.placeHolderReplaced = !instance.placeHolderValue.equals(instance.oldPlaceValue);
+                                instance.checked = true;
+                                if (instance.runnableset) {
+                                    getLogger().info("Runnable is set because we checked");
+                                } else {
+                                    getLogger().info("Runnable is not set because we checked");
+                                }
+                                instance.runTask();
+                            } else {
+                                getLogger().info(ChatColor.RED + "The incoming message was not expected. From an attacker?");
+                            }
                         }
                     }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -178,33 +191,53 @@ public class AskPlaceHolder implements Listener {
 
     private void cancelTask() {
         getLogger().info("Task cancelled");
+        getLogger().info("Cancelled instance with uuid of " + uuid);
+        removeInstance();
         taske.cancel();
         taske.purge();
+        taske = new Timer();
     }
 
     public void runTask() {
-        counted = 0;
         taske = new Timer();
 
-        taske.scheduleAtFixedRate(new TimerTask() {
+        getLogger().info("This instance uuid is " + uuid);
+
+        taske.schedule(new TimerTask() {
+            AskPlaceHolder instance = null;
+            private int count =0;
+
             @Override
             public void run() {
-                    getLogger().info("Ran " + counted);
-                    if (counted <= 10) {
-                        if (runnableset) {
-                            runnable.run();
-                            cancelTask();
-                        } else {
-                            counted++;
+                getLogger().info("Ran a timer");
+                if(count == 0) {
+                if (instance == null) {
+                    if(!instances.isEmpty()) {
+                        for (AskPlaceHolder askPlaceHolder : instances) {
+                            if (askPlaceHolder.uuid.equals(uuid)) {
+                                instance = askPlaceHolder;
+                                getLogger().info("Found on the list an instance with uuid " + askPlaceHolder.uuid);
+                                getLogger().info("It is equal to current uuid " + uuid);
+                            }
                         }
-                    } else {
+                    }else{
+                        getLogger().info("There are no instances while running timer");
+                        count++;
                         cancelTask();
-                        if(player != null) {
-                            player.sendMessage(FernCommands.getInstance().message("&cThere was an error trying to run this command."));
-                        }
-                        getLogger().info("There was an error trying to run this command.");
                     }
+                }else {
+                    runnable.run();
+                    instance.cancelTask();
+                    count++;
                 }
+
+                 /*
+                    if (instance.player != null) {
+                        instance.player.sendMessage(FernCommands.getInstance().message("&cThere was an error trying to run this command."));
+                    }
+                    getLogger().info("There was an error trying to run this command.");*/
+                }
+            }
 
         }, TimeUnit.SECONDS.toMillis(2),TimeUnit.SECONDS.toMillis(2));
 

@@ -2,6 +2,8 @@ package io.github.fernthedev.fcommands.bungeeclass;
 
 
 import io.github.fernthedev.fcommands.bungeeclass.commands.fernmain;
+import io.github.fernthedev.fcommands.bungeeclass.commands.fernping;
+import io.github.fernthedev.fcommands.bungeeclass.commands.ip.ShowAlts;
 import io.github.fernthedev.fcommands.bungeeclass.commands.ip.deleteip;
 import io.github.fernthedev.fcommands.bungeeclass.commands.ip.mainip;
 import io.github.fernthedev.fcommands.bungeeclass.commands.seen;
@@ -86,18 +88,19 @@ public class FernCommands extends Plugin {
         getProxy().getPluginManager().registerListener(this, new seen());
 
 
+        try {
+            FileManager.getInstance().createipFile();
+            //Configuration IpDataConfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
+            //FileManager.getInstance().loadFile(ipfile);
+            FileManager.getInstance().loadFiles("ip",false);
+        } catch (IOException e) {
+            getProxy().getLogger().warning("Unable to load ips. ");
+        }
+        getProxy().getPluginManager().registerListener(this, new punishmotd());
+
         //ADVANCEDBAN HOOK
         if (hooks.getInstance().hasIsAdvancedBan()) {
             getProxy().getLogger().info(ChatColor.GREEN + "FOUND ADVANCEDBAN! HOOKING IN API");
-            try {
-                FileManager.getInstance().createipFile();
-                //Configuration IpDataConfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
-                //FileManager.getInstance().loadFile(ipfile);
-                FileManager.getInstance().loadFiles("ip",true);
-            } catch (IOException e) {
-                getProxy().getLogger().warning("Unable to load ips. ");
-            }
-            getProxy().getPluginManager().registerListener(this, new punishmotd());
         } else {
             getProxy().getLogger().info(ChatColor.YELLOW + "ADVANCEDBAN NOT FOUND, DISABLING PUNISHMOTD");
         }
@@ -109,6 +112,8 @@ public class FernCommands extends Plugin {
 
         //MAIN FERN COMMAND MANAGER
         getProxy().getPluginManager().registerCommand(this, new fernmain());
+        getProxy().getPluginManager().registerCommand(this,new ShowAlts());
+        getProxy().getPluginManager().registerCommand(this,new fernping());
         getProxy().getPluginManager().registerCommand(this,new mainip());
         deleteip.loadTasks();
         run();
