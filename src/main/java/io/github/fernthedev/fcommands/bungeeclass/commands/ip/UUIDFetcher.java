@@ -127,7 +127,7 @@ public class UUIDFetcher {
         try {
             URL url = new URL(urlString);
             reader = new BufferedReader(new InputStreamReader(url.openStream()));
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             int read;
             char[] chars = new char[1024];
             while ((read = reader.read(chars)) != -1)
@@ -163,7 +163,7 @@ public class UUIDFetcher {
             return date;
         }
     }
-
+@SuppressWarnings("unused")
     class PlayerName {
         private String name;
         private long changedToAt;
@@ -177,7 +177,7 @@ public class UUIDFetcher {
         }
     }
 
-
+@SuppressWarnings("unused")
     class PlayerUUID {
         private String name;
         private String id;

@@ -86,7 +86,7 @@ public class FileManager {
 
         //IP
         boolean goip = which.equalsIgnoreCase("ip") || which.equalsIgnoreCase("all");
-        if (hooks.getInstance().hasIsAdvancedBan()) {
+        if (hooks.getInstance().hasAdvancedBan()) {
             if (ipfile.exists() && (which.equals("ip") || which.equals("all"))) {
                 try {
                     ipconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
@@ -108,7 +108,7 @@ public class FileManager {
         //deleteip
         //IP
         boolean goipdelete = which.equalsIgnoreCase("ipdelete") || which.equalsIgnoreCase("all");
-        if (hooks.getInstance().hasIsAdvancedBan()) {
+        if (hooks.getInstance().hasAdvancedBan()) {
             if (deleteipfile.exists() && goipdelete) {
                 try {
                     deleteipconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(deleteipfile);

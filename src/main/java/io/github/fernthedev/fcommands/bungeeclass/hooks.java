@@ -30,7 +30,7 @@ public class hooks {
         return ProxyServer.getInstance().getPluginManager().getPlugin(plugin) != null;
     }
 
-    public boolean hasIsAdvancedBan() {
+    public boolean hasAdvancedBan() {
         return isAdvancedBanEnabled;
     }
 

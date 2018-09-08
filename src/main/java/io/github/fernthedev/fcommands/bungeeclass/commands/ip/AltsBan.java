@@ -15,17 +15,14 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.event.EventHandler;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class AltsBan implements Listener {
-
     @EventHandler
     public void onJoin(PostLoginEvent e) {
-        if (hooks.getInstance().hasIsAdvancedBan()) {
+        if (hooks.getInstance().hasAdvancedBan()) {
             ProxiedPlayer player = e.getPlayer();
             Configuration ipconfig = new FileManager().getIpconfig();
 
@@ -162,6 +159,7 @@ public class AltsBan implements Listener {
 
     }
 
+    /*
     public String getNameByUUI(String uuid) {
         URL url = null;
         InputStreamReader in = null;
@@ -182,6 +180,6 @@ public class AltsBan implements Listener {
 
 
         return "";
-    }
+    }*/
 
 }

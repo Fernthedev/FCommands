@@ -99,10 +99,8 @@ public class FernCommands extends Plugin {
             getProxy().getLogger().warning("Unable to load ips. ");
         }
 
-        getProxy().getPluginManager().registerListener(this, new punishmotd());
-
         //ADVANCEDBAN HOOK
-        if (hooks.getInstance().hasIsAdvancedBan()) {
+        if (hooks.getInstance().hasAdvancedBan()) {
             getProxy().getLogger().info(ChatColor.GREEN + "FOUND ADVANCEDBAN! HOOKING IN API");
             getProxy().getPluginManager().registerListener(this,new AltsBan());
         } else {
@@ -113,6 +111,7 @@ public class FernCommands extends Plugin {
         getProxy().registerChannel("GetPlaceHolderAPI");
         getProxy().registerChannel("PlaceHolderValue");
         getLogger().info("Registered PlaceHolderAPI channels");
+        getProxy().getPluginManager().registerListener(this, new punishMOTD());
 
         //MAIN FERN COMMAND MANAGER
         getProxy().getPluginManager().registerCommand(this, new fernmain());
