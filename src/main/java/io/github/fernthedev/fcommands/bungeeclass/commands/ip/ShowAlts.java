@@ -12,6 +12,8 @@ import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.config.Configuration;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +26,16 @@ public class ShowAlts extends Command {
     public void execute(CommandSender sender, String[] args) {
         if(args.length > 0) {
             String plArgs = args[0];
-            if(ProxyServer.getInstance().getPlayer(plArgs) != null) {
-                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(plArgs);
+            ProxiedPlayer player = ProxyServer.getInstance().getPlayer(plArgs);
+            String playername;
+            if(player != null || UUIDFetcher.getUUID(args[0]) != null) {
+                if(player != null) {
+                    playername = player.getName();
+                }else{
+                    playername = UUIDFetcher.getName(UUIDFetcher.getUUID(args[0]));
+                }
+
+
 
                 Configuration ipconfig = new FileManager().getIpconfig();
 
@@ -50,6 +60,11 @@ public class ShowAlts extends Command {
                 if(ipfileloaded) {
                     List<String> players = ipconfig.getStringList(ip);
 
+                    if(players == null || players.isEmpty()) {
+                        players = new ArrayList<>();
+                        players.add(player.getName());
+                    }
+
                     List<String> ips = new ArrayList<>();
                     ips.add(ip);
 
@@ -69,8 +84,12 @@ public class ShowAlts extends Command {
                     sender.sendMessage(msg("&aSuccessfully found the player's alts. &bThe list is: "));
 
                     for(String uuid : players) {
-                        ProxiedPlayer playerListUUID = ProxyServer.getInstance().getPlayer(uuid);
-                        sender.sendMessage(msg("&3-&b" + playerListUUID.getName()));
+                         String playername2 = getNameByUUID(uuid);
+                        //ProxiedPlayer playerListUUID = ProxyServer.getInstance().getPlayer(uuid);
+                        if(uuid == null || playername2 != null) return;
+                        FernCommands.getInstance().getLogger().info("&3-&b" + playername2);
+                        FernCommands.getInstance().getLogger().info(sender.getName());
+                        sender.sendMessage(msg("&3-&b" + playername2));
                     }
 
                     sender.sendMessage(msg("&6The ips are from: "));
@@ -91,6 +110,30 @@ public class ShowAlts extends Command {
             sender.sendMessage(msg("&cYou provided no player to show alts."));
         }
     }
+
+    // Get Name from UUID
+    public String getNameByUUID(String uuid) {
+        URL url = null;
+        InputStreamReader in = null;
+        try {
+            url = new URL("https://api.mojang.com/user/profiles/UUID/names".replace("UUID", uuid.replace("-", "")));
+            try {
+                in = new InputStreamReader(url.openStream());
+                return FernCommands.getGson().fromJson(in, String.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if(in != null)
+                in.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        return "";
+    }
+
 
     private BaseComponent[] msg(String text) {
         return new ComponentBuilder(ChatColor.translateAlternateColorCodes('&',text)).create();

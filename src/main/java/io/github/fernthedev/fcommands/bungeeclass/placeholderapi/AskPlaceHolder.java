@@ -111,11 +111,11 @@ public class AskPlaceHolder implements Listener {
     @EventHandler
     public void onPluginMessage(PluginMessageEvent ev) {
         if (ev.getTag().equalsIgnoreCase("Bungeecord")) {
-            getLogger().info("It is a bungeecord message");
+
             //getLogger().info("Sender is " + ev.getSender());
             //FernCommands.getInstance().getLogger().info("Requested message from " + ev.getSender().getAddress());
             if (ev.getSender() instanceof Server) {
-                FernCommands.getInstance().getLogger().info("It is from current server.");
+
                 ByteArrayInputStream stream = new ByteArrayInputStream(ev.getData());
                 DataInputStream in = new DataInputStream(stream);
                 try {
@@ -135,6 +135,8 @@ public class AskPlaceHolder implements Listener {
                     }
                     if(subchannel != null && server != null) {
                         if (channel.equalsIgnoreCase("Forward") && subchannel.equalsIgnoreCase("PlaceHolderValue")) {
+                            getLogger().info("It is a bungeecord message");
+                            FernCommands.getInstance().getLogger().info("It is from current server.");
 
                             String placeholder = in.readUTF();
                             String uuide = in.readUTF();

@@ -127,6 +127,7 @@ public class seen extends Command implements Listener {
 
     @EventHandler
     public void onLeave(PlayerDisconnectEvent e) {
+        if(e.getPlayer().getServer() == null) return;
         try {
             FileManager.getInstance().loadFiles("seen",true);
         } catch (IOException e1) {
@@ -147,6 +148,7 @@ public class seen extends Command implements Listener {
         }
         //Calendar cal = Calendar.getInstance();
         String time= new SimpleDateFormat("MMM dd hh:mm aa").format(new Date());
+
         String server = e.getPlayer().getServer().getInfo().getName();
         //String time2 = new SimpleDateFormat("MM.dd HH:mm").format(date);
         //seenplist.add(time);

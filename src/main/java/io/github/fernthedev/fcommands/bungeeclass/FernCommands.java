@@ -1,8 +1,10 @@
 package io.github.fernthedev.fcommands.bungeeclass;
 
 
+import com.google.gson.Gson;
 import io.github.fernthedev.fcommands.bungeeclass.commands.fernmain;
 import io.github.fernthedev.fcommands.bungeeclass.commands.fernping;
+import io.github.fernthedev.fcommands.bungeeclass.commands.ip.AltsBan;
 import io.github.fernthedev.fcommands.bungeeclass.commands.ip.ShowAlts;
 import io.github.fernthedev.fcommands.bungeeclass.commands.ip.deleteip;
 import io.github.fernthedev.fcommands.bungeeclass.commands.ip.mainip;
@@ -29,6 +31,7 @@ public class FernCommands extends Plugin {
     private static File ipfile;
     private static File seenfile;
     private static File ipdeletefile;
+    private static Gson gson;
    // private static Configuration IpDataConfig;
     //private static Configuration configuration;
     //private static ConfigurationProvider configp;
@@ -40,6 +43,7 @@ public class FernCommands extends Plugin {
     @Override
    public void onEnable() {
         instance = this;
+        gson = new Gson();
         getLogger().info(ChatColor.BLUE + "ENABLED FERNCOMMANDS FOR BUNGEECORD");
         ipfile = new File(getDataFolder(), "ipdata.yml");
         seenfile = new File(getDataFolder(), "seen.yml");
@@ -101,6 +105,7 @@ public class FernCommands extends Plugin {
         //ADVANCEDBAN HOOK
         if (hooks.getInstance().hasIsAdvancedBan()) {
             getProxy().getLogger().info(ChatColor.GREEN + "FOUND ADVANCEDBAN! HOOKING IN API");
+            getProxy().getPluginManager().registerListener(this,new AltsBan());
         } else {
             getProxy().getLogger().info(ChatColor.YELLOW + "ADVANCEDBAN NOT FOUND, DISABLING PUNISHMOTD");
         }
@@ -159,6 +164,10 @@ public class FernCommands extends Plugin {
     }
 
 
+
+    public static Gson getGson() {
+        return gson;
+    }
     public static File getIpdeletefile() {
         return ipdeletefile;
     }
