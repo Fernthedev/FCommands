@@ -28,21 +28,23 @@ public class ShowAlts extends Command {
             String plArgs = args[0];
             ProxiedPlayer player = ProxyServer.getInstance().getPlayer(plArgs);
             String playername;
-            if(player != null || UUIDFetcher.getUUID(args[0]) != null) {
+            String uuidPlayer;
+            String ip = null;
+
+            if(player != null || !UUIDFetcher.getUUID(args[0]).equals("")) {
                 if(player != null) {
+                    uuidPlayer = player.getUniqueId().toString();
                     playername = player.getName();
+                    ip = player.getAddress().getHostString();
+                    ip = ip.replaceAll("\\.", " ");
                 }else{
                     playername = UUIDFetcher.getName(UUIDFetcher.getUUID(args[0]));
+                    uuidPlayer = UUIDFetcher.getUUID(args[0]);
                 }
-
-
 
                 Configuration ipconfig = new FileManager().getIpconfig();
 
-                String uuidPlayer = player.getUniqueId().toString();
 
-                String ip = player.getAddress().getHostString();
-                ip = ip.replaceAll("\\.", " ");
 
 
                 //String uuid = p.getUniqueId().toString();
@@ -58,11 +60,17 @@ public class ShowAlts extends Command {
                 }
 
                 if(ipfileloaded) {
-                    List<String> players = ipconfig.getStringList(ip);
+                    List<String> players;
 
-                    if(players == null || players.isEmpty()) {
+                    if(ip != null) {
+                       players =ipconfig.getStringList(ip);
+                    } else{
                         players = new ArrayList<>();
-                        players.add(player.getName());
+                    }
+
+                    if(players.isEmpty()) {
+                        players = new ArrayList<>();
+                        players.add(playername);
                     }
 
                     List<String> ips = new ArrayList<>();
@@ -84,9 +92,9 @@ public class ShowAlts extends Command {
                     sender.sendMessage(msg("&aSuccessfully found the player's alts. &bThe list is: "));
 
                     for(String uuid : players) {
-                         String playername2 = getNameByUUID(uuid);
+                         String playername2 = UUIDFetcher.getName(uuid);
                         //ProxiedPlayer playerListUUID = ProxyServer.getInstance().getPlayer(uuid);
-                        if(uuid == null || playername2 != null) return;
+                        if(uuid == null || playername2.equalsIgnoreCase("")) return;
                         FernCommands.getInstance().getLogger().info("&3-&b" + playername2);
                         FernCommands.getInstance().getLogger().info(sender.getName());
                         sender.sendMessage(msg("&3-&b" + playername2));
@@ -111,8 +119,9 @@ public class ShowAlts extends Command {
         }
     }
 
+    /*
     // Get Name from UUID
-    public String getNameByUUID(String uuid) {
+    public String getNameByUUIDe(String uuid) {
         URL url = null;
         InputStreamReader in = null;
         try {
@@ -132,7 +141,7 @@ public class ShowAlts extends Command {
 
 
         return "";
-    }
+    }*/
 
 
     private BaseComponent[] msg(String text) {
