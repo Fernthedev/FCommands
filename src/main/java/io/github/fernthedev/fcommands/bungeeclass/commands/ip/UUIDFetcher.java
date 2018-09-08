@@ -4,9 +4,8 @@ package io.github.fernthedev.fcommands.bungeeclass.commands.ip;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.util.UUIDTypeAdapter;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -17,21 +16,18 @@ import java.util.UUID;
 
 public class UUIDFetcher {
 
+    private UUIDFetcher() {}
+
     private static final Gson gson = new GsonBuilder().registerTypeAdapter(UUID.class, new UUIDTypeAdapter()).create();
     private static final String UUID_URL = "https://api.mojang.com/users/profiles/minecraft/%s?at=%d";
     private static final String NAME_URL = "https://api.mojang.com/user/profiles/%s/names";
     private static HashMap<UUID, String> names = new HashMap<>();
     private static HashMap<String, UUID> uuids = new HashMap<>();
 
-    public static UUID getUUID(Player p) {
+    public static UUID getUUID(ProxiedPlayer p) {
         return getUUID(p.getName());
     }
 
-    public static UUID getUUID(OfflinePlayer p) {
-        return getUUID(p.getName());
-    }
-
-    @SuppressWarnings("deprecation")
     public static UUID getUUID(String name) {
         if (name == null)
             return UUID.randomUUID();
@@ -52,10 +48,10 @@ public class UUIDFetcher {
 
             return player.getId();
         } catch (Exception e) {
-            Bukkit.getConsoleSender()
-                    .sendMessage("Your server has no connection to the mojang servers or is runnig slowly.");
-            uuids.put(name, Bukkit.getOfflinePlayer(name).getUniqueId());
-            return Bukkit.getOfflinePlayer(name).getUniqueId();
+            ProxyServer.getInstance().getLogger()
+                    .info("Your server has no connection to the mojang servers or is runnig slowly.");
+            uuids.put(name, ProxyServer.getInstance().getPlayer(name).getUniqueId());
+            return ProxyServer.getInstance().getPlayer(name).getUniqueId();
         }
     }
 
@@ -77,10 +73,9 @@ public class UUIDFetcher {
 
             return currentName.getName();
         } catch (Exception e) {
-            Bukkit.getConsoleSender()
-                    .sendMessage("§cYour server has no connection to the mojang servers or is runnig slow.");
-            names.put(uuid, Bukkit.getOfflinePlayer(uuid).getName());
-            return Bukkit.getOfflinePlayer(uuid).getName();
+            ProxyServer.getInstance().getLogger().info("§cYour server has no connection to the mojang servers or is runnig slow.");
+            names.put(uuid, ProxyServer.getInstance().getPlayer(uuid).getName());
+            return ProxyServer.getInstance().getPlayer(uuid).getName();
         }
     }
 }
