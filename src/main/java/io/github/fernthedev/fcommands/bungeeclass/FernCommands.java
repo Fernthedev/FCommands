@@ -2,12 +2,10 @@ package io.github.fernthedev.fcommands.bungeeclass;
 
 
 import com.google.gson.Gson;
+import io.github.fernthedev.fcommands.bungeeclass.commands.NameHistory;
 import io.github.fernthedev.fcommands.bungeeclass.commands.fernmain;
 import io.github.fernthedev.fcommands.bungeeclass.commands.fernping;
-import io.github.fernthedev.fcommands.bungeeclass.commands.ip.AltsBan;
-import io.github.fernthedev.fcommands.bungeeclass.commands.ip.ShowAlts;
-import io.github.fernthedev.fcommands.bungeeclass.commands.ip.deleteip;
-import io.github.fernthedev.fcommands.bungeeclass.commands.ip.mainip;
+import io.github.fernthedev.fcommands.bungeeclass.commands.ip.*;
 import io.github.fernthedev.fcommands.bungeeclass.commands.seen;
 import io.github.fernthedev.fcommands.bungeeclass.placeholderapi.AskPlaceHolder;
 import net.md_5.bungee.api.ChatColor;
@@ -100,6 +98,7 @@ public class FernCommands extends Plugin {
         } catch (IOException e) {
             getProxy().getLogger().warning("Unable to load ips. ");
         }
+
         getProxy().getPluginManager().registerListener(this, new punishmotd());
 
         //ADVANCEDBAN HOOK
@@ -120,6 +119,7 @@ public class FernCommands extends Plugin {
         getProxy().getPluginManager().registerCommand(this,new ShowAlts());
         getProxy().getPluginManager().registerCommand(this,new fernping());
         getProxy().getPluginManager().registerCommand(this,new mainip());
+        getProxy().getPluginManager().registerCommand(this,new NameHistory());
         deleteip.loadTasks();
         run();
 

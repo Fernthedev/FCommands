@@ -68,7 +68,7 @@ public class AltsBan implements Listener {
 
 
                 for (String uuid : players) {
-                    String playername = UUIDFetcher.getName(UUIDFetcher.getUUID(uuid));
+                    String playername = UUIDFetcher.getName((uuid));
                     //ProxiedPlayer playerListUUID = ProxyServer.getInstance().getPlayer(uuid);
 
                     if (PunishmentManager.get().isBanned(uuid) || PunishmentManager.get().isMuted(uuid)) {
@@ -155,7 +155,7 @@ public class AltsBan implements Listener {
 
             for(String uuid : players) {
                 //ProxiedPlayer playerListUUID = ProxyServer.getInstance().getPlayer(uuid);
-                String playername = UUIDFetcher.getName(UUIDFetcher.getUUID(uuid));
+                String playername = UUIDFetcher.getName(uuid);
                 new Punishment(playername,uuid,e.getPunishment().getReason() + " &6From an alt which is " + ProxyServer.getInstance().getPlayer(e.getPunishment().getUuid()),e.getPunishment().getOperator(),e.getPunishment().getType(),e.getPunishment().getStart(),e.getPunishment().getEnd(),e.getPunishment().getCalculation(),-1);
             }
             }

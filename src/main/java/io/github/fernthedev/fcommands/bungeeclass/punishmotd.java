@@ -1,5 +1,6 @@
 package io.github.fernthedev.fcommands.bungeeclass;
 
+import io.github.fernthedev.fcommands.bungeeclass.commands.ip.UUIDFetcher;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
 import me.leoko.advancedban.utils.PunishmentType;
@@ -19,6 +20,7 @@ import net.md_5.bungee.event.EventPriority;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -59,71 +61,75 @@ public class punishmotd implements Listener {
                 //getProxy.getLogger().info("detected players: " + players);
                // getProxy.getLogger().info("192.168.2.11's players " + ipconfig.getStringList("192 168 2 11"));
             } else {
-                if(players.toArray().length == 1) {
-                    FernCommands.getInstance().getLogger().info("Pinged by " + hostAddress + " and uuid is " + players.toString());
-                } else if(players.toArray().length >= 1) {
-                    FernCommands.getInstance().getLogger().info("Pinged by " + hostAddress + " and uuids are " + players.toString());
+                if(players.toArray().length >= 1) {
+                    List<String> playernames = new ArrayList<>();
+                    for(String uuid : players) {
+                        String name = UUIDFetcher.getName(uuid);
+                        playernames.add(name);
+                    }
+                    FernCommands.getInstance().getLogger().info("Pinged by " + hostAddress + " and uuid is " + players.toString() + " the player names are " + playernames.toString());
                 }
                 for (String key : players) {
-                    //getProxy.getLogger().info("Pinged by " + hostAddress + " and uuid is " + key);
-                    if (PunishmentManager.get().isBanned(key)) {
-                        PunishmentManager.get().getBan(key);
-                        //PERM BAN
-                        BaseComponent[] messagee;
+                    if (hooks.getInstance().hasIsAdvancedBan()) {
+                        //getProxy.getLogger().info("Pinged by " + hostAddress + " and uuid is " + key);
+                        if (PunishmentManager.get().isBanned(key)) {
+                            PunishmentManager.get().getBan(key);
+                            //PERM BAN
+                            BaseComponent[] messagee;
 
-                        if (PunishmentManager.get().getBan(key).getType() == PunishmentType.BAN) {
-                            FernCommands.getInstance().getLogger().info("Player pinged, and is permanently banned" + key);
-                            messagee = message("&c&lYOU HAVE BEEN PERMANENTLY BANNED",false);
-                            pingResponse.setDescriptionComponent(messagee[0]);
-                            eping.setResponse(pingResponse);
-                            //PERM IP_BAN
-                        } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.IP_BAN) {
-                            messagee = message("&c&lYOUR IP HAS BEEN PERMANENTLY BANNED",false);
-                            pingResponse.setDescriptionComponent(messagee[0]);
-                            eping.setResponse(pingResponse);
-                            //TEMP BAN
-                        } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.TEMP_BAN) {
-                            long time = PunishmentManager.get().getBan(key).getEnd();
-                            //String hms = String.format("%02d:%02d:%02d",
-                            //        TimeUnit.MILLISECONDS.toHours(time),
-                             //       TimeUnit.MILLISECONDS.toMinutes(time) -
-                             //               TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(time)), // The change is in this line
-                            //        TimeUnit.MILLISECONDS.toSeconds(time) -
-                            //                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time)));
+                            if (PunishmentManager.get().getBan(key).getType() == PunishmentType.BAN) {
+                                FernCommands.getInstance().getLogger().info("Player pinged, and is permanently banned" + key);
+                                messagee = message("&c&lYOU HAVE BEEN PERMANENTLY BANNED", false);
+                                pingResponse.setDescriptionComponent(messagee[0]);
+                                eping.setResponse(pingResponse);
+                                //PERM IP_BAN
+                            } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.IP_BAN) {
+                                messagee = message("&c&lYOUR IP HAS BEEN PERMANENTLY BANNED", false);
+                                pingResponse.setDescriptionComponent(messagee[0]);
+                                eping.setResponse(pingResponse);
+                                //TEMP BAN
+                            } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.TEMP_BAN) {
+                                long time = PunishmentManager.get().getBan(key).getEnd();
+                                //String hms = String.format("%02d:%02d:%02d",
+                                //        TimeUnit.MILLISECONDS.toHours(time),
+                                //       TimeUnit.MILLISECONDS.toMinutes(time) -
+                                //               TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(time)), // The change is in this line
+                                //        TimeUnit.MILLISECONDS.toSeconds(time) -
+                                //                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time)));
 
 
-                            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm:ss");
-                            String hms = sdf.format(time);
-                            //for(sdf.format(time - 1); ;) {
-                            sdf.format(time-1);
-                                messagee = message("&c&lYOU HAVE BEEN BANNED UNTIL " + hms,false);
+                                SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm:ss");
+                                String hms = sdf.format(time);
+                                //for(sdf.format(time - 1); ;) {
+                                sdf.format(time - 1);
+                                messagee = message("&c&lYOU HAVE BEEN BANNED UNTIL " + hms, false);
                                 pingResponse.setDescriptionComponent(messagee[0]);
 
                                 eping.setResponse(pingResponse);
                                 //TEMP IP_BAN
-                          //  }
-                        } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.TEMP_IP_BAN) {
-                            long time = TimeManager.getTime() + PunishmentManager.get().getBan(key).getEnd();
-                          //  String hms = String.format("%02d:%02d:%02d",
-                             //       TimeUnit.MILLISECONDS.toHours(time),
-                            //        TimeUnit.MILLISECONDS.toMinutes(time) -
-                            ///                TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(time)),
-                            //        TimeUnit.MILLISECONDS.toSeconds(time) -
-                            //                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time)));
-                            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm:ss");
-                            String hms = sdf.format(time);
-                            messagee = message("&c&lYOUR IP HAS BEEN BANNED UNTIL " + hms,false);
+                                //  }
+                            } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.TEMP_IP_BAN) {
+                                long time = TimeManager.getTime() + PunishmentManager.get().getBan(key).getEnd();
+                                //  String hms = String.format("%02d:%02d:%02d",
+                                //       TimeUnit.MILLISECONDS.toHours(time),
+                                //        TimeUnit.MILLISECONDS.toMinutes(time) -
+                                ///                TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(time)),
+                                //        TimeUnit.MILLISECONDS.toSeconds(time) -
+                                //                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time)));
+                                SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm:ss");
+                                String hms = sdf.format(time);
+                                messagee = message("&c&lYOUR IP HAS BEEN BANNED UNTIL " + hms, false);
 
 
+                                pingResponse.setDescriptionComponent(messagee[0]);
 
-                            pingResponse.setDescriptionComponent(messagee[0]);
 
+                                eping.setResponse(pingResponse);
 
-                            eping.setResponse(pingResponse);
-
+                            }
                         }
-                    }
 
+                    }
                 }
             }
         }

@@ -12,8 +12,6 @@ import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.config.Configuration;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,18 +26,17 @@ public class ShowAlts extends Command {
             String plArgs = args[0];
             ProxiedPlayer player = ProxyServer.getInstance().getPlayer(plArgs);
             String playername;
-            String uuidPlayer;
+            String uuidPlayer = UUIDFetcher.getUUID(args[0]);
             String ip = null;
 
-            if(player != null || !UUIDFetcher.getUUID(args[0]).equals("")) {
+            if(player != null || uuidPlayer != null) {
                 if(player != null) {
                     uuidPlayer = player.getUniqueId().toString();
                     playername = player.getName();
                     ip = player.getAddress().getHostString();
                     ip = ip.replaceAll("\\.", " ");
                 }else{
-                    playername = UUIDFetcher.getName(UUIDFetcher.getUUID(args[0]));
-                    uuidPlayer = UUIDFetcher.getUUID(args[0]);
+                    playername = args[0];
                 }
 
                 Configuration ipconfig = new FileManager().getIpconfig();
@@ -61,25 +58,28 @@ public class ShowAlts extends Command {
 
                 if(ipfileloaded) {
                     List<String> players;
+                    List<String> ips = new ArrayList<>();
 
                     if(ip != null) {
                        players =ipconfig.getStringList(ip);
+                        ips.add(ip);
                     } else{
                         players = new ArrayList<>();
                     }
 
                     if(players.isEmpty()) {
                         players = new ArrayList<>();
-                        players.add(playername);
+                        players.add(UUIDFetcher.getUUID(playername));
                     }
 
-                    List<String> ips = new ArrayList<>();
-                    ips.add(ip);
+
+
 
                     for(String ipe : ipconfig.getKeys()) {
                         if (!ipe.equals(ip)) {
                             List<String> playips = ipconfig.getStringList(ipe);
                             if (!playips.isEmpty() && playips.contains(uuidPlayer)) {
+                                ips.add(ipe);
                                 for (String pluuid : playips) {
                                     if (!players.contains(pluuid)) {
                                         players.add(pluuid);
@@ -92,9 +92,11 @@ public class ShowAlts extends Command {
                     sender.sendMessage(msg("&aSuccessfully found the player's alts. &bThe list is: "));
 
                     for(String uuid : players) {
+                        FernCommands.getInstance().getLogger().info("This uuid is " + uuid + " getting name now.");
                          String playername2 = UUIDFetcher.getName(uuid);
+                         FernCommands.getInstance().getLogger().info("Found that " + uuid + " is player " + playername2);
                         //ProxiedPlayer playerListUUID = ProxyServer.getInstance().getPlayer(uuid);
-                        if(uuid == null || playername2.equalsIgnoreCase("")) return;
+                        if(uuid == null || playername2 == null) return;
                         FernCommands.getInstance().getLogger().info("&3-&b" + playername2);
                         FernCommands.getInstance().getLogger().info(sender.getName());
                         sender.sendMessage(msg("&3-&b" + playername2));
