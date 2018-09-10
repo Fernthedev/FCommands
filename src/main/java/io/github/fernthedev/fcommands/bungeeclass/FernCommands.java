@@ -2,11 +2,9 @@ package io.github.fernthedev.fcommands.bungeeclass;
 
 
 import com.google.gson.Gson;
-import io.github.fernthedev.fcommands.bungeeclass.commands.NameHistory;
-import io.github.fernthedev.fcommands.bungeeclass.commands.fernmain;
-import io.github.fernthedev.fcommands.bungeeclass.commands.fernping;
+import io.github.fernthedev.fcommands.Universal.Universal;
+import io.github.fernthedev.fcommands.bungeeclass.commands.*;
 import io.github.fernthedev.fcommands.bungeeclass.commands.ip.*;
-import io.github.fernthedev.fcommands.bungeeclass.commands.seen;
 import io.github.fernthedev.fcommands.bungeeclass.placeholderapi.AskPlaceHolder;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -20,6 +18,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 //@SuppressWarnings("unused")
@@ -36,6 +37,16 @@ public class FernCommands extends Plugin {
 
     //private static File configfile;
     private static FernCommands instance;
+
+    private Universal universal;
+
+    private static Connection connection;
+
+    private static List<Runnable> runnableList = new ArrayList<>();
+
+    public static List<Runnable> getRunnables() {
+        return runnableList;
+    }
 
 
     @Override
@@ -55,6 +66,8 @@ public class FernCommands extends Plugin {
             System.out.println(mkdir);
         }
 
+        Universal.getInstance().setup(new BungeeMethods());
+
         File file = new File(getDataFolder(), "config.yml");
         if (!file.exists()) {
             try (InputStream in = getResourceAsStream("config.yml")) {
@@ -66,9 +79,13 @@ public class FernCommands extends Plugin {
         }
         try {
             FileManager.getInstance().loadFiles("config",false);
+            DatabaseHandler.setup();
+            connection = DatabaseHandler.getConnection();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
 
 
         //CREATING SEEN FILE
@@ -103,14 +120,16 @@ public class FernCommands extends Plugin {
         if (hooks.getInstance().hasAdvancedBan()) {
             getProxy().getLogger().info(ChatColor.GREEN + "FOUND ADVANCEDBAN! HOOKING IN API");
             getProxy().getPluginManager().registerListener(this,new AltsBan());
-        } else {
-            getProxy().getLogger().info(ChatColor.YELLOW + "ADVANCEDBAN NOT FOUND, DISABLING PUNISHMOTD");
         }
 
         getProxy().getPluginManager().registerListener(this,new AskPlaceHolder());
         getProxy().registerChannel("GetPlaceHolderAPI");
         getProxy().registerChannel("PlaceHolderValue");
         getLogger().info("Registered PlaceHolderAPI channels");
+        getProxy().registerChannel("ReloadNickSQL");
+        getProxy().getPluginManager().registerListener(this,new FernNick());
+        getLogger().info("Registered fern nicks bungee channels.");
+
         getProxy().getPluginManager().registerListener(this, new punishMOTD());
 
         //MAIN FERN COMMAND MANAGER
@@ -119,6 +138,8 @@ public class FernCommands extends Plugin {
         getProxy().getPluginManager().registerCommand(this,new fernping());
         getProxy().getPluginManager().registerCommand(this,new mainip());
         getProxy().getPluginManager().registerCommand(this,new NameHistory());
+        getProxy().getPluginManager().registerCommand(this,new FernNick());
+        getLogger().info("Registered fern nicks");
         deleteip.loadTasks();
         run();
 
@@ -130,6 +151,18 @@ public class FernCommands extends Plugin {
     public void onDisable(){
         instance = this;
         getLogger().info(ChatColor.AQUA + "DISABLED FERNCOMMANDS FOR BUNGEECORD");
+
+        DatabaseHandler.getScheduler().cancel(this);
+        // invoke on disable.
+        try { //using a try catch to catch connection errors (like wrong sql password...)
+            if (connection!=null && !connection.isClosed()){ //checking if connection isn't null to
+                //avoid receiving a nullpointer
+                connection.close(); //closing the connection field variable.
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
         ipfile = null;
         seenfile = null;
         fernmain.onDisable();

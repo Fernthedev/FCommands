@@ -246,7 +246,6 @@ public class namecolor implements CommandExecutor, Listener {
                 p.closeInventory();
                 p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_LAND, 1.0f, 1.0f);
             }
-
         }
     }
 

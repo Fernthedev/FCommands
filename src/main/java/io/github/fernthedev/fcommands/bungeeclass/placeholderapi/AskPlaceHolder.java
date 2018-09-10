@@ -115,7 +115,6 @@ public class AskPlaceHolder implements Listener {
             //getLogger().info("Sender is " + ev.getSender());
             //FernCommands.getInstance().getLogger().info("Requested message from " + ev.getSender().getAddress());
             if (ev.getSender() instanceof Server) {
-
                 ByteArrayInputStream stream = new ByteArrayInputStream(ev.getData());
                 DataInputStream in = new DataInputStream(stream);
                 try {
@@ -180,6 +179,7 @@ public class AskPlaceHolder implements Listener {
         }
     }
 
+    @Deprecated
     private void removeInstance(AskPlaceHolder askPlaceHolder) {
         getLogger().info("Removed an instance from list");
         instances.remove(askPlaceHolder);

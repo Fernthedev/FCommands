@@ -23,16 +23,47 @@ public class FileManager {
     private static Configuration seenconfig;
     private static Configuration deleteipconfig;
 
+    public File getConfigfile() {
+        return configfile;
+    }
+
     /**
      * The constructor for setting the instance;
      */
     public FileManager() {
+        registerVars();
+    }
+
+    private void registerVars() {
         thisinstance = this;
         deleteipfile = new File(FernCommands.getInstance().getDataFolder(),"ipdelete.yml");
         ipfile = new File(FernCommands.getInstance().getDataFolder(), "ipdata.yml");
         seenfile = new File(FernCommands.getInstance().getDataFolder(), "seen.yml");
         configfile = new File(FernCommands.getInstance().getDataFolder(), "config.yml");
         ConfigurationProvider configp = ConfigurationProvider.getProvider(YamlConfiguration.class);
+    }
+
+    /**
+     * This returns the value of the path, if there is none it returns the default value
+     * @param path The value path
+     * @param defval The default value if none is defined
+     * @return The path's value, if there is none it returns default.
+     */
+    public String getValue(String path,Object defval) {
+        try {
+            loadFiles(WhichFile.CONFIG,true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(path != null && defval != null) {
+            if(config.get(path) == null) {
+                config.set(path,defval);
+                saveFiles(config,configfile);
+            }
+
+            return config.getString(path);
+        }
+        return null;
     }
 
 
@@ -216,7 +247,6 @@ public class FileManager {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            // config.getKeys().add("Motd:");
         }
     }
 

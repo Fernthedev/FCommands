@@ -1,12 +1,16 @@
 package io.github.fernthedev.fcommands.spigotclass;
 
 import com.google.gson.Gson;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPHookManager;
+import io.github.fernthedev.fcommands.Universal.Universal;
 import io.github.fernthedev.fcommands.spigotclass.commands.fernmain;
+import io.github.fernthedev.fcommands.spigotclass.entity.NoAI;
 import io.github.fernthedev.fcommands.spigotclass.gui.namecolor;
 import io.github.fernthedev.fcommands.spigotclass.ncp.bungeencp;
 import io.github.fernthedev.fcommands.spigotclass.ncp.cooldown;
+import io.github.fernthedev.fcommands.spigotclass.nick.NickReload;
 import io.github.fernthedev.fcommands.spigotclass.placeholderapi.HookPlaceHolderAPI;
 import io.github.fernthedev.fcommands.spigotclass.placeholderapi.VanishPlaceholder;
 import net.milkbowl.vault.chat.Chat;
@@ -17,11 +21,16 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -37,11 +46,25 @@ public class FernCommands extends JavaPlugin {
     private static Economy econ = null;
     private static Permission perms = null;
     private static Chat chat = null;
+
+
     private static boolean isVault;
     private static boolean isNTE;
     private static boolean isPlaceHolderAPI;
+    private static boolean isWorldGuard;
+    private static boolean isEssentials;
+
+    private static Connection connection;
+
+    private WorldGuardPlugin worldGuardPlugin;
 
     private MessageListener messageListener;
+
+    private static List<BukkitRunnable> runnables = new ArrayList<>();
+
+    public static List<BukkitRunnable> getRunnables() {
+        return runnables;
+    }
 
     @Override
     public void onEnable() {
@@ -51,6 +74,8 @@ public class FernCommands extends JavaPlugin {
         gson = new Gson();
         SERVER_NAME = null;
         cooldown = new cooldown();
+        Universal.getInstance().setup(new SpigotMethods());
+
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 
         messageListener = new MessageListener();
@@ -65,6 +90,9 @@ public class FernCommands extends JavaPlugin {
         } catch (InvalidConfigurationException e) {
             getLogger().warning("Invalid Config");
         }
+        DatabaseHandler.setup();
+        connection = DatabaseHandler.getConnection();
+
         registerListener();
     }
 
@@ -100,6 +128,11 @@ public class FernCommands extends JavaPlugin {
                 messageListener.addListener(new HookPlaceHolderAPI());
             getLogger().info("HOOKED PLACEHOLDERAPI BUNGEE MESSAGING");
         }
+
+        isEssentials = Bukkit.getPluginManager().isPluginEnabled("Essentials");
+        if(isEssentials) {
+            messageListener.addListener(new NickReload());
+        }
     }
 
 
@@ -113,6 +146,24 @@ public class FernCommands extends JavaPlugin {
 
     public void hook() {
         useMcMMO = Bukkit.getServer().getPluginManager().isPluginEnabled("McMMO");
+        worldGuardPlugin = getWorldGuard();
+    }
+
+    public WorldGuardPlugin getWorldGuardPlugin() {
+        return worldGuardPlugin;
+    }
+
+    private WorldGuardPlugin getWorldGuard() {
+        Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
+
+        // WorldGuard may not be loaded
+        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+            isWorldGuard = false;
+            return null; // Maybe you want throw an exception instead
+        }
+
+        isWorldGuard = true;
+        return (WorldGuardPlugin) plugin;
     }
 
     @Nonnull
@@ -134,6 +185,18 @@ public class FernCommands extends JavaPlugin {
         // Unregister incoming plugin channel if it's registered
         if (this.getServer().getMessenger().isIncomingChannelRegistered(this, "BungeeCord"))
             this.getServer().getMessenger().unregisterIncomingPluginChannel(this, "BungeeCord");
+
+        DatabaseHandler.getScheduler().cancelTasks(this);
+        // invoke on disable.
+        try { //using a try catch to catch connection errors (like wrong sql password...)
+            if (connection!=null && !connection.isClosed()){ //checking if connection isn't null to
+                //avoid receiving a nullpointer
+                connection.close(); //closing the connection field variable.
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
         // Kill any async tasks that may be left over
         getServer().getScheduler().cancelTasks(instance);
         SERVER_NAME = null;
@@ -261,6 +324,10 @@ public class FernCommands extends JavaPlugin {
             }
         }
 
+        if(config.getBoolean("NoAIonSpawn")) {
+            this.getServer().getPluginManager().registerEvents(new NoAI(),this);
+        }
+
         if(config.getBoolean("NameColor")) {
             if((isVault && getChat().isEnabled()) || isNTE) {
              this.getServer().getPluginManager().registerEvents(new namecolor(),this);
@@ -284,13 +351,9 @@ public class FernCommands extends JavaPlugin {
         return Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus");
     }
 
-
-
-
-
-
-
-
+    public boolean isIsWorldGuard() {
+        return isWorldGuard;
+    }
 
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {

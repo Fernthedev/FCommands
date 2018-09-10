@@ -37,6 +37,11 @@ public class hooks implements CommandExecutor {
                     sender.sendMessage(FernCommands.message("&bVault:&cUnhooked"));
                 }
 
+                if(FernCommands.getInstance().isIsWorldGuard())
+                    sender.sendMessage(FernCommands.message("&bWorldGuard:&aHooked"));
+                else
+                    sender.sendMessage(FernCommands.message("&bWorldGuard:&cUnhooked"));
+
                 if (FernCommands.getInstance().isNTEEnabled()) {
                     sender.sendMessage(FernCommands.message("&bNametagEdit:&aHooked"));
                 } else {

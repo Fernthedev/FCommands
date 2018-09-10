@@ -24,6 +24,16 @@ public class FilesManager {
     private File configfile = new File(FernCommands.getInstance().getDataFolder(), "config.yml");
 
 
+    public String getValue(String val,String defval) {
+        if(val != null && defval != null) {
+            if (config.get(val) == null) {
+                config.set(val, defval);
+            }
+            return config.getString(val);
+        }
+        return null;
+    }
+
 
     /**
      *
@@ -33,6 +43,7 @@ public class FilesManager {
         if(which.equals("all") || which.equals("config")) {
             if(configfile.exists()) {
                 config.load(new File(FernCommands.getInstance().getDataFolder(),"config.yml"));
+                setDefault();
             }else{
                 //createFile();
                 FilesManager.getInstance().setDefault();
@@ -54,15 +65,29 @@ public class FilesManager {
     public void setDefault() {
         ourInstance = this;
         //FileConfiguration config = FernCommands.getInstance().getConfig();
-        FernCommands.getInstance().getConfig().set("nodmgepearl",false);
-        config.set("NoIgDoorFarm",false);
-        config.set("tpbow",false);
-        config.set("BungeeNCP",true);
-        config.set("BedFire",false);
-        config.set("ItemBurn",false);
-        config.set("Skylands",false);
-        config.set("NameColor",false);
+        if(config.get("nodmgepearl") == null ) {
+            FernCommands.getInstance().getConfig().set("nodmgepearl", false);
+        }
+        
+        
+        setCheck("NoIgDoorFarm",false);
+        setCheck("tpbow",false);
+        setCheck("BungeeNCP",true);
+        setCheck("BedFire",false);
+        setCheck("ItemBurn",false);
+        setCheck("Skylands",false);
+        setCheck("NameColor",false);
+        setCheck("NoAIonSpawn",false);
+        
         FernCommands.getInstance().saveConfig();
+    }
+    
+    public void setCheck(String value,Object def) {
+        if(value != null && def != null) {
+            if (config.get(value) == null) {
+                config.set(value, def);
+            }
+        }
     }
 
     private void createConfig() {

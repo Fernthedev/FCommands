@@ -23,8 +23,6 @@ public class HookPlaceHolderAPI implements Listener, PluginMessageListener {
         if (!channel.equals("BungeeCord")) {
             getLogger().info("It is not bungeecord message!");
             return;
-        }else{
-            getLogger().info("It is bungeecord message!");
         }
         getLogger().info("Recieved message on a random channel ");
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));

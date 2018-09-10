@@ -1,6 +1,6 @@
 package io.github.fernthedev.fcommands.bungeeclass;
 
-import io.github.fernthedev.fcommands.bungeeclass.commands.ip.UUIDFetcher;
+import io.github.fernthedev.fcommands.Universal.UUIDFetcher;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.TimeManager;
 import me.leoko.advancedban.utils.PunishmentType;
@@ -24,11 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class punishmotd implements Listener {
+public class punishMOTD implements Listener {
 
-    //private static ProxyServer getProxy = ProxyServer.getInstance();
-
-    @SuppressWarnings({"deprecation", "InfiniteLoopStatement"})
     @EventHandler(priority = EventPriority.HIGH)
     public void motdcheck(ProxyPingEvent eping) {
 
@@ -70,7 +67,7 @@ public class punishmotd implements Listener {
                     FernCommands.getInstance().getLogger().info("Pinged by " + hostAddress + " and uuid is " + players.toString() + " the player names are " + playernames.toString());
                 }
                 for (String key : players) {
-                    if (hooks.getInstance().hasIsAdvancedBan()) {
+                    if (hooks.getInstance().hasAdvancedBan()) {
                         //getProxy.getLogger().info("Pinged by " + hostAddress + " and uuid is " + key);
                         if (PunishmentManager.get().isBanned(key)) {
                             PunishmentManager.get().getBan(key);
@@ -143,12 +140,13 @@ public class punishmotd implements Listener {
     }
 
 
-    @SuppressWarnings({"unchecked", "deprecation"})
     @EventHandler
     public void onLoginIp(PostLoginEvent event) {
         Logger log = FernCommands.getInstance().getLogger();
         String player = event.getPlayer().getUniqueId().toString();
         File ipfile = FernCommands.getIpfile();
+        log.info("Player " + event.getPlayer() + " has joined.");
+        log.info(event.getPlayer().getAddress().getHostString().replaceAll("\\.", " ") + " is the ip of player");
 
         String ip = event.getPlayer().getAddress().getHostString().replaceAll("\\.", " ");
         log.info("proxy list fern" + ip + " " + player);
@@ -178,9 +176,10 @@ public class punishmotd implements Listener {
                     e.printStackTrace();
                 }
                 log.info("Saving new ip for: " + ip + " " + player);
+                /*
                 if(!ipconfig.getSection(ip).getKeys().contains(player)) {
                     log.warning("Unable to save ip");
-                }
+                }*/
         }
     }
 

@@ -1,4 +1,4 @@
-package io.github.fernthedev.fcommands.bungeeclass.commands.ip;
+package io.github.fernthedev.fcommands.Universal;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -7,7 +7,9 @@ import io.github.fernthedev.fcommands.bungeeclass.FernCommands;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class UUIDFetcher {
     private static final String UUID_URL = "https://api.mojang.com/users/profiles/minecraft/%name%";
