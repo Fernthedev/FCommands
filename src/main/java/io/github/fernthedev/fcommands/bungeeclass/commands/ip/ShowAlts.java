@@ -1,5 +1,6 @@
 package io.github.fernthedev.fcommands.bungeeclass.commands.ip;
 
+import io.github.fernthedev.fcommands.Universal.UUIDFetcher;
 import io.github.fernthedev.fcommands.bungeeclass.FernCommands;
 import io.github.fernthedev.fcommands.bungeeclass.FileManager;
 import net.md_5.bungee.api.ChatColor;

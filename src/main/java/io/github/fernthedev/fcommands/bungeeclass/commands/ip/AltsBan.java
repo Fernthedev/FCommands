@@ -1,5 +1,6 @@
 package io.github.fernthedev.fcommands.bungeeclass.commands.ip;
 
+import io.github.fernthedev.fcommands.Universal.UUIDFetcher;
 import io.github.fernthedev.fcommands.bungeeclass.FernCommands;
 import io.github.fernthedev.fcommands.bungeeclass.FileManager;
 import io.github.fernthedev.fcommands.bungeeclass.hooks;
@@ -71,26 +72,26 @@ public class AltsBan implements Listener {
                     if (PunishmentManager.get().isBanned(uuid) || PunishmentManager.get().isMuted(uuid)) {
                         if (!PunishmentManager.get().getPunishments(uuid, PunishmentType.MUTE, true).isEmpty()) {
                             for (Punishment punishment : PunishmentManager.get().getPunishments(uuid, PunishmentType.MUTE, true)) {
-                                new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + ProxyServer.getInstance().getPlayer(punishment.getUuid()) + punishment.getName(), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
+                                new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + ProxyServer.getInstance().getPlayer(punishment.getUuid()) + punishment.getName(), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1).create(true);
                             }
                         }
 
                         if (!PunishmentManager.get().getPunishments(uuid, PunishmentType.TEMP_MUTE, true).isEmpty()) {
                             for (Punishment punishment : PunishmentManager.get().getPunishments(uuid, PunishmentType.TEMP_MUTE, true)) {
-                                new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + ProxyServer.getInstance().getPlayer(punishment.getUuid()) + punishment.getName(), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
+                                new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + ProxyServer.getInstance().getPlayer(punishment.getUuid()) + punishment.getName(), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1).create(true);
                             }
                         }
 
                         if (!PunishmentManager.get().getPunishments(uuid, PunishmentType.BAN, true).isEmpty()) {
 
                             for (Punishment punishment : PunishmentManager.get().getPunishments(uuid, PunishmentType.BAN, true)) {
-                                new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + ProxyServer.getInstance().getPlayer(punishment.getUuid()) + punishment.getName(), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
+                                new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + ProxyServer.getInstance().getPlayer(punishment.getUuid()) + punishment.getName(), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1).create(true);
                             }
                         }
 
                         if (!PunishmentManager.get().getPunishments(uuid, PunishmentType.TEMP_BAN, true).isEmpty()) {
                             for (Punishment punishment : PunishmentManager.get().getPunishments(uuid, PunishmentType.TEMP_BAN, true)) {
-                                new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + ProxyServer.getInstance().getPlayer(punishment.getUuid()) + punishment.getName(), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
+                                new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + ProxyServer.getInstance().getPlayer(punishment.getUuid()) + punishment.getName(), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1).create(true);
                             }
                         }
                     }
@@ -153,7 +154,7 @@ public class AltsBan implements Listener {
             for(String uuid : players) {
                 //ProxiedPlayer playerListUUID = ProxyServer.getInstance().getPlayer(uuid);
                 String playername = UUIDFetcher.getName(uuid);
-                new Punishment(playername,uuid,e.getPunishment().getReason() + " &6From an alt which is " + ProxyServer.getInstance().getPlayer(e.getPunishment().getUuid()),e.getPunishment().getOperator(),e.getPunishment().getType(),e.getPunishment().getStart(),e.getPunishment().getEnd(),e.getPunishment().getCalculation(),-1);
+                new Punishment(playername,uuid,e.getPunishment().getReason() + " &6From an alt which is " + ProxyServer.getInstance().getPlayer(e.getPunishment().getUuid()),e.getPunishment().getOperator(),e.getPunishment().getType(),e.getPunishment().getStart(),e.getPunishment().getEnd(),e.getPunishment().getCalculation(),-1).create(true);
             }
             }
 

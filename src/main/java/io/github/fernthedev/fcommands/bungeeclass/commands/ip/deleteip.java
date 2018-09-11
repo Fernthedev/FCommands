@@ -204,8 +204,7 @@ public class deleteip extends Command {
                         } catch (IOException ee) {
                             ee.printStackTrace();
                         }
-
-                        FernCommands.getInstance().getLogger().info("Made ip invisible to player " + key + " requested by " + ProxyServer.getInstance().getPlayer(deleteipconfig.getString("Requested")).getDisplayName());
+                        FernCommands.getInstance().getLogger().info("Made ip invisible to player " + key + " requested by " + deleteipconfig.getString("Requested"));
 
                     }else {
                         timer.schedule(new TimerTask() {
