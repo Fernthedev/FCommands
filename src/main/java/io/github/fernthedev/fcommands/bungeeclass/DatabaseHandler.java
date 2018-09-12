@@ -61,6 +61,7 @@ public class DatabaseHandler {
             }
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection(url,username,password);
+            Universal.getMethods().getLogger().info("Connection successful to MySQL");
         }
     }
 

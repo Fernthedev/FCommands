@@ -79,7 +79,9 @@ public class FernCommands extends Plugin {
         }
         try {
             FileManager.getInstance().loadFiles("config",false);
+            getLogger().info("Attempting to connect to MySQL");
             DatabaseHandler.setup();
+            getLogger().info("Mysql connection attempted.");
             connection = DatabaseHandler.getConnection();
         } catch (IOException e) {
             e.printStackTrace();

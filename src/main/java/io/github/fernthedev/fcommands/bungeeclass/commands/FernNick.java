@@ -57,7 +57,7 @@ public class FernNick extends FCommand implements Listener {
                     String sql = "DELETE FROM fern_nicks WHERE PLAYERUUID='" + formattedUUID + "';";
                     Universal.getMethods().getLogger().info(sql);
 
-                    PreparedStatement stmt = DatabaseHandler.getConnection().prepareStatement(sql);
+                    PreparedStatement stmt = connection.prepareStatement(sql);
 
                     stmt.executeUpdate();
 

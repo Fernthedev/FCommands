@@ -61,23 +61,27 @@ public class seen extends Command implements Listener {
                 getLogger.info("Requesting if " + ProxyServer.getInstance().getPlayer(ptarget).getDisplayName() + " is vanished");
                 AskPlaceHolder askPlaceHolder = new AskPlaceHolder(ProxyServer.getInstance().getPlayer(ptarget), "%fvanish_isvanished%");
 
-                askPlaceHolder.setRunnable(new MessageRunnable() {
-                    @Override
-                    public void run() {
-                        super.run();
-                        getLogger.info("Player " + ProxyServer.getInstance().getPlayer(ptarget).getDisplayName() + " is " + askPlaceHolder.getPlaceHolderResult() + " and is replaced is " + askPlaceHolder.isPlaceHolderReplaced());
-                        getLogger.info("The player was " + askPlaceHolder.getPlaceHolderResult());
-                        if (!askPlaceHolder.isPlaceHolderReplaced() || askPlaceHolder.getPlaceHolderResult() == null) {
-                            sender.sendMessage(bungeee.message("&cThere was an error trying to find this player. Please try again later"));
-                        } else {
-                            if (askPlaceHolder.getPlaceHolderResult().equalsIgnoreCase("vanished") && !sender.hasPermission("sv.see")) {
+                if(!sender.hasPermission("sv.see")) {
+                    askPlaceHolder.setRunnable(new MessageRunnable() {
+                        @Override
+                        public void run() {
+                            super.run();
+                            getLogger.info("Player " + ProxyServer.getInstance().getPlayer(ptarget).getDisplayName() + " is " + askPlaceHolder.getPlaceHolderResult() + " and is replaced is " + askPlaceHolder.isPlaceHolderReplaced());
+                            getLogger.info("The player was " + askPlaceHolder.getPlaceHolderResult());
+                            if (!askPlaceHolder.isPlaceHolderReplaced() || askPlaceHolder.getPlaceHolderResult() == null) {
                                 sender.sendMessage(bungeee.message("&cThere was an error trying to find this player. Please try again later"));
                             } else {
-                                sender.sendMessage(bungeee.message("&aPlayer &2" + ptarget + " &awas found. Player is currently online on server: " + ProxyServer.getInstance().getPlayer(ptarget).getServer().getInfo().getName()));
+                                if (askPlaceHolder.getPlaceHolderResult().equalsIgnoreCase("vanished")) {
+                                    sender.sendMessage(bungeee.message("&cThere was an error trying to find this player. Please try again later"));
+                                } else {
+                                    sender.sendMessage(bungeee.message("&aPlayer &2" + ptarget + " &awas found. Player is currently online on server: " + ProxyServer.getInstance().getPlayer(ptarget).getServer().getInfo().getName()));
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }else{
+                    sender.sendMessage(bungeee.message("&aPlayer &2" + ptarget + " &awas found. Player is currently online on server: " + ProxyServer.getInstance().getPlayer(ptarget).getServer().getInfo().getName()));
+                }
 
 
 

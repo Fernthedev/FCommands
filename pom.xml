@@ -97,6 +97,14 @@
             <scope>system</scope>
             <systemPath>${basedir}/Dependencies/worldguard-6.2.1.jar</systemPath>
         </dependency>
+
+        <!--MySQL-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.12</version>
+        </dependency>
+
         <!-- WATERFALL -->
         <!--<dependency>
             <groupId>io.github.waterfallmc</groupId>
@@ -119,6 +127,8 @@
             <version>1.12.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
+
 
         <dependency>
             <groupId>org.spigotmc</groupId>
