@@ -48,15 +48,18 @@ public class AltsBan implements Listener {
             if (ipfileloaded) {
                 List<String> players = ipconfig.getStringList(ip);
 
-                List<String> ips = new ArrayList<>();
-                ips.add(ip);
+                //List<String> ips = new ArrayList<>();
+                //ips.add(ip);
 
                 for (String ipe : ipconfig.getKeys()) {
                     if (!ipe.equals(ip)) {
                         List<String> playips = ipconfig.getStringList(ipe);
                         if (!playips.isEmpty() && playips.contains(uuidPlayer)) {
                             for (String pluuid : playips) {
+                                pluuid = pluuid.replace("-","");
+
                                 if (!players.contains(pluuid)) {
+
                                     players.add(pluuid);
                                 }
                             }
@@ -66,32 +69,47 @@ public class AltsBan implements Listener {
 
 
                 for (String uuid : players) {
-                    String playername = UUIDFetcher.getName((uuid));
+                    String playername = UUIDFetcher.getName(uuid);
+                    FernCommands.getInstance().getLogger().info("Player is " + uuid + " and is going to get punishment from player " + e.getPlayer().getName());
                     //ProxiedPlayer playerListUUID = ProxyServer.getInstance().getPlayer(uuid);
 
                     if (PunishmentManager.get().isBanned(uuid) || PunishmentManager.get().isMuted(uuid)) {
                         if (!PunishmentManager.get().getPunishments(uuid, PunishmentType.MUTE, true).isEmpty()) {
                             for (Punishment punishment : PunishmentManager.get().getPunishments(uuid, PunishmentType.MUTE, true)) {
-                                new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + ProxyServer.getInstance().getPlayer(punishment.getUuid()) + punishment.getName(), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1).create(true);
+
+                                Punishment punishment1 = new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + ProxyServer.getInstance().getPlayer(punishment.getUuid()) + punishment.getName(), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
+                                if(!PunishmentManager.get().getPunishments(uuid,punishment.getType(),true).contains(punishment1))
+                                    punishment1.create(true);
+
                             }
                         }
 
                         if (!PunishmentManager.get().getPunishments(uuid, PunishmentType.TEMP_MUTE, true).isEmpty()) {
                             for (Punishment punishment : PunishmentManager.get().getPunishments(uuid, PunishmentType.TEMP_MUTE, true)) {
-                                new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + ProxyServer.getInstance().getPlayer(punishment.getUuid()) + punishment.getName(), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1).create(true);
+
+                                Punishment punishment1 = new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + ProxyServer.getInstance().getPlayer(punishment.getUuid()) + punishment.getName(), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
+                                if(!PunishmentManager.get().getPunishments(uuid,punishment.getType(),true).contains(punishment1))
+                                    punishment1.create(true);
+
                             }
                         }
 
                         if (!PunishmentManager.get().getPunishments(uuid, PunishmentType.BAN, true).isEmpty()) {
 
                             for (Punishment punishment : PunishmentManager.get().getPunishments(uuid, PunishmentType.BAN, true)) {
-                                new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + ProxyServer.getInstance().getPlayer(punishment.getUuid()) + punishment.getName(), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1).create(true);
+                                Punishment punishment1 = new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + ProxyServer.getInstance().getPlayer(punishment.getUuid()) + punishment.getName(), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
+                                if(!PunishmentManager.get().getPunishments(uuid,punishment.getType(),true).contains(punishment1))
+                                punishment1.create(true);
+
                             }
                         }
 
                         if (!PunishmentManager.get().getPunishments(uuid, PunishmentType.TEMP_BAN, true).isEmpty()) {
                             for (Punishment punishment : PunishmentManager.get().getPunishments(uuid, PunishmentType.TEMP_BAN, true)) {
-                                new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + ProxyServer.getInstance().getPlayer(punishment.getUuid()) + punishment.getName(), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1).create(true);
+                                Punishment punishment1 = new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + ProxyServer.getInstance().getPlayer(punishment.getUuid()) + punishment.getName(), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
+                                if(!PunishmentManager.get().getPunishments(uuid,punishment.getType(),true).contains(punishment1))
+                                punishment1.create(true);
+
                             }
                         }
                     }
@@ -103,60 +121,95 @@ public class AltsBan implements Listener {
 
     @EventHandler
     public void onPunish(PunishmentEvent e) {
-        ProxiedPlayer player = ProxyServer.getInstance().getPlayer(e.getPunishment().getUuid());
-
+/*
         if(player == null) {
-            FernCommands.getInstance().getLogger().info("There was an issue finding a punished player with the uuid of " + e.getPunishment().getUuid());
+            FernCommands.getInstance().getLogger().info("There was an issue finding a punished player with the uuid of " + e.getPunishment().getUuid() + " and name is " + e.getPunishment().getName());
+
             return;
-        }
+        }else punishedUUID = player.getUniqueId().toString();
 
         Configuration ipconfig = new FileManager().getIpconfig();
 
-        String uuidPlayer = player.getUniqueId().toString();
+        String uuidPlayer = player.getUniqueId().toString();*/
 
-        String ip = player.getAddress().getHostString();
-        ip = ip.replaceAll("\\.", " ");
+        //String ip = player.getAddress().getHostString();
+        //ip = ip.replaceAll("\\.", " ");
 
 
         //String uuid = p.getUniqueId().toString();
 
+
+        String uuidPlayer = e.getPunishment().getUuid();
+
+        String name = UUIDFetcher.getName(uuidPlayer);
+
+        String uuidPlayerUUID = UUIDFetcher.getUUID(e.getPunishment().getName());
+
+        if (uuidPlayerUUID != null) uuidPlayer = uuidPlayerUUID;
+        else uuidPlayer = null;
+
+
+        FernCommands.getInstance().printInLog(this, "Player UUID " + uuidPlayer + " is " + name + " and is getting others punished.");
+
         boolean ipfileloaded;
 
         try {
-            new FileManager().loadFiles("ip",true);
+            new FileManager().loadFiles("ip", true);
             ipfileloaded = true;
         } catch (IOException ee) {
             FernCommands.getInstance().getLogger().warning("Unable to load ips");
             ipfileloaded = false;
         }
 
-        if(ipfileloaded) {
-            List<String> players = ipconfig.getStringList(ip);
+        if (ipfileloaded && uuidPlayer != null) {
+            Configuration ipconfig = new FileManager().getIpconfig();
+
+            List<String> players = new ArrayList<>();
 
             List<String> ips = new ArrayList<>();
-            ips.add(ip);
 
-            for(String ipe : ipconfig.getKeys()) {
-                if (!ipe.equals(ip)) {
-                    List<String> playips = ipconfig.getStringList(ipe);
-                    if (!playips.isEmpty() && playips.contains(uuidPlayer)) {
-                        for (String pluuid : playips) {
-                            if (!players.contains(pluuid)) {
-                                players.add(pluuid);
-                            }
-                        }
+            //List<String> ips = new ArrayList<>();
+            //ips.add(ip);
+
+            for (String ipe : ipconfig.getKeys()) {
+                // FernCommands.getInstance().printInLog(this,ipe + " is the ip being checked now.");
+                List<String> playips = ipconfig.getStringList(ipe);
+                if (!playips.isEmpty() && playips.contains(uuidPlayer)) {
+                    ips.add(ipe);
+                }
+            }
+
+            for(String ipe : ips) {
+                List<String> playips = ipconfig.getStringList(ipe);
+                for(String pluuid : playips) {
+                    print("The ip being checked is " + ipe + " and the uuid being checked is " + pluuid);
+                    if (!players.contains(pluuid)) {
+                        players.add(pluuid);
                     }
                 }
             }
 
+            print("Players list is " + players.toString());
 
+            for (String uuid : players) {
+                print("The uuid is " + uuid);
+                String playername;
+                if(ProxyServer.getInstance().getPlayer(uuid) != null) {
+                    playername = ProxyServer.getInstance().getPlayer(uuid).getName();
+                }else {
+                    playername = UUIDFetcher.getName(uuid);
+                }
 
-            for(String uuid : players) {
-                //ProxiedPlayer playerListUUID = ProxyServer.getInstance().getPlayer(uuid);
-                String playername = UUIDFetcher.getName(uuid);
-                new Punishment(playername,uuid,e.getPunishment().getReason() + " &6From an alt which is " + ProxyServer.getInstance().getPlayer(e.getPunishment().getUuid()),e.getPunishment().getOperator(),e.getPunishment().getType(),e.getPunishment().getStart(),e.getPunishment().getEnd(),e.getPunishment().getCalculation(),-1).create(true);
+                print("A uuid is " + uuid + " and name is " + playername + " punishing now.");
+                if(playername == null) return;
+
+                Punishment punishment = new Punishment(playername, uuid, e.getPunishment().getReason() + " &6From an alt which is " + ProxyServer.getInstance().getPlayer(e.getPunishment().getUuid()), e.getPunishment().getOperator(), e.getPunishment().getType(), e.getPunishment().getStart(), e.getPunishment().getEnd(), e.getPunishment().getCalculation(), -1);
+                if (!PunishmentManager.get().getPunishments(uuid, punishment.getType(), true).contains(punishment))
+                    punishment.create(true);
             }
-            }
+        } else {
+            FernCommands.getInstance().printInLog(this, "Failed to load ips. UUID Player is " + uuidPlayer);
+        }
 
     }
 
@@ -183,4 +236,9 @@ public class AltsBan implements Listener {
         return "";
     }*/
 
+
+    public void print(Object log) {
+        if(log == null) log = "null because the object was null";
+        FernCommands.getInstance().printInLog(this,log);
+    }
 }

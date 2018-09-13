@@ -2,9 +2,13 @@ package io.github.fernthedev.fcommands.bungeeclass;
 
 
 import com.google.gson.Gson;
+import io.github.fernthedev.fcommands.Universal.UUIDFetcher;
 import io.github.fernthedev.fcommands.Universal.Universal;
 import io.github.fernthedev.fcommands.bungeeclass.commands.*;
-import io.github.fernthedev.fcommands.bungeeclass.commands.ip.*;
+import io.github.fernthedev.fcommands.bungeeclass.commands.ip.AltsBan;
+import io.github.fernthedev.fcommands.bungeeclass.commands.ip.ShowAlts;
+import io.github.fernthedev.fcommands.bungeeclass.commands.ip.deleteip;
+import io.github.fernthedev.fcommands.bungeeclass.commands.ip.mainip;
 import io.github.fernthedev.fcommands.bungeeclass.placeholderapi.AskPlaceHolder;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -134,6 +138,8 @@ public class FernCommands extends Plugin {
 
         getProxy().getPluginManager().registerListener(this, new punishMOTD());
 
+        UUIDFetcher.addRequestTimer();
+
         //MAIN FERN COMMAND MANAGER
         getProxy().getPluginManager().registerCommand(this, new fernmain());
         getProxy().getPluginManager().registerCommand(this,new ShowAlts());
@@ -197,6 +203,10 @@ public class FernCommands extends Plugin {
         }, 3L, TimeUnit.SECONDS);
     }
 
+
+    public void printInLog(Object classe, Object log) {
+        getLogger().info("{" + classe.getClass().getName() + "} " + log);
+    }
 
 
     public static Gson getGson() {
