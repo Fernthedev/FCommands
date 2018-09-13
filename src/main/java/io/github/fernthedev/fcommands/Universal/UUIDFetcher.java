@@ -44,7 +44,7 @@ public class UUIDFetcher {
             if(fileData == null) {
                 if(playerUUIDCache.containsKey(name)) {
                     return playerUUIDCache.get(name).id;
-                }
+                }else return null;
             }else{
 
             PlayerUUID uuidResponse = gson.fromJson(fileData,PlayerUUID.class);
@@ -189,6 +189,7 @@ public class UUIDFetcher {
             } catch (IOException e) {
                 if(e.getMessage().contains("code: 429")) {
                     requests = 601;
+                    FernCommands.getInstance().getLogger().info("[UUIDF");
                     addBanHourTask();
                     return null;
                 }else{
@@ -267,6 +268,10 @@ public class UUIDFetcher {
                 stopHourTask();
             }else if(!didHourCheck) didHourCheck = true;
         },1,1,TimeUnit.HOURS);
+    }
+
+    private static void print(Object log) {
+        FernCommands.getInstance().getLogger().info("[UUIDFetcher] " + log);
     }
 
     public static void addRequestTimer() {

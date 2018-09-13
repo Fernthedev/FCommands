@@ -127,7 +127,7 @@ public class AskPlaceHolder implements Listener {
                         server = null;
                     }
 
-                    if(in.available() > 0 && in.available() != -1) {
+                    if(in.available() > 0 && in.read() != -1) {
                         subchannel = in.readUTF();
                     }else{
                         subchannel = null;
