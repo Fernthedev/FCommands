@@ -10,6 +10,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
 
 public class NameHistory extends Command {
@@ -17,10 +18,13 @@ public class NameHistory extends Command {
         super("nh", "fernc.namehistory", "namehistory","fnh");
     }
 
+    private static HashMap<ProxiedPlayer,Long> cooldowns = new HashMap<>();
+
     @Override
     public void execute(CommandSender sender, String[] args) {
         if(args.length > 0) {
             ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[0]);
+            ProxiedPlayer senderPlayer = (ProxiedPlayer) sender;
             String playername;
             String uuidPlayer = UUIDFetcher.getUUID(args[0]);
             if(player != null || uuidPlayer != null) {
@@ -30,6 +34,16 @@ public class NameHistory extends Command {
                 }else{
                     playername = args[0];
                 }
+
+                if(cooldowns.containsKey(senderPlayer)) {
+                    int cooldownTimer = 60;
+                    long secondsLeft = ((cooldowns.get(senderPlayer)/1000)+ cooldownTimer) - (System.currentTimeMillis()/1000);
+                    if(secondsLeft>0) {
+                        sender.sendMessage(msg("You cant use that commands for another "+ secondsLeft +" seconds!"));
+                        return;
+                    }
+                }
+                cooldowns.put(player,System.currentTimeMillis());
                 List<UUIDFetcher.PlayerHistory> names = UUIDFetcher.getNameHistory(uuidPlayer);
                 if(names != null) {
                     sender.sendMessage(msg("&b" + playername + "'s names."));
@@ -41,6 +55,8 @@ public class NameHistory extends Command {
                         if(playerHistory.getTimeDateInt() != 0)
                         sender.sendMessage(msg("&3  -&b" + time));
                     }
+
+
                 }else{
                     sender.sendMessage(msg("&cUnable to find player history"));
                 }

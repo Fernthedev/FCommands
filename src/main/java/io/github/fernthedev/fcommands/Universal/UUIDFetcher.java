@@ -275,7 +275,12 @@ public class UUIDFetcher {
     }
 
     public static void addRequestTimer() {
-        requestTask = ProxyServer.getInstance().getScheduler().schedule(FernCommands.getInstance(), () -> requests = 0, 1, 10, TimeUnit.MINUTES);
+        requestTask = ProxyServer.getInstance().getScheduler().schedule(FernCommands.getInstance(), () ->{
+                requests = 0;
+                playerNameCache.clear();
+                playerUUIDCache.clear();
+                playerHistoryCache.clear();
+    }, 1, 10, TimeUnit.MINUTES);
     }
 
     public static void stopRequestTimer() {

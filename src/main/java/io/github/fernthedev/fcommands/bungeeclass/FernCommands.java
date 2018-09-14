@@ -174,6 +174,8 @@ public class FernCommands extends Plugin {
         ipfile = null;
         seenfile = null;
         fernmain.onDisable();
+        UUIDFetcher.stopRequestTimer();
+        UUIDFetcher.stopHourTask();
         seen.onDisable();
         hooks.onDisable();
         FileManager.onDisable();
