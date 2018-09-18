@@ -26,7 +26,9 @@ public class UUIDFetcher {
     private static Map<String,PlayerName> playerNameCache = new HashMap<>();
     private static Map<String,List<PlayerHistory>> playerHistoryCache = new HashMap<>();
 
-    private static ScheduledTask requestTask,banHourTask;
+    private static ScheduledTask requestTask;
+
+    private static ScheduledTask banHourTask;
 
     private static BukkitTask requestBukkitRunnable;
     private static BukkitTask banBukkitRunnable;
@@ -270,7 +272,7 @@ public class UUIDFetcher {
         hourRan = false;
         didHourCheck = false;
 
-        if (Universal.getMethods().getServeType() == ServType.Bungee) {
+        if (Universal.getMethods().getServeType() == ServType.BUNGEE) {
             banHourTask = ProxyServer.getInstance().getScheduler().schedule(FernCommands.getInstance(), () -> {
                 if (!hourRan && didHourCheck) {
                     hourRan = true;
@@ -280,7 +282,7 @@ public class UUIDFetcher {
             }, 1, 1, TimeUnit.HOURS);
         }
 
-        if(Universal.getMethods().getServeType() == ServType.Bukkit) {
+        if(Universal.getMethods().getServeType() == ServType.BUKKIT) {
             banBukkitRunnable = new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -300,7 +302,7 @@ public class UUIDFetcher {
     }
 
     public static void addRequestTimer() {
-        if (Universal.getMethods().getServeType() == ServType.Bungee) {
+        if (Universal.getMethods().getServeType() == ServType.BUNGEE) {
             requestTask = ProxyServer.getInstance().getScheduler().schedule(FernCommands.getInstance(), () -> {
                 requests = 0;
                 playerNameCache.clear();
@@ -309,7 +311,7 @@ public class UUIDFetcher {
             }, 1, 10, TimeUnit.MINUTES);
         }
 
-        if (Universal.getMethods().getServeType() == ServType.Bukkit) {
+        if (Universal.getMethods().getServeType() == ServType.BUKKIT) {
             requestBukkitRunnable = new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -324,10 +326,10 @@ public class UUIDFetcher {
     }
 
     public static void stopRequestTimer() {
-        if(Universal.getMethods().getServeType() == ServType.Bungee && requestTask != null)
+        if(Universal.getMethods().getServeType() == ServType.BUNGEE && requestTask != null)
         ProxyServer.getInstance().getScheduler().cancel(requestTask);
 
-        if(Universal.getMethods().getServeType() ==  ServType.Bukkit && requestBukkitRunnable != null)
+        if(Universal.getMethods().getServeType() ==  ServType.BUKKIT && requestBukkitRunnable != null)
         Bukkit.getScheduler().cancelTask(requestBukkitRunnable.getTaskId());
 
     }
@@ -335,7 +337,7 @@ public class UUIDFetcher {
     public static void stopHourTask() {
         ProxyServer.getInstance().getScheduler().cancel(banHourTask);
 
-        if(Universal.getMethods().getServeType() ==  ServType.Bukkit && banBukkitRunnable != null)
+        if(Universal.getMethods().getServeType() ==  ServType.BUKKIT && banBukkitRunnable != null)
             Bukkit.getScheduler().cancelTask(banBukkitRunnable.getTaskId());
     }
 }

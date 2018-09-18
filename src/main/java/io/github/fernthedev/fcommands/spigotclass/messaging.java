@@ -1,16 +1,17 @@
 package io.github.fernthedev.fcommands.spigotclass;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class messaging {
+
+    private messaging() {
+
+    }
 
     /**
      * {@link #sendRequest(Player, String)}
@@ -19,18 +20,25 @@ public class messaging {
         sendRequest(null, request);
     }
     /**
-     * Sends a Bungee Request using the Plugin Messaging System
+     * Sends a BUNGEE Request using the Plugin Messaging System
      *
      * @param player The player who will send the plugin message.
      * @param request The request of the plugin message.
      */
     public static void sendRequest(Player player, String request) {
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(stream);
+
         if(player == null)
             player = getRandomPlayer();
-        out.writeUTF(request);
+        try {
+            out.writeUTF(request);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         if (player != null)
-            player.sendPluginMessage(FernCommands.getInstance(), "BungeeCord", out.toByteArray());
+            player.sendPluginMessage(FernCommands.getInstance(), "BungeeCord", stream.toByteArray());
     }
     /**
      * {@link #sendRequest(String, String...)}
@@ -43,16 +51,21 @@ public class messaging {
 
 
     /**
-     * Sends a Bungee Request using the Plugin Messaging System
+     * Sends a BUNGEE Request using the Plugin Messaging System
      *
      * @param player The player who will send the plugin message.
      * @param message The message that will be sent.
      * @param request The request of the plugin message.
      */
     public static void sendRequest(Player player, String message, String... request) throws IOException {
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(stream);
 
-        Arrays.asList(request).forEach(out::writeUTF);
+
+        for (String s : request) {
+            out.writeUTF(s);
+        }
+
 
         ByteArrayOutputStream msgBytes = new ByteArrayOutputStream();
         DataOutputStream msgOut = new DataOutputStream(msgBytes);
@@ -65,7 +78,7 @@ public class messaging {
             player = getRandomPlayer();
 
         if (player != null)
-            player.sendPluginMessage(FernCommands.getInstance(), "BungeeCord", out.toByteArray());
+            player.sendPluginMessage(FernCommands.getInstance(), "BungeeCord", stream.toByteArray());
     }
 
 
@@ -74,7 +87,7 @@ public class messaging {
      * @return A random Player (/ the first player in the Player Collection)
      */
     private static Player getRandomPlayer() {
-        if (Bukkit.getServer().getOnlinePlayers().size() > 0)
+        if (!Bukkit.getServer().getOnlinePlayers().isEmpty())
             return Bukkit.getServer().getOnlinePlayers().iterator().next();
         else
             return null;

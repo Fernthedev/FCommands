@@ -3,6 +3,8 @@ package io.github.fernthedev.fcommands.bungeeclass;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.config.Configuration;
@@ -14,26 +16,30 @@ import java.net.Socket;
 
 public class servermaintenance implements Listener {
 
+    private boolean onlineCheck() {
+        boolean online;
+        Socket s = null;
+        try {
+            s = new Socket();
+            s.connect(new InetSocketAddress("localhost", 25566), 20);
+            online = true;
+        } catch (Exception e) {
+            online = false;
+        } finally {
+            if (s != null)
+                try {
+                    s.close();
+                } catch (Exception ignored) {
+                    FernCommands.getInstance().getLogger().info("Unable to close socket (ignore this)");
+                }
+        }
+        return online;
+    }
+
     @SuppressWarnings({"deprecation", "ConstantConditions"})
     private boolean lobbycheck() {
         ProxyServer getProxy = ProxyServer.getInstance();
-        boolean online;
-        {
-            Socket s = null;
-            try {
-                s = new Socket();
-                s.connect(new InetSocketAddress("localhost", 25566), 20);
-                online = true;
-            } catch (Exception e) {
-                online = false;
-            } finally {
-                if (s != null)
-                    try {
-                        s.close();
-                    } catch (Exception ignored) {
-                    }
-            }
-        }
+        boolean online = onlineCheck();
 
         if (online) {
             getProxy.getLogger().info("Lobby was connected, disabling maintenance");
@@ -44,9 +50,10 @@ public class servermaintenance implements Listener {
         }
         return online;
     }
+
+
     @EventHandler
-    @SuppressWarnings("deprecation")
-    public void MaintenanceMotd(ProxyPingEvent eping) {
+    public void maintenanceMOTD(ProxyPingEvent eping) {
         boolean online = this.lobbycheck();
         if (online) {
             try {
@@ -57,27 +64,32 @@ public class servermaintenance implements Listener {
             Configuration config = new FileManager().getConfig();
             ServerPing pingResponse = eping.getResponse();
             //PendingConnection address = eping.getConnection();
-            Object motd = config.get("Motd");
+            String motd = config.getString("Motd");
             if (motd == null) {
                 ProxyServer.getInstance().getLogger().warning("Unable to find MOTD");
             } else {
                 //String motd = config.getString("Motd");
                 String emotd;
-                emotd = motd.toString();
-                if(emotd == null) {
+                emotd = motd;
+                if(emotd.isEmpty()) {
                     FernCommands.getInstance().getLogger().warning("Motd is null oh no!");
                 }
-                //ChatColor.translateAlternateColorCodes('&', (String) motd);
-                motd = ((String) motd).replace('&','§');
-                pingResponse.setDescription((String) motd);
+
+                motd = motd.replace("\\n", "\n");
+
+                pingResponse.setDescriptionComponent(message(motd));
                 eping.setResponse(pingResponse);
             }
         }else {
             ServerPing pingResponse = eping.getResponse();
             //PendingConnection address = eping.getConnection();
-            pingResponse.setDescription(ChatColor.RED + "SERVER UNDER MAINTENANCE!");
+            pingResponse.setDescriptionComponent(message("&cSERVER UNDER MAINTENANCE!"));
             eping.setResponse(pingResponse);
         }
+    }
+
+    public BaseComponent message(String text) {
+        return new TextComponent(ChatColor.translateAlternateColorCodes('&',text));
     }
 }
 

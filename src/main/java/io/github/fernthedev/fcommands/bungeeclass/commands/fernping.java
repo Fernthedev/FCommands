@@ -22,7 +22,7 @@ public class fernping extends Command {
                 ProxiedPlayer p = (ProxiedPlayer) sender;
 
                 sender.sendMessage(message("&aYour FernPing is &9" + p.getPing()));
-                //Player p = Bukkit.getPlayer("PlayerName");
+                //Player p = BUKKIT.getPlayer("PlayerName");
                 // if (p != null) {
                 // Do stuff
                 //} else {

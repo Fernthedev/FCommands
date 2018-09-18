@@ -10,13 +10,13 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 
 @SuppressWarnings("unused")
 public class BedFire implements Listener {
-    //Player players = (Player) Bukkit.getServer().getOnlinePlayers();
+    //Player players = (Player) BUKKIT.getServer().getOnlinePlayers();
     @EventHandler
     public static void onPlayerBedEnter(PlayerBedEnterEvent event) {
         FernCommands loginfo = new FernCommands();
 
         Bukkit.getLogger().info("LOADED BEDFIRE EVENT");
-        //for (Player players : Bukkit.getServer().getOnlinePlayers()) {
+        //for (Player players : BUKKIT.getServer().getOnlinePlayers()) {
           /*  if (players.isSleeping()) {
                 players.setFireTicks(200);
                 players.sendMessage(ChatColor.GOLD + "YOU'RE NOW ON FIRE THANKS TO A SHAODW! HAHAHAHAH");
@@ -25,7 +25,7 @@ public class BedFire implements Listener {
 
         Player target = event.getPlayer();
         if (!(target.isInvulnerable())) {
-            if (!(target.getGameMode() == GameMode.CREATIVE)) {
+            if (target.getGameMode() != GameMode.CREATIVE) {
                 target.setFireTicks(200);
                 target.sendMessage(ChatColor.GOLD + "A Shadow Burnt you to death. Maybe.");
                 Bukkit.getLogger().info("Burnt inbed: " + target.getDisplayName());

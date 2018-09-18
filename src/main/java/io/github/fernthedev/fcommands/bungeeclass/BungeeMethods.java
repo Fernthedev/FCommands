@@ -19,6 +19,6 @@ public class BungeeMethods implements MethodInterface {
 
     @Override
     public ServType getServeType() {
-        return ServType.Bungee;
+        return ServType.BUNGEE;
     }
 }

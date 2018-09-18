@@ -1,8 +1,5 @@
 package io.github.fernthedev.fcommands.spigotclass;
 
-import com.onarandombox.MultiverseCore.MultiverseCore;
-import com.onarandombox.MultiverseCore.api.MultiverseWorld;
-import com.onarandombox.MultiverseCore.utils.WorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,7 +10,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.plugin.Plugin;
 
 import java.util.Random;
 
@@ -33,21 +29,14 @@ public class skylands implements Listener {
       To print out using the plugin name prefix
      */
 
-        //thrown = true;
-        //if (!(event.getEntity().getShooter() instanceof Player)) { return; }
-        //getMultiverseCore = new FernCommands().getMultiverseCore();
+
         if (event.getEntity().toString().contentEquals("CraftEnderPearl") || event.getEntity().getType() == EntityType.ENDER_PEARL) {
             //thrown = true;
             Player player = (Player) event.getEntity().getShooter();
-            Location hitlocation = event.getEntity().getLocation();
             Entity enderpearl = event.getEntity();
+
             if (player.getEyeLocation().getY() >= 240 && player.getLocation().getPitch() == -90 && player.getWorld() != Bukkit.getWorld("skyland")) {
-                WorldManager wm = new WorldManager(getMultiverseCore());
-                //new FernCommands().infolog("Enderpearl launched at 240 or higher and looking straight up");
-                //WorldManager wm = new WorldManager(getMultiverseCore());
-                //WorldManager wm = new WorldManager(getMultiverseCore());
-                MultiverseWorld world = wm.getMVWorld("skyland");
-                //Bukkit.getServer().getLogger().info("Multiverse worlds found: " + worlds);
+
                 if (Bukkit.getWorld("skyland").getLoadedChunks() != null) {
                     //for (Object worlde : worlds) {
                     //MultiverseWorld world = wm.getMVWorld((String) worlde);
@@ -56,12 +45,11 @@ public class skylands implements Listener {
                     Location plocation = player.getLocation();
                     int x = (int) player.getLocation().getX();
                     int z = (int) player.getLocation().getZ();
-                    //int y = Bukkit.getWorld("skyland").getHighestBlockYAt(player.getLocation());
+                    //int y = BUKKIT.getWorld("skyland").getHighestBlockYAt(player.getLocation());
                     int y = 256;
                     Location goworld = new Location(Bukkit.getWorld("skyland"),x,y,z,player.getLocation().getYaw(),player.getLocation().getPitch());
 
 
-                    String type = plocation.getBlock().getType().toString();
 
                     player.sendMessage(FernCommands.message("Going to find a place to send you"));
 
@@ -153,21 +141,9 @@ public class skylands implements Listener {
                 //If the cause of the event is the void
                 e.setCancelled(true);
                 player.teleport(new Location(Bukkit.getServer().getWorlds().get(0),player.getLocation().getX(),256,player.getLocation().getZ()));
-                //Teleport the player to the world's spawn-location
-                //player.sendMessage(ChatColor.DARK_AQUA + "You've been teleported back to spawn!");
-                //Send the player a fancy message saying he was being stupid
+
             }
         }
-    }
-
-    public MultiverseCore getMultiverseCore() {
-        Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
-
-        if (plugin instanceof MultiverseCore) {
-            return (MultiverseCore) plugin;
-        }
-
-        throw new RuntimeException("MultiVerse not found!");
     }
 
 

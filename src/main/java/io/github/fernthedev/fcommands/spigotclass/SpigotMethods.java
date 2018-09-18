@@ -18,6 +18,6 @@ public class SpigotMethods implements MethodInterface {
 
     @Override
     public ServType getServeType() {
-        return ServType.Bukkit;
+        return ServType.BUKKIT;
     }
 }
