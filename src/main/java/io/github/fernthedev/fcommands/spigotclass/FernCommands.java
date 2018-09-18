@@ -90,7 +90,9 @@ public class FernCommands extends JavaPlugin {
         } catch (InvalidConfigurationException e) {
             getLogger().warning("Invalid Config");
         }
+        getLogger().info("Connecting to mysql");
         DatabaseHandler.setup();
+
         connection = DatabaseHandler.getConnection();
 
         registerListener();

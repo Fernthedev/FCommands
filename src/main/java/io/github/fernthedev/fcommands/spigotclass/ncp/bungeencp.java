@@ -124,6 +124,7 @@ public class bungeencp extends AbstractNCPHook implements PluginMessageListener,
             // Send a report notification to other servers
             messaging.sendRequest(player, FernCommands.getGson().toJson(new playerreport(player.getName(), checkType, info.getTotalVl())), "Forward", "ONLINE", FernCommands.getInstance().getName());
         } catch (IOException e) {
+
         }
         /*try {
             // Send a report notification to other servers

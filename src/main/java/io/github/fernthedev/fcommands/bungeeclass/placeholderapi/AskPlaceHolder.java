@@ -127,7 +127,11 @@ public class AskPlaceHolder implements Listener {
                         server = null;
                     }
 
-                    if(in.available() > 0 && in.read() != -1) {
+                    byte[] data = new byte[26];
+
+                    int bytesRead = in.read(data);
+
+                    if(in.available() > 0 && bytesRead != -1) {
                         subchannel = in.readUTF();
                     }else{
                         subchannel = null;

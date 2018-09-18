@@ -8,6 +8,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -67,9 +68,9 @@ public class punishMOTD implements Listener {
                     FernCommands.getInstance().getLogger().info("Pinged by " + hostAddress + " and uuid is " + players.toString() + " the player names are " + playernames.toString());
                 }
                 for (String key : players) {
-                    if (hooks.getInstance().hasAdvancedBan()) {
+                    if (hooks.getInstance().hasAdvancedBan() && PunishmentManager.get().isBanned(key)) {
                         //getProxy.getLogger().info("Pinged by " + hostAddress + " and uuid is " + key);
-                        if (PunishmentManager.get().isBanned(key)) {
+
                             PunishmentManager.get().getBan(key);
                             //PERM BAN
                             BaseComponent[] messagee;
@@ -87,17 +88,12 @@ public class punishMOTD implements Listener {
                                 //TEMP BAN
                             } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.TEMP_BAN) {
                                 long time = PunishmentManager.get().getBan(key).getEnd();
-                                //String hms = String.format("%02d:%02d:%02d",
-                                //        TimeUnit.MILLISECONDS.toHours(time),
-                                //       TimeUnit.MILLISECONDS.toMinutes(time) -
-                                //               TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(time)), // The change is in this line
-                                //        TimeUnit.MILLISECONDS.toSeconds(time) -
-                                //                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time)));
+
 
 
                                 SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm:ss");
                                 String hms = sdf.format(time);
-                                //for(sdf.format(time - 1); ;) {
+
                                 sdf.format(time - 1);
                                 messagee = message("&c&lYOU HAVE BEEN BANNED UNTIL " + hms, false);
                                 pingResponse.setDescriptionComponent(messagee[0]);
@@ -107,12 +103,7 @@ public class punishMOTD implements Listener {
                                 //  }
                             } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.TEMP_IP_BAN) {
                                 long time = TimeManager.getTime() + PunishmentManager.get().getBan(key).getEnd();
-                                //  String hms = String.format("%02d:%02d:%02d",
-                                //       TimeUnit.MILLISECONDS.toHours(time),
-                                //        TimeUnit.MILLISECONDS.toMinutes(time) -
-                                ///                TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(time)),
-                                //        TimeUnit.MILLISECONDS.toSeconds(time) -
-                                //                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time)));
+
                                 SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm:ss");
                                 String hms = sdf.format(time);
                                 messagee = message("&c&lYOUR IP HAS BEEN BANNED UNTIL " + hms, false);
@@ -125,8 +116,6 @@ public class punishMOTD implements Listener {
 
                             }
                         }
-
-                    }
                 }
             }
         }
@@ -183,12 +172,9 @@ public class punishMOTD implements Listener {
         }
     }
 
-    @SuppressWarnings("unused")
-    private String message(String text) {
-        return text.replace("&","§");
+    public BaseComponent message(String text) {
+        return new TextComponent(ChatColor.translateAlternateColorCodes('&',text));
     }
-
-
 
     @SuppressWarnings("unused")
     public BaseComponent[] message(String text,boolean no) {

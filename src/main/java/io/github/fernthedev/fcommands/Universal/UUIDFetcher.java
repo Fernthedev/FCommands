@@ -5,6 +5,9 @@ import com.google.gson.GsonBuilder;
 import io.github.fernthedev.fcommands.bungeeclass.FernCommands;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
+import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,6 +27,9 @@ public class UUIDFetcher {
     private static Map<String,List<PlayerHistory>> playerHistoryCache = new HashMap<>();
 
     private static ScheduledTask requestTask,banHourTask;
+
+    private static BukkitTask requestBukkitRunnable;
+    private static BukkitTask banBukkitRunnable;
 
     private static boolean hourRan = true;
     private static boolean didHourCheck = false;
@@ -50,7 +56,7 @@ public class UUIDFetcher {
             PlayerUUID uuidResponse = gson.fromJson(fileData,PlayerUUID.class);
 
 
-            FernCommands.getInstance().getLogger().info("The uuid for " + name + " is " + uuidResponse.getId());
+            Universal.getMethods().getLogger().info("The uuid for " + name + " is " + uuidResponse.getId());
 
                 if(playerUUIDCache.get(name) != uuidResponse) playerHistoryCache.remove(name);
                 playerUUIDCache.put(name,uuidResponse);
@@ -79,19 +85,19 @@ public class UUIDFetcher {
                 else return null;
             } else {
 
-                FernCommands.getInstance().getLogger().info("The url of name is " + NAME_URL.replace("%uuid%", uuid));
+                Universal.getMethods().getLogger().info("The url of name is " + NAME_URL.replace("%uuid%", uuid));
 
                 PlayerName[] uuidResponse = gson.fromJson(fileData, PlayerName[].class);
 
                 if (uuidResponse != null) {
-                    //FernCommands.getInstance().getLogger().info(gson.toJson(uuidResponse));
-                    FernCommands.getInstance().getLogger().info("The max length of response is " + uuidResponse.length);
+                    //Universal.getMethods().getLogger().info(gson.toJson(uuidResponse));
+                    Universal.getMethods().getLogger().info("The max length of response is " + uuidResponse.length);
 
                     if (uuidResponse.length > 0) {
 
                         PlayerName currentName = uuidResponse[uuidResponse.length - 1];
 
-                        FernCommands.getInstance().getLogger().info("The current name is " + currentName.name);
+                        Universal.getMethods().getLogger().info("The current name is " + currentName.name);
 
                         if(playerNameCache.get(uuid) != currentName) playerHistoryCache.remove(uuid);
                         playerNameCache.put(uuid,currentName);
@@ -101,8 +107,8 @@ public class UUIDFetcher {
                         return null;
                     }
                 } else {
-                    FernCommands.getInstance().getLogger().info("The response was empty");
-                    FernCommands.getInstance().getLogger().info("The response received is " + fileData);
+                    Universal.getMethods().getLogger().info("The response was empty");
+                    Universal.getMethods().getLogger().info("The response received is " + fileData);
 
 
                 }
@@ -134,16 +140,16 @@ public class UUIDFetcher {
                 }
 
             } else {
-                FernCommands.getInstance().getLogger().info("The url of namehistory is " + NAME_URL.replace("%uuid%", uuid));
+                Universal.getMethods().getLogger().info("The url of namehistory is " + NAME_URL.replace("%uuid%", uuid));
 
                 PlayerName[] uuidResponse = gson.fromJson(fileData, PlayerName[].class);
 
                 if (uuidResponse != null) {
-                    //FernCommands.getInstance().getLogger().info(gson.toJson(uuidResponse));
-                    FernCommands.getInstance().getLogger().info("The max length of response is " + uuidResponse.length);
+                    //Universal.getMethods().getLogger().info(gson.toJson(uuidResponse));
+                    Universal.getMethods().getLogger().info("The max length of response is " + uuidResponse.length);
                     for (int i = 0; i < uuidResponse.length; i++) {
                         PlayerName playerUUID = uuidResponse[i];
-                        FernCommands.getInstance().getLogger().info("A name from uuid " + uuid + " is " + playerUUID.name + " at length " + i);
+                        Universal.getMethods().getLogger().info("A name from uuid " + uuid + " is " + playerUUID.name + " at length " + i);
                     }
 
                     if (uuidResponse.length > 0) {
@@ -161,8 +167,8 @@ public class UUIDFetcher {
                         return null;
                     }
                 } else {
-                    FernCommands.getInstance().getLogger().info("The response was empty");
-                    FernCommands.getInstance().getLogger().info("The response received is " + fileData);
+                    Universal.getMethods().getLogger().info("The response was empty");
+                    Universal.getMethods().getLogger().info("The response received is " + fileData);
                 }
             }
         } catch (Exception e) {
@@ -174,7 +180,7 @@ public class UUIDFetcher {
 
 
     private static String readUrl(String urlString) throws Exception {
-        if (requests >= 600) {
+        if (requests < 560) {
             BufferedReader reader = null;
             try {
                 URL url = new URL(urlString);
@@ -189,7 +195,7 @@ public class UUIDFetcher {
             } catch (IOException e) {
                 if(e.getMessage().contains("code: 429")) {
                     requests = 601;
-                    FernCommands.getInstance().getLogger().info("[UUIDF");
+                    print("Received error 429, waiting for an hour to continue checking for uuids");
                     addBanHourTask();
                     return null;
                 }else{
@@ -200,6 +206,9 @@ public class UUIDFetcher {
                     reader.close();
                 requests++;
             }
+        }else{
+            print("There is over 600 requests sent, waiting for requests to be refreshed.");
+            return null;
         }
         return null;
     }
@@ -261,33 +270,72 @@ public class UUIDFetcher {
         hourRan = false;
         didHourCheck = false;
 
-        banHourTask = ProxyServer.getInstance().getScheduler().schedule(FernCommands.getInstance(), () -> {
-            if(!hourRan && didHourCheck) {
-                hourRan = true;
-                addRequestTimer();
-                stopHourTask();
-            }else if(!didHourCheck) didHourCheck = true;
-        },1,1,TimeUnit.HOURS);
+        if (Universal.getMethods().getServeType() == ServType.Bungee) {
+            banHourTask = ProxyServer.getInstance().getScheduler().schedule(FernCommands.getInstance(), () -> {
+                if (!hourRan && didHourCheck) {
+                    hourRan = true;
+                    addRequestTimer();
+                    stopHourTask();
+                } else if (!didHourCheck) didHourCheck = true;
+            }, 1, 1, TimeUnit.HOURS);
+        }
+
+        if(Universal.getMethods().getServeType() == ServType.Bukkit) {
+            banBukkitRunnable = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (!hourRan && didHourCheck) {
+                        hourRan = true;
+                        addRequestTimer();
+                        stopHourTask();
+                    } else if (!didHourCheck) didHourCheck = true;
+                }
+            }.runTaskLater(io.github.fernthedev.fcommands.spigotclass.FernCommands.getInstance(),
+                    TimeUnit.HOURS.toSeconds(1) *20);
+        }
     }
 
     private static void print(Object log) {
-        FernCommands.getInstance().getLogger().info("[UUIDFetcher] " + log);
+        Universal.getMethods().getLogger().info("[UUIDFetcher] " + log);
     }
 
     public static void addRequestTimer() {
-        requestTask = ProxyServer.getInstance().getScheduler().schedule(FernCommands.getInstance(), () ->{
+        if (Universal.getMethods().getServeType() == ServType.Bungee) {
+            requestTask = ProxyServer.getInstance().getScheduler().schedule(FernCommands.getInstance(), () -> {
                 requests = 0;
                 playerNameCache.clear();
                 playerUUIDCache.clear();
                 playerHistoryCache.clear();
-    }, 1, 10, TimeUnit.MINUTES);
+            }, 1, 10, TimeUnit.MINUTES);
+        }
+
+        if (Universal.getMethods().getServeType() == ServType.Bukkit) {
+            requestBukkitRunnable = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    requests = 0;
+                    playerNameCache.clear();
+                    playerUUIDCache.clear();
+                    playerHistoryCache.clear();
+                }
+            }.runTaskLater(io.github.fernthedev.fcommands.spigotclass.FernCommands.getInstance(),
+                    TimeUnit.MINUTES.toSeconds(10) * 20);
+        }
     }
 
     public static void stopRequestTimer() {
+        if(Universal.getMethods().getServeType() == ServType.Bungee && requestTask != null)
         ProxyServer.getInstance().getScheduler().cancel(requestTask);
+
+        if(Universal.getMethods().getServeType() ==  ServType.Bukkit && requestBukkitRunnable != null)
+        Bukkit.getScheduler().cancelTask(requestBukkitRunnable.getTaskId());
+
     }
 
     public static void stopHourTask() {
         ProxyServer.getInstance().getScheduler().cancel(banHourTask);
+
+        if(Universal.getMethods().getServeType() ==  ServType.Bukkit && banBukkitRunnable != null)
+            Bukkit.getScheduler().cancelTask(banBukkitRunnable.getTaskId());
     }
 }

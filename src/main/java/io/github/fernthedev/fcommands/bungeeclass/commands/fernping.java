@@ -43,23 +43,23 @@ public class fernping extends Command {
                 ProxiedPlayer p = ProxyServer.getInstance().getPlayer(args[0]);
                 if (p != null) {
                     //is connected
-                    AskPlaceHolder askPlaceHolder = new AskPlaceHolder(p,"%fvanish_isvanished%");
-                    askPlaceHolder.setRunnable(new MessageRunnable() {
-                        @Override
-                        public void run() {
-                            super.run();
-                            if(askPlaceHolder.getPlaceHolderResult().equalsIgnoreCase("Vanished")) {
-                                if(sender.hasPermission("sv.see")) {
-                                    sender.sendMessage(message("&c" + p + "'s &aFernPing is " + p.getPing()));
-                                }else {
-                                    sender.sendMessage(message("&cUnable to find &9" + args[0]));
-                                }
-                            }else{
-                                sender.sendMessage(message("&c" + p + "'s &aFernPing is " + p.getPing()));
-                            }
-                        }
-                    });
 
+                    if(p.hasPermission("sv.see")) {
+                        sender.sendMessage(message("&c" + p + "'s &aFernPing is " + p.getPing()));
+                    } else {
+                        AskPlaceHolder askPlaceHolder = new AskPlaceHolder(p, "%fvanish_isvanished%");
+                        askPlaceHolder.setRunnable(new MessageRunnable() {
+                            @Override
+                            public void run() {
+                                super.run();
+                                if (askPlaceHolder.getPlaceHolderResult().equalsIgnoreCase("Vanished")) {
+                                    sender.sendMessage(message("&cUnable to find &9" + args[0]));
+                                } else {
+                                    sender.sendMessage(message("&c" + p + "'s &aFernPing is " + p.getPing()));
+                                }
+                            }
+                        });
+                    }
 
                 } else {
                     sender.sendMessage(message("&cUnable to find &9" + args[0]));

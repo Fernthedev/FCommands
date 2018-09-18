@@ -4,6 +4,10 @@ import java.util.logging.Logger;
 
 public interface MethodInterface {
 
-    public Logger getLogger();
+    Logger getLogger();
 
+    Object getInstance();
+
+    ServType getServeType();
 }
+

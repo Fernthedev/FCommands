@@ -1,6 +1,7 @@
 package io.github.fernthedev.fcommands.bungeeclass.commands;
 
 import io.github.fernthedev.fcommands.Universal.UUIDFetcher;
+import io.github.fernthedev.fcommands.bungeeclass.FernCommands;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -12,13 +13,18 @@ import net.md_5.bungee.api.plugin.Command;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class NameHistory extends Command {
     public NameHistory() {
         super("nh", "fernc.namehistory", "namehistory","fnh");
+
+
     }
 
     private static HashMap<ProxiedPlayer,Long> cooldowns = new HashMap<>();
+
+    public static final int DEFAULT_COOLDOWN = 60;
 
     @Override
     public void execute(CommandSender sender, String[] args) {
@@ -28,22 +34,32 @@ public class NameHistory extends Command {
             String playername;
             String uuidPlayer = UUIDFetcher.getUUID(args[0]);
             if(player != null || uuidPlayer != null) {
-                if(player != null) {
+                if (player != null) {
                     uuidPlayer = player.getUniqueId().toString();
                     playername = player.getName();
-                }else{
+                } else {
                     playername = args[0];
                 }
 
-                if(cooldowns.containsKey(senderPlayer)) {
-                    int cooldownTimer = 60;
-                    long secondsLeft = ((cooldowns.get(senderPlayer)/1000)+ cooldownTimer) - (System.currentTimeMillis()/1000);
-                    if(secondsLeft>0) {
-                        sender.sendMessage(msg("You cant use that commands for another "+ secondsLeft +" seconds!"));
-                        return;
-                    }
+                long secondsLeft = System.currentTimeMillis() - getCooldown(senderPlayer);
+
+                if((TimeUnit.MILLISECONDS.toSeconds(secondsLeft) <= DEFAULT_COOLDOWN)) {
+                    long timer = TimeUnit.MILLISECONDS.toSeconds(secondsLeft) - DEFAULT_COOLDOWN;
+                    sender.sendMessage(msg("You cant use that commands for another " + timer + " seconds!"));
+                    return;
                 }
-                cooldowns.put(player,System.currentTimeMillis());
+
+
+                if (!sender.hasPermission("fernc.namehistory.bypass")) {
+                    FernCommands.getInstance().getLogger().info("Player does not have cooldown bypass");
+                    setCooldown(senderPlayer,System.currentTimeMillis());
+
+                }else FernCommands.getInstance().getLogger().info("Player has cooldown bypass, skipping.");
+
+
+
+
+
                 List<UUIDFetcher.PlayerHistory> names = UUIDFetcher.getNameHistory(uuidPlayer);
                 if(names != null) {
                     sender.sendMessage(msg("&b" + playername + "'s names."));
@@ -67,6 +83,18 @@ public class NameHistory extends Command {
         }else{
             sender.sendMessage(msg("&cNo player argument specified"));
         }
+    }
+
+    public void setCooldown(ProxiedPlayer player, long time){
+        if(time < 1) {
+            cooldowns.remove(player);
+        } else {
+            cooldowns.put(player, time);
+        }
+    }
+
+    public long getCooldown(ProxiedPlayer player){
+        return cooldowns.getOrDefault(player, (long) 0);
     }
 
     private BaseComponent[] msg(String text) {

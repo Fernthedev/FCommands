@@ -25,6 +25,8 @@ public class DatabaseHandler {
 
     private static boolean scheduled;
 
+    private static boolean isSetup = false;
+
     private static BukkitScheduler scheduler;
 
     //Connection vars
@@ -58,9 +60,9 @@ public class DatabaseHandler {
     }
 
     public void openConnection() throws SQLException, ClassNotFoundException {
-            if (connection != null && !connection.isClosed()) {
-                return;
-            }
+        if (connection != null && !connection.isClosed()) {
+            return;
+        }
         try { //We use a try catch to avoid errors, hopefully we don't get any.
             Class.forName("com.mysql.jdbc.Driver"); //this accesses Driver in jdbc.
         } catch (ClassNotFoundException e) {
@@ -68,9 +70,15 @@ public class DatabaseHandler {
             System.err.println("jdbc driver unavailable!");
             return;
         }
+        if (!isSetup) {
+            Universal.getMethods().getLogger().info("Connecting to MySQL now.");
+        }
+        connection = DriverManager.getConnection(url, username, password);
 
-            connection = DriverManager.getConnection(url,username,password);
-        Universal.getMethods().getLogger().info("Connected successfully");
+        if (!isSetup) {
+            Universal.getMethods().getLogger().info("Connected successfully");
+            isSetup = true;
+        }
     }
 
     public DatabaseHandler() {}
@@ -80,6 +88,9 @@ public class DatabaseHandler {
     }
 
     static void setup() {
+        if(!isSetup) {
+            Universal.getMethods().getLogger().info("Setting database connection");
+        }
         fileManager = FilesManager.getInstance();
 
         scheduler = Bukkit.getScheduler();
@@ -93,6 +104,8 @@ public class DatabaseHandler {
         urlHost = fileManager.getValue("DBHost","localhost");
 
         url = "jdbc:mysql://%host%:%port%/%database%".replaceAll("%host%",urlHost).replaceAll("%port%",port).replaceAll("%database%",database);
+
+
 
     }
 
