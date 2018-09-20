@@ -1,9 +1,9 @@
 package io.github.fernthedev.fcommands.bungeeclass;
 
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
-import org.bukkit.ChatColor;
 
 import java.io.File;
 import java.io.IOException;

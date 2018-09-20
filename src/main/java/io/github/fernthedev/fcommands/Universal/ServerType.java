@@ -1,6 +1,6 @@
 package io.github.fernthedev.fcommands.Universal;
 
-public enum ServType {
+public enum ServerType {
     BUNGEE,
     BUKKIT
 }

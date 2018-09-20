@@ -62,7 +62,7 @@ public class ShowAlts extends Command {
                     List<String> ips = new ArrayList<>();
 
                     if(ip != null) {
-                       players =ipconfig.getStringList(ip);
+                       players = ipconfig.getStringList(ip);
                         ips.add(ip);
                     } else{
                         players = new ArrayList<>();
@@ -73,17 +73,16 @@ public class ShowAlts extends Command {
                         players.add(UUIDFetcher.getUUID(playername));
                     }
 
-
-
-
                     for(String ipe : ipconfig.getKeys()) {
                         if (!ipe.equals(ip)) {
                             List<String> playips = ipconfig.getStringList(ipe);
-                            if (!playips.isEmpty() && playips.contains(uuidPlayer)) {
+                            if (!playips.isEmpty()) {
                                 ips.add(ipe);
                                 for (String pluuid : playips) {
-                                    if (!players.contains(pluuid)) {
-                                        players.add(pluuid);
+                                    pluuid = pluuid.replaceAll("-","");
+                                    if (pluuid.equals(uuidPlayer)) {
+                                        ips.add(pluuid);
+                                        break;
                                     }
                                 }
                             }

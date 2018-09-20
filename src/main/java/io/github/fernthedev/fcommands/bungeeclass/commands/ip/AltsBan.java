@@ -46,75 +46,65 @@ public class AltsBan implements Listener {
             }
 
             if (ipfileloaded) {
-                List<String> players = ipconfig.getStringList(ip);
-
-                //List<String> ips = new ArrayList<>();
-                //ips.add(ip);
 
                 for (String ipe : ipconfig.getKeys()) {
                     if (!ipe.equals(ip)) {
                         List<String> playips = ipconfig.getStringList(ipe);
                         if (!playips.isEmpty() && playips.contains(uuidPlayer)) {
                             for (String pluuid : playips) {
-                                pluuid = pluuid.replace("-","");
 
-                                if (!players.contains(pluuid)) {
 
-                                    players.add(pluuid);
+                                String uuid = pluuid.replace("-","");
+
+                                String playername = UUIDFetcher.getName(uuid);
+                                FernCommands.getInstance().getLogger().info("Player is " + uuid + " and is going to get punishment from player " + e.getPlayer().getName());
+                                //ProxiedPlayer playerListUUID = ProxyServer.getInstance().getPlayer(uuid);
+
+                                if (PunishmentManager.get().isBanned(uuid) || PunishmentManager.get().isMuted(uuid)) {
+                                    if (!PunishmentManager.get().getPunishments(uuid, PunishmentType.MUTE, true).isEmpty()) {
+                                        for (Punishment punishment : PunishmentManager.get().getPunishments(uuid, PunishmentType.MUTE, true)) {
+
+                                            Punishment punishment1 = new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + UUIDFetcher.getName(punishment.getUuid()), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
+                                            if(!PunishmentManager.get().getPunishments(uuid,punishment.getType(),true).contains(punishment1))
+                                                punishment1.create(true);
+
+                                        }
+                                    }
+
+                                    if (!PunishmentManager.get().getPunishments(uuid, PunishmentType.TEMP_MUTE, true).isEmpty()) {
+                                        for (Punishment punishment : PunishmentManager.get().getPunishments(uuid, PunishmentType.TEMP_MUTE, true)) {
+
+                                            Punishment punishment1 = new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + UUIDFetcher.getName(punishment.getUuid()), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
+                                            if(!PunishmentManager.get().getPunishments(uuid,punishment.getType(),true).contains(punishment1))
+                                                punishment1.create(true);
+
+                                        }
+                                    }
+
+                                    if (!PunishmentManager.get().getPunishments(uuid, PunishmentType.BAN, true).isEmpty()) {
+
+                                        for (Punishment punishment : PunishmentManager.get().getPunishments(uuid, PunishmentType.BAN, true)) {
+                                            Punishment punishment1 = new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + UUIDFetcher.getName(punishment.getUuid()), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
+                                            if(!PunishmentManager.get().getPunishments(uuid,punishment.getType(),true).contains(punishment1))
+                                                punishment1.create(true);
+
+                                        }
+                                    }
+
+                                    if (!PunishmentManager.get().getPunishments(uuid, PunishmentType.TEMP_BAN, true).isEmpty()) {
+                                        for (Punishment punishment : PunishmentManager.get().getPunishments(uuid, PunishmentType.TEMP_BAN, true)) {
+                                            Punishment punishment1 = new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + UUIDFetcher.getName(punishment.getUuid()), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
+                                            if(!PunishmentManager.get().getPunishments(uuid,punishment.getType(),true).contains(punishment1))
+                                                punishment1.create(true);
+
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
 
-
-                for (String uuid : players) {
-                    String playername = UUIDFetcher.getName(uuid);
-                    FernCommands.getInstance().getLogger().info("Player is " + uuid + " and is going to get punishment from player " + e.getPlayer().getName());
-                    //ProxiedPlayer playerListUUID = ProxyServer.getInstance().getPlayer(uuid);
-
-                    if (PunishmentManager.get().isBanned(uuid) || PunishmentManager.get().isMuted(uuid)) {
-                        if (!PunishmentManager.get().getPunishments(uuid, PunishmentType.MUTE, true).isEmpty()) {
-                            for (Punishment punishment : PunishmentManager.get().getPunishments(uuid, PunishmentType.MUTE, true)) {
-
-                                Punishment punishment1 = new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + UUIDFetcher.getName(punishment.getUuid()), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
-                                if(!PunishmentManager.get().getPunishments(uuid,punishment.getType(),true).contains(punishment1))
-                                    punishment1.create(true);
-
-                            }
-                        }
-
-                        if (!PunishmentManager.get().getPunishments(uuid, PunishmentType.TEMP_MUTE, true).isEmpty()) {
-                            for (Punishment punishment : PunishmentManager.get().getPunishments(uuid, PunishmentType.TEMP_MUTE, true)) {
-
-                                Punishment punishment1 = new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + UUIDFetcher.getName(punishment.getUuid()), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
-                                if(!PunishmentManager.get().getPunishments(uuid,punishment.getType(),true).contains(punishment1))
-                                    punishment1.create(true);
-
-                            }
-                        }
-
-                        if (!PunishmentManager.get().getPunishments(uuid, PunishmentType.BAN, true).isEmpty()) {
-
-                            for (Punishment punishment : PunishmentManager.get().getPunishments(uuid, PunishmentType.BAN, true)) {
-                                Punishment punishment1 = new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + UUIDFetcher.getName(punishment.getUuid()), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
-                                if(!PunishmentManager.get().getPunishments(uuid,punishment.getType(),true).contains(punishment1))
-                                punishment1.create(true);
-
-                            }
-                        }
-
-                        if (!PunishmentManager.get().getPunishments(uuid, PunishmentType.TEMP_BAN, true).isEmpty()) {
-                            for (Punishment punishment : PunishmentManager.get().getPunishments(uuid, PunishmentType.TEMP_BAN, true)) {
-                                Punishment punishment1 = new Punishment(playername, uuid, punishment.getReason() + "&6From an alt which is " + UUIDFetcher.getName(punishment.getUuid()), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
-                                if(!PunishmentManager.get().getPunishments(uuid,punishment.getType(),true).contains(punishment1))
-                                punishment1.create(true);
-
-                            }
-                        }
-                    }
-
-                }
             }
         }
     }

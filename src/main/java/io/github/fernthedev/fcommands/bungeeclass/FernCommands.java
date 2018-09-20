@@ -9,6 +9,7 @@ import io.github.fernthedev.fcommands.bungeeclass.commands.ip.AltsBan;
 import io.github.fernthedev.fcommands.bungeeclass.commands.ip.ShowAlts;
 import io.github.fernthedev.fcommands.bungeeclass.commands.ip.deleteip;
 import io.github.fernthedev.fcommands.bungeeclass.commands.ip.mainip;
+import io.github.fernthedev.fcommands.bungeeclass.methods.BungeeMethods;
 import io.github.fernthedev.fcommands.bungeeclass.placeholderapi.AskPlaceHolder;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -138,7 +139,11 @@ public class FernCommands extends Plugin {
 
         getProxy().getPluginManager().registerListener(this, new punishMOTD());
 
-        UUIDFetcher.addRequestTimer();
+        try {
+            UUIDFetcher.addRequestTimer();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         //MAIN FERN COMMAND MANAGER
         getProxy().getPluginManager().registerCommand(this, new fernmain());

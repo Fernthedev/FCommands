@@ -137,7 +137,7 @@
             <scope>system</scope>
             <systemPath>${basedir}/Dependencies/spigot-1.12.2-R0.1-SNAPSHOT.jar</systemPath>
         </dependency>
-        <!--Bukkit API-->
+        <!--BUKKIT API-->
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>

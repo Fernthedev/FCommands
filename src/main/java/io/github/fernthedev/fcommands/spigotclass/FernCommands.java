@@ -8,6 +8,7 @@ import io.github.fernthedev.fcommands.Universal.Universal;
 import io.github.fernthedev.fcommands.spigotclass.commands.fernmain;
 import io.github.fernthedev.fcommands.spigotclass.entity.NoAI;
 import io.github.fernthedev.fcommands.spigotclass.gui.namecolor;
+import io.github.fernthedev.fcommands.spigotclass.methods.SpigotMethods;
 import io.github.fernthedev.fcommands.spigotclass.ncp.bungeencp;
 import io.github.fernthedev.fcommands.spigotclass.ncp.cooldown;
 import io.github.fernthedev.fcommands.spigotclass.nick.NickReload;

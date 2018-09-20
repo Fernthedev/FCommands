@@ -2,19 +2,14 @@ package io.github.fernthedev.fcommands.Universal;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.github.fernthedev.fcommands.bungeeclass.FernCommands;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.scheduler.ScheduledTask;
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
+import io.github.fernthedev.fcommands.bungeeclass.methods.UUIDFetcherBungee;
+import io.github.fernthedev.fcommands.spigotclass.methods.UUIDFetcherSpigot;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class UUIDFetcher {
     private static final String UUID_URL = "https://api.mojang.com/users/profiles/minecraft/%name%";
@@ -22,19 +17,23 @@ public class UUIDFetcher {
 
     private static int requests = 0;
 
-    private static Map<String,PlayerUUID> playerUUIDCache = new HashMap<>();
-    private static Map<String,PlayerName> playerNameCache = new HashMap<>();
-    private static Map<String,List<PlayerHistory>> playerHistoryCache = new HashMap<>();
+    private static UUIDFetcherSpigot spigotMethods;
+    private static UUIDFetcherBungee bungeeMethods;
 
-    private static ScheduledTask requestTask;
+    public static void setRequests(int requests) {
+        UUIDFetcher.requests = requests;
+    }
 
-    private static ScheduledTask banHourTask;
+    public static Map<String,PlayerUUID> playerUUIDCache = new HashMap<>();
+    public static Map<String,PlayerName> playerNameCache = new HashMap<>();
+    public static Map<String,List<PlayerHistory>> playerHistoryCache = new HashMap<>();
 
-    private static BukkitTask requestBukkitRunnable;
-    private static BukkitTask banBukkitRunnable;
 
-    private static boolean hourRan = true;
-    private static boolean didHourCheck = false;
+
+
+
+    public static boolean hourRan = true;
+    public static boolean didHourCheck = false;
 
     private UUIDFetcher() {
     }
@@ -57,7 +56,9 @@ public class UUIDFetcher {
 
             PlayerUUID uuidResponse = gson.fromJson(fileData,PlayerUUID.class);
 
-
+            if(Universal.getMethods().getLogger() == null) {
+                throw new NullPointerException();
+            }else
             Universal.getMethods().getLogger().info("The uuid for " + name + " is " + uuidResponse.getId());
 
                 if(playerUUIDCache.get(name) != uuidResponse) playerHistoryCache.remove(name);
@@ -239,7 +240,7 @@ public class UUIDFetcher {
         }
     }
 @SuppressWarnings("unused")
-    class PlayerName {
+ public   class PlayerName {
         private String name;
         private long changedToAt;
 
@@ -253,7 +254,7 @@ public class UUIDFetcher {
     }
 
 @SuppressWarnings("unused")
-    class PlayerUUID {
+ public   class PlayerUUID {
         private String name;
         private String id;
 
@@ -272,28 +273,12 @@ public class UUIDFetcher {
         hourRan = false;
         didHourCheck = false;
 
-        if (Universal.getMethods().getServeType() == ServType.BUNGEE) {
-            banHourTask = ProxyServer.getInstance().getScheduler().schedule(FernCommands.getInstance(), () -> {
-                if (!hourRan && didHourCheck) {
-                    hourRan = true;
-                    addRequestTimer();
-                    stopHourTask();
-                } else if (!didHourCheck) didHourCheck = true;
-            }, 1, 1, TimeUnit.HOURS);
+        if (Universal.getMethods().getServeType() == ServerType.BUNGEE) {
+            bungeeMethods.runHourTask();
         }
 
-        if(Universal.getMethods().getServeType() == ServType.BUKKIT) {
-            banBukkitRunnable = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (!hourRan && didHourCheck) {
-                        hourRan = true;
-                        addRequestTimer();
-                        stopHourTask();
-                    } else if (!didHourCheck) didHourCheck = true;
-                }
-            }.runTaskLater(io.github.fernthedev.fcommands.spigotclass.FernCommands.getInstance(),
-                    TimeUnit.HOURS.toSeconds(1) *20);
+        if(Universal.getMethods().getServeType() == ServerType.BUKKIT) {
+            spigotMethods.runHourTask();
         }
     }
 
@@ -302,42 +287,39 @@ public class UUIDFetcher {
     }
 
     public static void addRequestTimer() {
-        if (Universal.getMethods().getServeType() == ServType.BUNGEE) {
-            requestTask = ProxyServer.getInstance().getScheduler().schedule(FernCommands.getInstance(), () -> {
-                requests = 0;
-                playerNameCache.clear();
-                playerUUIDCache.clear();
-                playerHistoryCache.clear();
-            }, 1, 10, TimeUnit.MINUTES);
-        }
+        try {
+            if (Universal.getMethods().getServeType() == ServerType.BUNGEE) {
+                if(bungeeMethods == null) bungeeMethods = new UUIDFetcherBungee();
 
-        if (Universal.getMethods().getServeType() == ServType.BUKKIT) {
-            requestBukkitRunnable = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    requests = 0;
-                    playerNameCache.clear();
-                    playerUUIDCache.clear();
-                    playerHistoryCache.clear();
-                }
-            }.runTaskLater(io.github.fernthedev.fcommands.spigotclass.FernCommands.getInstance(),
-                    TimeUnit.MINUTES.toSeconds(10) * 20);
+                bungeeMethods.runTimerRequest();
+            }
+
+            if (Universal.getMethods().getServeType() == ServerType.BUKKIT) {
+                if(spigotMethods == null) spigotMethods = new UUIDFetcherSpigot();
+
+                spigotMethods.runTimerRequest();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     public static void stopRequestTimer() {
-        if(Universal.getMethods().getServeType() == ServType.BUNGEE && requestTask != null)
-        ProxyServer.getInstance().getScheduler().cancel(requestTask);
+        if(Universal.getMethods().getServeType() == ServerType.BUNGEE)
+            bungeeMethods.stopHourTask();
 
-        if(Universal.getMethods().getServeType() ==  ServType.BUKKIT && requestBukkitRunnable != null)
-        Bukkit.getScheduler().cancelTask(requestBukkitRunnable.getTaskId());
+        if(Universal.getMethods().getServeType() ==  ServerType.BUKKIT) {
+            spigotMethods.stopTimerRequest();
+        }
 
     }
 
     public static void stopHourTask() {
-        ProxyServer.getInstance().getScheduler().cancel(banHourTask);
+        if(Universal.getMethods().getServeType() == ServerType.BUNGEE)
+        bungeeMethods.stopHourTask();
 
-        if(Universal.getMethods().getServeType() ==  ServType.BUKKIT && banBukkitRunnable != null)
-            Bukkit.getScheduler().cancelTask(banBukkitRunnable.getTaskId());
+        if(Universal.getMethods().getServeType() ==  ServerType.BUKKIT) {
+            spigotMethods.stopHourTask();
+        }
     }
 }

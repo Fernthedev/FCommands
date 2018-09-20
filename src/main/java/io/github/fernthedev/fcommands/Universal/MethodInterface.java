@@ -1,5 +1,7 @@
 package io.github.fernthedev.fcommands.Universal;
 
+import io.github.fernthedev.fcommands.bungeeclass.FernCommands;
+
 import java.util.logging.Logger;
 
 public interface MethodInterface {
@@ -8,6 +10,10 @@ public interface MethodInterface {
 
     Object getInstance();
 
-    ServType getServeType();
+    ServerType getServeType();
+
+    FernCommands getBungeeInstance();
+
+    io.github.fernthedev.fcommands.spigotclass.FernCommands getSpigotInstance();
 }
 
