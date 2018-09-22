@@ -59,9 +59,9 @@ public class seen extends Command implements Listener {
             //String UUID = ProxyServer.getInstance().getPlayer(ptarget).getUniqueId().toString();
             if (ProxyServer.getInstance().getPlayer(ptarget) != null) {
                 getLogger.info("Requesting if " + ProxyServer.getInstance().getPlayer(ptarget).getDisplayName() + " is vanished");
-                AskPlaceHolder askPlaceHolder = new AskPlaceHolder(ProxyServer.getInstance().getPlayer(ptarget), "%fvanish_isvanished%");
 
                 if(!sender.hasPermission("sv.see")) {
+                    AskPlaceHolder askPlaceHolder = new AskPlaceHolder(ProxyServer.getInstance().getPlayer(ptarget), "%fvanish_isvanished%");
                     askPlaceHolder.setRunnable(new MessageRunnable() {
                         @Override
                         public void run() {

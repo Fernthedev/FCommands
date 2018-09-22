@@ -2,6 +2,7 @@ package io.github.fernthedev.fcommands.bungeeclass;
 
 
 import com.google.gson.Gson;
+import io.github.fernthedev.fcommands.Universal.Channels;
 import io.github.fernthedev.fcommands.Universal.UUIDFetcher;
 import io.github.fernthedev.fcommands.Universal.Universal;
 import io.github.fernthedev.fcommands.bungeeclass.commands.*;
@@ -132,6 +133,9 @@ public class FernCommands extends Plugin {
         getProxy().getPluginManager().registerListener(this,new AskPlaceHolder());
         getProxy().registerChannel("GetPlaceHolderAPI");
         getProxy().registerChannel("PlaceHolderValue");
+
+        getProxy().registerChannel(Channels.PlaceHolderBungeeChannel);
+
         getLogger().info("Registered PlaceHolderAPI channels");
         getProxy().registerChannel("ReloadNickSQL");
         getProxy().getPluginManager().registerListener(this,new FernNick());
@@ -152,6 +156,10 @@ public class FernCommands extends Plugin {
         getProxy().getPluginManager().registerCommand(this,new mainip());
         getProxy().getPluginManager().registerCommand(this,new NameHistory());
         getProxy().getPluginManager().registerCommand(this,new FernNick());
+
+        getProxy().getPluginManager().registerCommand(this,new getPlaceholderCommand("bpapi","fernc.bpapi"));
+
+
         getLogger().info("Registered fern nicks");
         deleteip.loadTasks();
         run();

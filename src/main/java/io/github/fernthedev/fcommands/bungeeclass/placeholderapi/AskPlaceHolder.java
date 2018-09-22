@@ -1,6 +1,7 @@
 package io.github.fernthedev.fcommands.bungeeclass.placeholderapi;
 
 
+import io.github.fernthedev.fcommands.Universal.Channels;
 import io.github.fernthedev.fcommands.bungeeclass.FernCommands;
 import io.github.fernthedev.fcommands.bungeeclass.MessageRunnable;
 import net.md_5.bungee.api.ChatColor;
@@ -48,7 +49,6 @@ public class AskPlaceHolder implements Listener {
 
 
 
-
     public AskPlaceHolder(ProxiedPlayer player, String placeHolderValue) {
      this.player = player;
 
@@ -60,7 +60,7 @@ public class AskPlaceHolder implements Listener {
         try {
             out.writeUTF("Forward"); //TYPE
             out.writeUTF(player.getServer().getInfo().getName()); //SERVER
-            out.writeUTF("GetPlaceHolderAPI"); //SUBCHANNEL
+            out.writeUTF(Channels.getPlaceHolderResult); //SUBCHANNEL
 
             uuid = UUID.randomUUID().toString();
             if(!instances.isEmpty()) {
@@ -100,7 +100,7 @@ public class AskPlaceHolder implements Listener {
         this.runnable = mrunnable;
         instances.add(this);
 
-        player.getServer().sendData("BungeeCord",outputStream.toByteArray());
+        player.getServer().sendData(Channels.PlaceHolderBungeeChannel,outputStream.toByteArray());
         getLogger().info("Runnable has now been initialized");
     }
 
@@ -110,7 +110,7 @@ public class AskPlaceHolder implements Listener {
 
     @EventHandler
     public void onPluginMessage(PluginMessageEvent ev) {
-        if (ev.getTag().equalsIgnoreCase("Bungeecord")) {
+        if (ev.getTag().equalsIgnoreCase(Channels.PlaceHolderBungeeChannel)) {
 
             //getLogger().info("Sender is " + ev.getSender());
             //FernCommands.getInstance().getLogger().info("Requested message from " + ev.getSender().getAddress());
@@ -124,54 +124,55 @@ public class AskPlaceHolder implements Listener {
                     if (in.available() > 0) {
                         server = in.readUTF();
                     }else{
-                        server = null;
+                        return;
                     }
 
-                    byte[] data = new byte[26];
-
-                    int bytesRead = in.read(data);
-
-                    if(in.available() > 0 && bytesRead != -1) {
+                    if(in.available() > 0) {
                         subchannel = in.readUTF();
                     }else{
-                        subchannel = null;
+                        return;
                     }
-                    if(subchannel != null && server != null) {
-                        if (channel.equalsIgnoreCase("Forward") && subchannel.equalsIgnoreCase("PlaceHolderValue")) {
-                            getLogger().info("It is a bungeecord message");
-                            FernCommands.getInstance().getLogger().info("It is from current server.");
+                    if (channel.equalsIgnoreCase("Forward") && subchannel.equalsIgnoreCase(Channels.PlaceHolderValue)) {
+                        getLogger().info("It is a bungeecord message");
+                        FernCommands.getInstance().getLogger().info("It is from current server.");
 
-                            String placeholder = in.readUTF();
-                            String uuide = in.readUTF();
+                        String placeholder = in.readUTF();
 
-                            getLogger().info("Channel is " + channel + " and server is" + server + " and subchannel is " + subchannel + " and placeholder is " + placeholder);
+                        if(placeholder.equals("NoPlaceHolderFound")) placeholder = null;
 
-                            getLogger().info("The message is for a placeholder. Running code!");
+                        String uuide = in.readUTF();
 
-                            AskPlaceHolder instance = null;
-                            if (!instances.isEmpty()) {
-                                for (AskPlaceHolder askPlaceHolder : instances) {
-                                    //getLogger().info("A uuid is" + askPlaceHolder.uuid);
-                                    if (askPlaceHolder.uuid.equals(uuide)) {
-                                        instance = askPlaceHolder;
-                                    }
+                        getLogger().info("Channel is " + channel + " and server is" + server + " and subchannel is " + subchannel + " and placeholder is " + placeholder);
+
+                        getLogger().info("The message is for a placeholder. Running code!");
+
+                        AskPlaceHolder instance = null;
+                        if (!instances.isEmpty()) {
+                            for (AskPlaceHolder askPlaceHolder : instances) {
+                                //getLogger().info("A uuid is" + askPlaceHolder.uuid);
+                                if (askPlaceHolder.uuid.equals(uuide)) {
+                                    instance = askPlaceHolder;
                                 }
-                            } else {
-                                getLogger().info("There were no instances");
                             }
-                            if (instance != null) {
-                                instance.placeHolderValue = placeholder;
+                        } else {
+                            getLogger().info("There were no instances");
+                        }
+                        if (instance != null) {
+                            instance.placeHolderValue = placeholder;
+
+                            if (placeholder != null) {
                                 instance.placeHolderReplaced = !instance.placeHolderValue.equals(instance.oldPlaceValue);
-                                instance.checked = true;
-                                if (instance.runnableset) {
-                                    getLogger().info("Runnable is set because we checked");
-                                } else {
-                                    getLogger().info("Runnable is not set because we checked");
-                                }
-                                instance.runTask();
-                            } else {
-                                getLogger().info(ChatColor.RED + "The incoming message was not expected. From an attacker?");
                             }
+
+                            instance.checked = true;
+                            if (instance.runnableset) {
+                                getLogger().info("Runnable is set because we checked");
+                            } else {
+                                getLogger().info("Runnable is not set because we checked");
+                            }
+                            instance.runTask();
+                        } else {
+                            getLogger().info(ChatColor.RED + "The incoming message was not expected. From an attacker?");
                         }
                     }
 

@@ -19,6 +19,10 @@ public abstract class FCommand extends Command {
         return new ComponentBuilder(ChatColor.translateAlternateColorCodes('&',text)).create();
     }
 
+    @Override
+     public abstract void execute(CommandSender sender, String[] args);
+
+
     Logger logger() {
         return FernCommands.getInstance().getLogger();
     }

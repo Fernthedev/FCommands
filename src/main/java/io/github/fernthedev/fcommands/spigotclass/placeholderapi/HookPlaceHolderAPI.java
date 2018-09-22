@@ -1,5 +1,6 @@
 package io.github.fernthedev.fcommands.spigotclass.placeholderapi;
 
+import io.github.fernthedev.fcommands.Universal.Channels;
 import io.github.fernthedev.fcommands.spigotclass.FernCommands;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
@@ -20,23 +21,28 @@ public class HookPlaceHolderAPI implements Listener, PluginMessageListener {
 
     @Override
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
-        if (!channel.equals("BungeeCord")) {
-            getLogger().info("It is not bungeecord message!");
+        if (!channel.equals(Channels.PlaceHolderBungeeChannel)) {
+            getLogger().info("It is not ferncommands message!");
             return;
         }
-        getLogger().info("Recieved message on a random channel ");
+
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
         try {
             String type = in.readUTF(); //TYPE
             in.readUTF(); //SERVER NOT NEEDED
             String subchannel = in.readUTF(); //SUB CHANNEL
-            getLogger().info("Recieved message on channel " + subchannel);
-            if (type.equalsIgnoreCase("Forward") && subchannel.equalsIgnoreCase("GetPlaceHolderAPI")) {
+
+            if (type.equalsIgnoreCase("Forward") && subchannel.equalsIgnoreCase(Channels.getPlaceHolderResult)) {
+
+                getLogger().info("Recieved message on channel " + subchannel);
+                getLogger().info("Recieved message on a random channel ");
+
+
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 DataOutputStream out = new DataOutputStream(stream);
                 out.writeUTF("Forward");
                 out.writeUTF("ALL");
-                out.writeUTF("PlaceHolderValue");
+                out.writeUTF(Channels.PlaceHolderValue);
                 getLogger().info("Requested by " + subchannel + " to get a placeholder");
                 String placeholderOld = in.readUTF(); //PLACEHOLDER
                 getLogger().info("Placeholder is" +placeholderOld);
@@ -50,6 +56,7 @@ public class HookPlaceHolderAPI implements Listener, PluginMessageListener {
 
                 if (placeholder.equalsIgnoreCase(placeholderOld)) {
                     out.writeUTF("NoPlaceHolderFound");
+                    getLogger().info("The placeholder could not be found");
                    // out.writeShort("NoPlaceHolderFound".length());
                 } else {
                     //out.writeShort(placeholder.length());
@@ -58,7 +65,7 @@ public class HookPlaceHolderAPI implements Listener, PluginMessageListener {
                 }
                 out.writeUTF(uuid);
 
-                Bukkit.getServer().sendPluginMessage(FernCommands.getPlugin(FernCommands.class), "BungeeCord", stream.toByteArray());
+                Bukkit.getServer().sendPluginMessage(FernCommands.getPlugin(FernCommands.class), Channels.PlaceHolderBungeeChannel, stream.toByteArray());
                 // Use the code sample in the 'Response' sections below to read
                 // the data.
             }

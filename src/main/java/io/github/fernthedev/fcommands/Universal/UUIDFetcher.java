@@ -56,9 +56,7 @@ public class UUIDFetcher {
 
             PlayerUUID uuidResponse = gson.fromJson(fileData,PlayerUUID.class);
 
-            if(Universal.getMethods().getLogger() == null) {
-                throw new NullPointerException();
-            }else
+
             Universal.getMethods().getLogger().info("The uuid for " + name + " is " + uuidResponse.getId());
 
                 if(playerUUIDCache.get(name) != uuidResponse) playerHistoryCache.remove(name);

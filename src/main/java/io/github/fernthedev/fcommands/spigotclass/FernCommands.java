@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPHookManager;
+import io.github.fernthedev.fcommands.Universal.Channels;
 import io.github.fernthedev.fcommands.Universal.Universal;
 import io.github.fernthedev.fcommands.spigotclass.commands.fernmain;
 import io.github.fernthedev.fcommands.spigotclass.entity.NoAI;
@@ -79,6 +80,10 @@ public class FernCommands extends JavaPlugin {
 
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, Channels.PlaceHolderBungeeChannel);
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, Channels.PlaceHolderBungeeChannel, new HookPlaceHolderAPI() );
+
+
         messageListener = new MessageListener();
         this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", messageListener);
 
@@ -128,7 +133,7 @@ public class FernCommands extends JavaPlugin {
                 //Registering placeholder will be use here
                 new VanishPlaceholder().register();
                 getLogger().info("HOOKED PLACEHOLDERAPI");
-                messageListener.addListener(new HookPlaceHolderAPI());
+                //messageListener.addListener(new HookPlaceHolderAPI());
             getLogger().info("HOOKED PLACEHOLDERAPI BUNGEE MESSAGING");
         }
 
