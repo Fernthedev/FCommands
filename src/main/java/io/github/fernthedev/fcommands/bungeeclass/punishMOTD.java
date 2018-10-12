@@ -59,35 +59,34 @@ public class punishMOTD implements Listener {
                 //getProxy.getLogger().info("detected players: " + players);
                // getProxy.getLogger().info("192.168.2.11's players " + ipconfig.getStringList("192 168 2 11"));
             } else {
-                if(players.toArray().length >= 1) {
                     List<String> playernames = new ArrayList<>();
                     for(String uuid : players) {
+                        uuid = uuid.replaceAll("-","");
                         String name = UUIDFetcher.getName(uuid);
                         playernames.add(name);
                     }
                     FernCommands.getInstance().getLogger().info("Pinged by " + hostAddress + " and uuid is " + players.toString() + " the player names are " + playernames.toString());
-                }
-                for (String key : players) {
-                    if (hooks.getInstance().hasAdvancedBan() && PunishmentManager.get().isBanned(key)) {
-                        //getProxy.getLogger().info("Pinged by " + hostAddress + " and uuid is " + key);
+                for (String checkedPlayer : players) {
+                    if (hooks.getInstance().hasAdvancedBan() && PunishmentManager.get().isBanned(checkedPlayer)) {
+                        //getProxy.getLogger().info("Pinged by " + hostAddress + " and uuid is " + checkedPlayer);
 
-                            PunishmentManager.get().getBan(key);
+                            PunishmentManager.get().getBan(checkedPlayer);
                             //PERM BAN
-                            BaseComponent[] messagee;
+                            BaseComponent message;
 
-                            if (PunishmentManager.get().getBan(key).getType() == PunishmentType.BAN) {
-                                FernCommands.getInstance().getLogger().info("Player pinged, and is permanently banned" + key);
-                                messagee = message("&c&lYOU HAVE BEEN PERMANENTLY BANNED", false);
-                                pingResponse.setDescriptionComponent(messagee[0]);
+                            if (PunishmentManager.get().getBan(checkedPlayer).getType() == PunishmentType.BAN) {
+                                FernCommands.getInstance().getLogger().info("Player pinged, and is permanently banned" + checkedPlayer);
+                                message = message("&c&lYOU HAVE BEEN PERMANENTLY BANNED");
+                                pingResponse.setDescriptionComponent(message);
                                 eping.setResponse(pingResponse);
                                 //PERM IP_BAN
-                            } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.IP_BAN) {
-                                messagee = message("&c&lYOUR IP HAS BEEN PERMANENTLY BANNED", false);
-                                pingResponse.setDescriptionComponent(messagee[0]);
+                            } else if (PunishmentManager.get().getBan(checkedPlayer).getType() == PunishmentType.IP_BAN) {
+                                message = message("&c&lYOUR IP HAS BEEN PERMANENTLY BANNED");
+                                pingResponse.setDescriptionComponent(message);
                                 eping.setResponse(pingResponse);
                                 //TEMP BAN
-                            } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.TEMP_BAN) {
-                                long time = PunishmentManager.get().getBan(key).getEnd();
+                            } else if (PunishmentManager.get().getBan(checkedPlayer).getType() == PunishmentType.TEMP_BAN) {
+                                long time = PunishmentManager.get().getBan(checkedPlayer).getEnd();
 
 
 
@@ -95,21 +94,21 @@ public class punishMOTD implements Listener {
                                 String hms = sdf.format(time);
 
                                 sdf.format(time - 1);
-                                messagee = message("&c&lYOU HAVE BEEN BANNED UNTIL " + hms, false);
-                                pingResponse.setDescriptionComponent(messagee[0]);
+                                message = message("&c&lYOU HAVE BEEN BANNED UNTIL " + hms);
+                                pingResponse.setDescriptionComponent(message);
 
                                 eping.setResponse(pingResponse);
                                 //TEMP IP_BAN
                                 //  }
-                            } else if (PunishmentManager.get().getBan(key).getType() == PunishmentType.TEMP_IP_BAN) {
-                                long time = TimeManager.getTime() + PunishmentManager.get().getBan(key).getEnd();
+                            } else if (PunishmentManager.get().getBan(checkedPlayer).getType() == PunishmentType.TEMP_IP_BAN) {
+                                long time = TimeManager.getTime() + PunishmentManager.get().getBan(checkedPlayer).getEnd();
 
                                 SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm:ss");
                                 String hms = sdf.format(time);
-                                messagee = message("&c&lYOUR IP HAS BEEN BANNED UNTIL " + hms, false);
+                                message = message("&c&lYOUR IP HAS BEEN BANNED UNTIL " + hms);
 
 
-                                pingResponse.setDescriptionComponent(messagee[0]);
+                                pingResponse.setDescriptionComponent(message);
 
 
                                 eping.setResponse(pingResponse);

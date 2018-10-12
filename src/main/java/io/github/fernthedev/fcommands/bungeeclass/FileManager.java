@@ -103,6 +103,9 @@ public class FileManager {
         if (seenfile.exists() && goseen) {
             try {
                 seenconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(seenfile);
+            } catch(org.yaml.snakeyaml.scanner.ScannerException e) {
+                FernCommands.getInstance().getProxy().getLogger().info("Unable to load seenconfig. Error: " + e.getProblem());
+
             } catch (IOException e) {
                 FernCommands.getInstance().getProxy().getLogger().warning(ChatColor.RED + "failed to load seen config");
                 e.printStackTrace();

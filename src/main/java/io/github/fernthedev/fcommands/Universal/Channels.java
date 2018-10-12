@@ -9,6 +9,6 @@ public class Channels {
 
     public static String PlaceHolderValue = "PlaceHolderValue";
 
-    public static String PlaceHolderBungeeChannel = "FernCommands:ph";
+    public static String PlaceHolderBungeeChannel = "ferncommands:ph";
 
 }

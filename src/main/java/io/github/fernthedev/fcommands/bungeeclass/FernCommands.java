@@ -131,6 +131,7 @@ public class FernCommands extends Plugin {
         }
 
         getProxy().getPluginManager().registerListener(this,new AskPlaceHolder());
+        //getProxy().getPluginManager().registerListener(this,new UUIDSpoofChecker()  );
         getProxy().registerChannel("GetPlaceHolderAPI");
         getProxy().registerChannel("PlaceHolderValue");
 

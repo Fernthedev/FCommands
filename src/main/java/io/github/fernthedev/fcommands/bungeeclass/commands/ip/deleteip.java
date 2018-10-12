@@ -88,6 +88,10 @@ public class deleteip extends Command {
             Date date = cal.getTime();
             String setTimee =dateFormat.format(date);
 
+            FernCommands.getInstance().getLogger().info("The time to hide delete is " + setTimee);
+
+            setTimee = setTimee.replaceAll("/","-");
+
             deleteipconfig.getSection(ip).set("HideDelete",setTimee);
 
             timer.schedule(new TimerTask() {
@@ -107,8 +111,18 @@ public class deleteip extends Command {
 
             setTimee =dateFormat.format(date);
 
+
+            FernCommands.getInstance().getLogger().info("The time to delete is " + setTimee);
+            setTimee = setTimee.replaceAll("/","-");
             deleteipconfig.getSection(ip).set("Delete",setTimee);
 
+
+            try {
+                ConfigurationProvider.getProvider(YamlConfiguration.class).save(deleteipconfig,FernCommands.getIpdeletefile());
+                //ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, configfile);
+            } catch (IOException ee) {
+                ee.printStackTrace();
+            }
 
             timer.schedule(new TimerTask() {
                 @Override
@@ -120,6 +134,7 @@ public class deleteip extends Command {
 
                     try {
                         ConfigurationProvider.getProvider(YamlConfiguration.class).save(ipconfig,FernCommands.getIpfile());
+                        ConfigurationProvider.getProvider(YamlConfiguration.class).save(deleteipconfig,FernCommands.getIpdeletefile());
                         //ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, configfile);
                     } catch (IOException ee) {
                         ee.printStackTrace();
@@ -177,13 +192,14 @@ public class deleteip extends Command {
 
         if(ipfileloaded) {
             for(String key : deleteipconfig.getKeys()) {
-                String dateString = deleteipconfig.getSection(key).getString("HideDelete");
-                String deleteString = deleteipconfig.getSection(key).getString("Delete");
+                String dateString = deleteipconfig.getSection(key).getString("HideDelete").replaceAll("-","/");
+                String deleteString = deleteipconfig.getSection(key).getString("Delete").replaceAll("-","/");
                 Timer timer = new Timer();
                 Date hideDate = null;
                 Date deleteDate = null;
 
                 try {
+                    FernCommands.getInstance().getLogger().info("The date string is " + dateString);
                     hideDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse(dateString);
                     deleteDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse(deleteString);
                 } catch (ParseException e) {
@@ -200,6 +216,7 @@ public class deleteip extends Command {
 
                         try {
                             ConfigurationProvider.getProvider(YamlConfiguration.class).save(deleteipconfig, FernCommands.getIpdeletefile());
+                            ConfigurationProvider.getProvider(YamlConfiguration.class).save(ipconfig,FernCommands.getIpfile());
                             //ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, configfile);
                         } catch (IOException ee) {
                             ee.printStackTrace();
@@ -214,6 +231,7 @@ public class deleteip extends Command {
 
                                 try {
                                     ConfigurationProvider.getProvider(YamlConfiguration.class).save(deleteipconfig, FernCommands.getIpdeletefile());
+                                    ConfigurationProvider.getProvider(YamlConfiguration.class).save(ipconfig,FernCommands.getIpfile());
                                     //ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, configfile);
                                 } catch (IOException ee) {
                                     ee.printStackTrace();

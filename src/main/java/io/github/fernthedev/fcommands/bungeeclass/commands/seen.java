@@ -22,10 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class seen extends Command implements Listener {
@@ -104,10 +101,10 @@ public class seen extends Command implements Listener {
                     sender.sendMessage(bungeee.message("&cPlayer doesn't exist. You sure you typed that right?"));
                 } else {
 
-                    List<String> seenplist = seenconfig.getStringList(UUID);
-                    if (!seenplist.isEmpty()) {
-                        String server = seenplist.get(1);
-                        String time = seenplist.get(0);
+                    Configuration seenplist = seenconfig.getSection(UUID);
+                    if (seenplist != null) {
+                        String server = seenplist.getString("server");
+                        String time = seenplist.getString("time");
                         time = time.replace(".", ":");
                         if (server.equals("")) {
                             server = "&cNo Server found";
@@ -143,25 +140,29 @@ public class seen extends Command implements Listener {
         //String UUID = UUIDManager.get().getUUID(playere);
         UUID UUIDE = UUID.nameUUIDFromBytes(("OfflinePlayer:" + playere).getBytes(StandardCharsets.UTF_8));
         String UUID = UUIDE.toString();
-        List<String> seenplist = new ArrayList<>();
+
 //        Configuration sconfig = new FileManager().getConfig();
         try {
             FileManager.getInstance().loadFiles("seen",true);
         } catch (IOException e1) {
             getLogger.warning("unable to load seen file");
         }
+
+        Configuration seenplist = seenconfig.getSection(UUID);
         //Calendar cal = Calendar.getInstance();
-        String time= new SimpleDateFormat("MMM dd hh:mm aa").format(new Date());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM-yyyy dd hh:mm aa",Locale.US);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        String time = simpleDateFormat.format(new Date());
 
         String server = e.getPlayer().getServer().getInfo().getName();
-        //String time2 = new SimpleDateFormat("MM.dd HH:mm").format(date);
-        //seenplist.add(time);
-        seenplist.add("" + time.replace(":",".") + "");
-        seenplist.add(server);
-        //seenplist.add(e.getPlayer().getServer().getInfo().getName());
-        //getLogger.info("ferntime1 " + time);
-        //getLogger.info("ferntime2 " + time2);
-        for(String ee : seenplist) {
+
+        seenplist.set("time",time.replace(":","."));
+        seenplist.set("server",server);
+
+        getLogger.info("ferntime1 " + time);
+
+        for(String ee : seenplist.getKeys()) {
             getLogger.info(ee + " fern");
         }
         seenconfig.set(UUID,null);

@@ -1,20 +1,18 @@
 package io.github.fernthedev.fcommands.spigotclass;
 
 import com.google.gson.Gson;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import fr.neatmonster.nocheatplus.checks.CheckType;
-import fr.neatmonster.nocheatplus.hooks.NCPHookManager;
 import io.github.fernthedev.fcommands.Universal.Channels;
 import io.github.fernthedev.fcommands.Universal.Universal;
 import io.github.fernthedev.fcommands.spigotclass.commands.fernmain;
 import io.github.fernthedev.fcommands.spigotclass.entity.NoAI;
 import io.github.fernthedev.fcommands.spigotclass.gui.namecolor;
+import io.github.fernthedev.fcommands.spigotclass.hooks.HookManager;
 import io.github.fernthedev.fcommands.spigotclass.methods.SpigotMethods;
+import io.github.fernthedev.fcommands.spigotclass.ncp.NCPHandle;
 import io.github.fernthedev.fcommands.spigotclass.ncp.bungeencp;
 import io.github.fernthedev.fcommands.spigotclass.ncp.cooldown;
-import io.github.fernthedev.fcommands.spigotclass.nick.NickReload;
 import io.github.fernthedev.fcommands.spigotclass.placeholderapi.HookPlaceHolderAPI;
-import io.github.fernthedev.fcommands.spigotclass.placeholderapi.VanishPlaceholder;
+import io.github.fernthedev.fcommands.spigotclass.shop.ChestImport;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -23,9 +21,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
@@ -38,7 +36,7 @@ import java.util.logging.Logger;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class FernCommands extends JavaPlugin {
     private FileConfiguration config;
-    private boolean useMcMMO;
+
     private static FernCommands instance;
     public static String SERVER_NAME;
     private static Gson gson;
@@ -49,16 +47,18 @@ public class FernCommands extends JavaPlugin {
     private static Permission perms = null;
     private static Chat chat = null;
 
+    public static HookManager getHookManager() {
+        return hookManager;
+    }
 
-    private static boolean isVault;
-    private static boolean isNTE;
-    private static boolean isPlaceHolderAPI;
-    private static boolean isWorldGuard;
-    private static boolean isEssentials;
+    private static HookManager hookManager;
+
+
+
 
     private static Connection connection;
 
-    private WorldGuardPlugin worldGuardPlugin;
+
 
     private MessageListener messageListener;
 
@@ -76,6 +76,9 @@ public class FernCommands extends JavaPlugin {
         gson = new Gson();
         SERVER_NAME = null;
         cooldown = new cooldown();
+
+        hookManager = new HookManager();
+
         Universal.getInstance().setup(new SpigotMethods());
 
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
@@ -83,12 +86,11 @@ public class FernCommands extends JavaPlugin {
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, Channels.PlaceHolderBungeeChannel);
         this.getServer().getMessenger().registerIncomingPluginChannel(this, Channels.PlaceHolderBungeeChannel, new HookPlaceHolderAPI() );
 
+        getLogger().info("Connecting to mysql");
+        DatabaseHandler.setup();
 
-        messageListener = new MessageListener();
-        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", messageListener);
+        connection = DatabaseHandler.getConnection();
 
-        messaging.sendRequest("GetServer");
-        registerPlugins();
         try {
             FilesManager.getInstance().reloadConfig("all");
         } catch (IOException e) {
@@ -96,83 +98,31 @@ public class FernCommands extends JavaPlugin {
         } catch (InvalidConfigurationException e) {
             getLogger().warning("Invalid Config");
         }
-        getLogger().info("Connecting to mysql");
-        DatabaseHandler.setup();
 
-        connection = DatabaseHandler.getConnection();
+
+        messageListener = new MessageListener();
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", messageListener);
+
+        messaging.sendRequest("GetServer");
+
+        hookManager.registerPlugins();
 
         registerListener();
     }
 
 
-    /**
-     * This registers if any compatible plugins are enabled for other methods
-     */
-    public void registerPlugins() {
-        /*
-          Checks for vault
-         */
-        isVault = false;
-        if(this.getServer().getPluginManager().isPluginEnabled("Vault")) {
-            isVault = true;
-            setupEconomy();
-            setupPermissions();
-            setupChat();
-            getLogger().info("HOOKED VAULT ECONOMY PERMISSIONS AND CHAT");
-        }
-
-        /*
-         Checks for NametagEdit
-         */
-        isNTE = this.getServer().getPluginManager().isPluginEnabled("NametagEdit");
-        if(isNTE)
-            getLogger().info("HOOKED NAMETAGEDIT API");
-
-        isPlaceHolderAPI = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
-        if(isPlaceHolderAPI) {
-                //Registering placeholder will be use here
-                new VanishPlaceholder().register();
-                getLogger().info("HOOKED PLACEHOLDERAPI");
-                //messageListener.addListener(new HookPlaceHolderAPI());
-            getLogger().info("HOOKED PLACEHOLDERAPI BUNGEE MESSAGING");
-        }
-
-        isEssentials = Bukkit.getPluginManager().isPluginEnabled("Essentials");
-        if(isEssentials) {
-            messageListener.addListener(new NickReload());
-        }
-    }
 
 
 
 
 
 
-    public boolean mcmmoEnabled() {
-        return useMcMMO;
-    }
 
-    public void hook() {
-        useMcMMO = Bukkit.getServer().getPluginManager().isPluginEnabled("McMMO");
-        worldGuardPlugin = getWorldGuard();
-    }
 
-    public WorldGuardPlugin getWorldGuardPlugin() {
-        return worldGuardPlugin;
-    }
 
-    private WorldGuardPlugin getWorldGuard() {
-        Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
 
-        // WorldGuard may not be loaded
-        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
-            isWorldGuard = false;
-            return null; // Maybe you want throw an exception instead
-        }
 
-        isWorldGuard = true;
-        return (WorldGuardPlugin) plugin;
-    }
+
 
     @Nonnull
     public static FernCommands getInstance() {
@@ -185,8 +135,8 @@ public class FernCommands extends JavaPlugin {
     }
 
     public void onDisable() {
-        if (NCPHookManager.getHooksByName(this.getName()) != null)
-            NCPHookManager.removeHooks(this.getName());
+        if(hookManager.isNCPEnabled())
+        NCPHandle.onDisable();
         // Unregister outgoing plugin channel if it's registered
         if (this.getServer().getMessenger().isOutgoingChannelRegistered(this, "BungeeCord"))
             this.getServer().getMessenger().unregisterOutgoingPluginChannel(this, "BungeeCord");
@@ -285,8 +235,8 @@ public class FernCommands extends JavaPlugin {
          */
         if (config.getBoolean("BungeeNCP"))
             //if (this.getServer().getPluginManager().getPlugin("NoCheatPlus") != null) {
-            if(isNCPEnabled()) {
-                NCPHookManager.addHook(CheckType.values(), new bungeencp());
+            if(hookManager.isNCPEnabled()) {
+                NCPHandle.register();
                 messageListener.addListener(new bungeencp());
                // this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new bungeencp());
                 this.getServer().getPluginManager().registerEvents(new bungeencp(), this);
@@ -304,17 +254,19 @@ public class FernCommands extends JavaPlugin {
         if (config.getBoolean("ItemBurn"))
             this.getServer().getPluginManager().registerEvents(new LavaBurn(), this);
 
+        if(config.getBoolean("AddShop")) {
+            ChestImport chestImport = new ChestImport();
+            this.getCommand("fshop").setExecutor(chestImport);
+        }
         /*
           If MCMMO and NTE are enabled, when MCMMO levels up, nametag prefixes and suffixes get messed up.
           This is to prevent that, this reloads NTE every time MCMMO levels up
          */
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("McMMO")) {
-            hook();
-            if (isNTE) {
-                {
+            hookManager.hook();
+            if (hookManager.isNTEEnabled()) {
                     getLogger().info("FOUND MCMMO AND NAMETAGEDIT IN PLUGINS, ENABLING AUTO RELOAD");
                     this.getServer().getPluginManager().registerEvents(new NTEmcMMO(), this);
-                }
             }
         }
 
@@ -337,33 +289,20 @@ public class FernCommands extends JavaPlugin {
         }
 
         if(config.getBoolean("NameColor")) {
-            if((isVault && getChat().isEnabled()) || isNTE) {
+            if((hookManager.isVaultEnabled() && getChat().isEnabled()) || hookManager.isNTEEnabled()) {
              this.getServer().getPluginManager().registerEvents(new namecolor(),this);
              this.getCommand("namecolor").setExecutor(new namecolor());
             }else{
                 getLogger().warning("Tried to start NameColor, but no compatible chat formatter (Vault) or nametag changer (NametagEdit) has been found. To work it needs one of these");
             }
         }
+
+        //this.getServer().getPluginManager().registerEvents(new UUIDSpoofChecker(),this);
     }
 
-    //CHECK IF COMPATIBLE PLUGINS ARE ENABLED
 
-    public boolean isVaultEnabled() {
-        return isVault;
-    }
-    public boolean isNTEEnabled() {
-        return isNTE;
-    }
 
-    public boolean isNCPEnabled() {
-        return Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus");
-    }
-
-    public boolean isIsWorldGuard() {
-        return isWorldGuard;
-    }
-
-    private boolean setupEconomy() {
+    public boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;
         }
@@ -375,17 +314,18 @@ public class FernCommands extends JavaPlugin {
         return econ != null;
     }
 
-    private boolean setupChat() {
+    public boolean setupChat() {
         RegisteredServiceProvider<Chat> rsp = getServer().getServicesManager().getRegistration(Chat.class);
         chat = rsp.getProvider();
         return chat != null;
     }
 
-    private boolean setupPermissions() {
+    public boolean setupPermissions() {
         RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
         perms = rsp.getProvider();
         return perms != null;
     }
+
     public static Economy getEconomy() {
         return econ;
     }
@@ -403,10 +343,19 @@ public class FernCommands extends JavaPlugin {
 
 
     public static boolean hasVaultPermission(Player p,String Permissione) {
-        if(isVault && getPermissions().isEnabled()) {
+        if(hookManager.isVaultEnabled() && getPermissions().isEnabled()) {
             return p.hasPermission(Permissione) || getPermissions().has(p, Permissione);
         }else return p.hasPermission(Permissione);
     }
 
+    public void setupVault() {
+        setupEconomy();
+        setupChat();
+        setupPermissions();
+    }
+
+    public void addMessageListener(PluginMessageListener pluginMessageListener) {
+        messageListener.addListener(pluginMessageListener);
+    }
 
 }

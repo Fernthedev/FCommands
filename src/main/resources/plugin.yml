@@ -19,4 +19,7 @@ commands:
    namecolor:
       description: Used for changing nametag and chat name color
       usage: /namecolor
+   fshop:
+      description: A random shop thing
+      usage: /fshop
 softdepend: [NoCheatPlus,McMMO,SB-Skylands,Multiverse-Core,NametagEdit,Vault,WorldGuard]

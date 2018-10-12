@@ -16,7 +16,7 @@ public class hooks implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (args.length != 0 && (args[0].equals("hooks"))) {
         if(sender.hasPermission("fernc.hooks")) {
-                if (FernCommands.getInstance().isVaultEnabled()) {
+                if (FernCommands.getHookManager().isVaultEnabled()) {
                     sender.sendMessage(FernCommands.message("&bVault:&aHooked"));
                     if (FernCommands.getChat().isEnabled()) {
                         sender.sendMessage(FernCommands.message("&b(Vault) Chat:&aHooked"));
@@ -37,17 +37,17 @@ public class hooks implements CommandExecutor {
                     sender.sendMessage(FernCommands.message("&bVault:&cUnhooked"));
                 }
 
-                if(FernCommands.getInstance().isIsWorldGuard())
+                if(FernCommands.getHookManager().isIsWorldGuard())
                     sender.sendMessage(FernCommands.message("&bWorldGuard:&aHooked"));
                 else
                     sender.sendMessage(FernCommands.message("&bWorldGuard:&cUnhooked"));
 
-                if (FernCommands.getInstance().isNTEEnabled()) {
+                if (FernCommands.getHookManager().isNTEEnabled()) {
                     sender.sendMessage(FernCommands.message("&bNametagEdit:&aHooked"));
                 } else {
                     sender.sendMessage(FernCommands.message("&bNametagEdit:&cUnhooked"));
                 }
-                if (FernCommands.getInstance().isNCPEnabled()) {
+                if (FernCommands.getHookManager().isNCPEnabled()) {
                     sender.sendMessage(FernCommands.message("&bNoCheatPlus:&aHooked"));
                 } else {
                     sender.sendMessage(FernCommands.message("&bNoCheatPlus:&cUnhooked"));

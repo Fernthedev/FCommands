@@ -128,7 +128,20 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.18.2</version>
+        <scope>provided</scope>
+    </dependency>
 
+        <dependency>
+            <groupId>com.earth2.essentials</groupId>
+            <artifactId>essentials</artifactId>
+            <version>LATEST</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/Dependencies/EssentialsX-2.15.0.45.jar</systemPath>
+        </dependency>
 
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -142,6 +155,12 @@
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <version>1.12.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.13.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- PAPERCLIP-->

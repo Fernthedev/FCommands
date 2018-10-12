@@ -74,11 +74,12 @@ public class skylands implements Listener {
                     player.sendMessage("Found a place checking if you can build. It's at " + goworld.getX() + " " + goworld.getY() + " " + goworld.getZ());
 
 
-                    if(FernCommands.getInstance().isIsWorldGuard()) {
-                        if(!FernCommands.getInstance().getWorldGuardPlugin().canBuild(player,goworld)) {
+                    if(FernCommands.getHookManager().isIsWorldGuard()) {
+                        if(!FernCommands.getHookManager().getWorldGuardPlugin().canBuild(player,goworld)) {
                             player.sendMessage("You can't build here? why. Lets find another place");
                         }
-                        while (!FernCommands.getInstance().getWorldGuardPlugin().canBuild(player, goworld)) {
+                        while (!FernCommands.getHookManager()
+                                .getWorldGuardPlugin().canBuild(player, goworld)) {
                             Random random = new Random();
                             goworld.setX(random.nextDouble());
                             goworld.setZ(random.nextDouble());

@@ -20,11 +20,30 @@ public class FilesManager {
     }
 
 
-    FileConfiguration config = FernCommands.getInstance().getConfig();
-    private File configfile = new File(FernCommands.getInstance().getDataFolder(), "config.yml");
+    static FileConfiguration config = FernCommands.getInstance().getConfig();
+    private File configFile = new File(FernCommands.getInstance().getDataFolder(), "config.yml");
+
+    static FileConfiguration chestConfig = FernCommands.getInstance().getConfig();
+    private static File chestConfigFile = new File(FernCommands.getInstance().getDataFolder(), "chest.yml");
 
 
-    public String getValue(String val,String defval) {
+    public static FileConfiguration getConfig() {
+        return config;
+    }
+
+    public File getConfigFile() {
+        return configFile;
+    }
+
+    public static FileConfiguration getChestConfig() {
+        return chestConfig;
+    }
+
+    public static File getChestConfigFile() {
+        return chestConfigFile;
+    }
+
+    public String getValue(String val, String defval) {
         if(val != null && defval != null) {
             if (config.get(val) == null) {
                 config.set(val, defval);
@@ -41,7 +60,7 @@ public class FilesManager {
      */
     public void reloadConfig(String which) throws IOException, InvalidConfigurationException {
         if(which.equals("all") || which.equals("config")) {
-            if(configfile.exists()) {
+            if(configFile.exists()) {
                 config.load(new File(FernCommands.getInstance().getDataFolder(),"config.yml"));
                 setDefault();
             }else{
@@ -49,10 +68,27 @@ public class FilesManager {
                 FilesManager.getInstance().setDefault();
             }
         }
+
+        if(which.equals("all") || which.equals("chest")) {
+            if(chestConfigFile.exists()) {
+                chestConfig.load(chestConfigFile);
+            }
+        }
     }
 
     public void createFile(){
         File file = new File(FernCommands.getInstance().getDataFolder(), "players.yml");
+        if(!file.exists()){
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void createChestFile(){
+        File file = chestConfigFile;
         if(!file.exists()){
             try {
                 file.createNewFile();
@@ -78,6 +114,7 @@ public class FilesManager {
         setCheck("Skylands",false);
         setCheck("NameColor",false);
         setCheck("NoAIonSpawn",false);
+        setCheck("AddShop",false);
         
         FernCommands.getInstance().saveConfig();
     }

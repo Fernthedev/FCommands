@@ -1,5 +1,6 @@
 package io.github.fernthedev.fcommands.spigotclass;
 
+import io.github.fernthedev.fcommands.Universal.DatabaseInterface;
 import io.github.fernthedev.fcommands.Universal.Universal;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
@@ -10,6 +11,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseHandler {
     private static FilesManager fileManager;
@@ -28,6 +31,21 @@ public class DatabaseHandler {
     private static boolean isSetup = false;
 
     private static BukkitScheduler scheduler;
+
+    private static boolean connected = false;
+    private static List<DatabaseInterface> runAfterConnectMethods = new ArrayList<>();
+
+    public static void runAfterConnect(DatabaseInterface method) {
+        if(!connected) {
+            runAfterConnectMethods.add(method);
+        }else{
+            method.runAfterConnect();
+        }
+    }
+
+    public static boolean isConnected() {
+        return connected;
+    }
 
     //Connection vars
     private static Connection connection; //This is the variable we will use to connect to database
@@ -76,6 +94,13 @@ public class DatabaseHandler {
         connection = DriverManager.getConnection(url, username, password);
 
         if (!isSetup) {
+            connected = true;
+            if(!runAfterConnectMethods.isEmpty()) {
+                for(DatabaseInterface method : runAfterConnectMethods) {
+                    method.runAfterConnect();
+                }
+            }
+
             Universal.getMethods().getLogger().info("Connected successfully");
             isSetup = true;
         }

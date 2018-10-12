@@ -40,6 +40,8 @@ public class ShowAlts extends Command {
                     playername = args[0];
                 }
 
+                uuidPlayer = uuidPlayer.replaceAll("-","");
+
                 Configuration ipconfig = new FileManager().getIpconfig();
 
 
@@ -58,48 +60,56 @@ public class ShowAlts extends Command {
                 }
 
                 if(ipfileloaded) {
-                    List<String> players;
+                    List<String> players = new ArrayList<>();
                     List<String> ips = new ArrayList<>();
 
-                    if(ip != null) {
-                       players = ipconfig.getStringList(ip);
-                        ips.add(ip);
-                    } else{
-                        players = new ArrayList<>();
-                    }
 
-                    if(players.isEmpty()) {
-                        players = new ArrayList<>();
-                        players.add(UUIDFetcher.getUUID(playername));
-                    }
+
+                    players.add(uuidPlayer);
+
 
                     for(String ipe : ipconfig.getKeys()) {
-                        if (!ipe.equals(ip)) {
-                            List<String> playips = ipconfig.getStringList(ipe);
-                            if (!playips.isEmpty()) {
-                                ips.add(ipe);
-                                for (String pluuid : playips) {
-                                    pluuid = pluuid.replaceAll("-","");
+                        List<String> playips = ipconfig.getStringList(ipe);
+                        //print("The players for ip " + ipe + " has uuids " + playips.toString());
+
+                        if (!playips.isEmpty()) {
+                            //ips.add(ipe);
+                            boolean keepgoing = true;
+                            for (String pluuid : playips) {
+                                if (keepgoing) {
+                                    pluuid = pluuid.replaceAll("-", "");
+                                    //print("The ip " + ipe + " has player uuid " + uuidPlayer + " with name " + name);
                                     if (pluuid.equals(uuidPlayer)) {
-                                        ips.add(pluuid);
-                                        break;
+                                        ips.add(ipe);
+                                        keepgoing = false;
                                     }
                                 }
                             }
                         }
                     }
 
+                    List<String> checkedPlayers = new ArrayList<>();
+                    checkedPlayers.add(uuidPlayer);
                     sender.sendMessage(msg("&aSuccessfully found the player's alts. &bThe list is: "));
 
-                    for(String uuid : players) {
-                        FernCommands.getInstance().getLogger().info("This uuid is " + uuid + " getting name now.");
-                         String playername2 = UUIDFetcher.getName(uuid);
-                         FernCommands.getInstance().getLogger().info("Found that " + uuid + " is player " + playername2);
-                        //ProxiedPlayer playerListUUID = ProxyServer.getInstance().getPlayer(uuid);
-                        if(uuid == null || playername2 == null) return;
-                        FernCommands.getInstance().getLogger().info("&3-&b" + playername2);
-                        FernCommands.getInstance().getLogger().info(sender.getName());
-                        sender.sendMessage(msg("&3-&b" + playername2));
+                    for(String ipe : ips) {
+                        List<String> playips = ipconfig.getStringList(ipe);
+                        for (String uuid : playips) {
+                            boolean keeprun = true;
+                            if (checkedPlayers.contains(uuid)) keeprun = false;
+
+                            if (keeprun) {
+                                FernCommands.getInstance().getLogger().info("This uuid is " + uuid + " getting name now.");
+                                String playername2 = UUIDFetcher.getName(uuid);
+                                FernCommands.getInstance().getLogger().info("Found that " + uuid + " is player " + playername2);
+                                //ProxiedPlayer playerListUUID = ProxyServer.getInstance().getPlayer(uuid);
+                                if (uuid == null || playername2 == null) return;
+                                FernCommands.getInstance().getLogger().info("&3-&b" + playername2);
+                                FernCommands.getInstance().getLogger().info(sender.getName());
+                                sender.sendMessage(msg("&3-&b" + playername2));
+                                checkedPlayers.add(uuid);
+                            }
+                        }
                     }
 
                     sender.sendMessage(msg("&6The ips are from: "));

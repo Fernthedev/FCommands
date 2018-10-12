@@ -45,7 +45,7 @@ public class NameHistory extends Command {
 
                 if((TimeUnit.MILLISECONDS.toSeconds(secondsLeft) <= DEFAULT_COOLDOWN)) {
                     long timer = TimeUnit.MILLISECONDS.toSeconds(secondsLeft) - DEFAULT_COOLDOWN;
-                    sender.sendMessage(msg("You cant use that commands for another " + timer + " seconds!"));
+                    sender.sendMessage(msg("You cant use that commands for another " + timer*-1 + " seconds!"));
                     return;
                 }
 

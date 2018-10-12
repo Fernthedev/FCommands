@@ -14,9 +14,30 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 public class NickReload implements Listener, PluginMessageListener {
+
+    static HashMap<String,String> nicknames = new HashMap<>();
+
+    public NickReload() {
+        DatabaseHandler.runAfterConnect(() -> {
+            try {
+                String sql = "SELECT * FROM fern_nicks;";
+                PreparedStatement stmt = DatabaseHandler.getConnection().prepareStatement(sql);
+                ResultSet result = stmt.executeQuery();
+
+                while (result.next()) {
+                    String uUID = result.getString("PLAYERUUID");
+                    String nick = result.getString("NICK");
+                    nicknames.put(uUID,nick);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
     @Override
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
@@ -49,14 +70,16 @@ public class NickReload implements Listener, PluginMessageListener {
 
                         String nick = null;
                         while (result.next()) {
-                            String UUID = result.getString("PLAYERUUID");
-                            if (UUID.equals(uuid)) {
+                            String uUID = result.getString("PLAYERUUID");
+                            if (uUID.equals(uuid)) {
                                 nick = result.getString("NICK");
                             }
                         }
 
                         if (nick != null) {
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "essentials:nick " + playerName + " " + nick);
+                            nicknames.remove(uuid);
+                            nicknames.put(uuid,nick);
                         } else {
                             Player pl = Bukkit.getPlayer(uuid);
                             if (pl != null) pl.sendMessage(ChatColor.RED + "Unable to set nick");

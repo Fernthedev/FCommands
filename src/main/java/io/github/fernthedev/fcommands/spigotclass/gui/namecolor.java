@@ -251,10 +251,10 @@ public class namecolor implements CommandExecutor, Listener {
 
     private void setPrefix(Player p,String color) {
         boolean fail = false;
-        if(FernCommands.getInstance().isVaultEnabled() && FernCommands.getChat().isEnabled()) {
+        if(FernCommands.getHookManager().isVaultEnabled() && FernCommands.getChat().isEnabled()) {
                 FernCommands.getChat().setPlayerPrefix(p, message(color));
         }
-        if(FernCommands.getInstance().isNTEEnabled()) {
+        if(FernCommands.getHookManager().isNTEEnabled()) {
             //if(!NametagEdit.getApi().getNametag(p).getPrefix().equals("") || !NametagEdit.getApi().getNametag(p).getPrefix().isEmpty()) {
                 NametagEdit.getApi().setPrefix(p,color);
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"nte player " + p.getName() + " prefix " + color + "");
