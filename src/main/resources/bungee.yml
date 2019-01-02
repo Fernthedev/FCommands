@@ -1,4 +1,4 @@
 name: FernCommands
-main: io.github.fernthedev.fcommands.bungeeclass.FernCommands
+main: com.github.fernthedev.fcommands.bungeeclass.FernCommands
 version: 1.0
 author: fernthedev
