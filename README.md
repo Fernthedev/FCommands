@@ -3,14 +3,17 @@ Fern Commands :P
 A plugin I made because I get bored
 
 [o] = can be used on other players
+
 [c] = Command
+
 [b] = Bungee Permissions required (Used in spigot/universal features)
+
 [f] = Configurable in config
 
 # Bungee Features:
-- NameHistory (/nh,/namehistory, /fnh ) [o] [c]
-- PingShower (/fernb) [o] [c]
-- Last Seen (/seen) [o] [c]
+- NameHistory (/nh,/namehistory, /fnh fernc.namehistory) [o] [c]
+- PingShower (/fernb fern.test) [o] [c]
+- Last Seen (/seen fernc.seen) [o] [c]
 - Alt ban (Advancedban required)
 - Alt List (/accounts fernc.accounts.see) [o] [c]
 - Show current ip and alts from current ip (/myip fernc.myip.see) [c]
