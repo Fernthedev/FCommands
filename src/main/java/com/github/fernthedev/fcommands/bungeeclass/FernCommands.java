@@ -201,7 +201,6 @@ public class FernCommands extends FernBungeeAPI {
         } catch(Exception e) {
             e.printStackTrace();
         }
-        //weeeeeeeeeeeeeeeeeeeeeeeeeeee
 
         ipfile = null;
         seenfile = null;
