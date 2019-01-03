@@ -11,14 +11,14 @@ A plugin I made because I get bored
 [f] = Configurable in config
 
 # Bungee Features:
-- NameHistory (/nh,/namehistory, /fnh fernc.namehistory) [o] [c]
-- PingShower (/fernb fern.test) [o] [c]
-- Last Seen (/seen fernc.seen) [o] [c]
-- Alt ban (Advancedban required)
-- Alt List (/accounts fernc.accounts.see) [o] [c]
-- Show current ip and alts from current ip (/myip fernc.myip.see) [c]
-- Shows a special MOTD for banned players
-- Shows a special MOTD when a server running port 25566 is down (Currently not configurable, to change soon)
+- NameHistory (/nh,/namehistory, /fnh fernc.namehistory) [o] [c] [f]
+- PingShower (/fernb fern.test) [o] [c] [f]
+- Last Seen (/seen fernc.seen) [o] [c] [f]
+- Alt ban (Advancedban required) [f]
+- Alt List (/accounts fernc.accounts.see) [o] [c] [f]
+- Show current ip and alts from current ip (/myip fernc.myip.see) [c] [f]
+- Shows a special MOTD for banned players [f]
+- Shows a special MOTD when a server running a list of ports in config is down (Currently not configurable, to change soon) [f]
 
 
 # Spigot Features:
@@ -57,7 +57,7 @@ askPlaceHolder.setRunnable(new MessageRunnable() {
 });
 ```
 
-Get UUID from server. Ex:
+Get UUID from server. (Used from [FernAPI](https://github.com/Fernthedev/FernAPI)) Ex:
 ```java
 String name = UUIDFetcher.getName(uuid);
 String UUID = UUIDFetcher.getUUID(name);
