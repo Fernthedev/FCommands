@@ -61,6 +61,15 @@
 
                 <configuration>
                     <minimizeJar>true</minimizeJar>
+                    <relocations>
+                        <relocation>
+                            <pattern>com.github.fernthedev.fernapi</pattern>
+                            <shadedPattern>shaded.com.github.fernthedev.fernapi</shadedPattern>
+                            <includes>
+                                <include>com.github.fernthedev.fernapi.*</include>
+                            </includes>
+                        </relocation>
+                    </relocations>
                     <!-- put your configurations here -->
                 </configuration>
                 <executions>
@@ -115,6 +124,8 @@
             <scope>system</scope>
             <systemPath>${basedir}/Dependencies/worldguard-6.2.1.jar</systemPath>
         </dependency>
+
+
 
         <!--MySQL-->
         <dependency>

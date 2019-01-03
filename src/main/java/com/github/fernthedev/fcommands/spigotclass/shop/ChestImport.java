@@ -32,6 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * This is used for importing the shop from <a href="https://www.spigotmc.org/resources/guishop.2451/">GuiShop</a>
+ * This isn't loaded for default.
+ */
 public class ChestImport extends FCommand implements Listener, CommandExecutor {
 
     private static File chestConfigFile = new File(FernCommands.getInstance().getDataFolder(), "thing.yml");

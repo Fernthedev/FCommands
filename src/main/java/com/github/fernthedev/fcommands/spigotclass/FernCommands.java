@@ -10,7 +10,6 @@ import com.github.fernthedev.fcommands.spigotclass.ncp.NCPHandle;
 import com.github.fernthedev.fcommands.spigotclass.ncp.bungeencp;
 import com.github.fernthedev.fcommands.spigotclass.ncp.cooldown;
 import com.github.fernthedev.fcommands.spigotclass.placeholderapi.HookPlaceHolderAPI;
-import com.github.fernthedev.fcommands.spigotclass.shop.ChestImport;
 import com.github.fernthedev.fernapi.server.spigot.FernSpigotAPI;
 import com.google.gson.Gson;
 import lombok.NonNull;
@@ -25,7 +24,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.scheduler.BukkitRunnable;
-
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -64,6 +62,7 @@ public class FernCommands extends FernSpigotAPI {
 
     public void onEnable() {
         super.onEnable();
+        
         instance = this;
         config = this.getConfig();
         gson = new Gson();
@@ -246,10 +245,10 @@ public class FernCommands extends FernSpigotAPI {
         if (config.getBoolean("ItemBurn"))
             this.getServer().getPluginManager().registerEvents(new LavaBurn(), this);
 
-        if(config.getBoolean("AddShop")) {
+        /*if(config.getBoolean("AddShop")) {
             ChestImport chestImport = new ChestImport();
             this.getCommand("fshop").setExecutor(chestImport);
-        }
+        }*/
         /*
           If MCMMO and NTE are enabled, when MCMMO levels up, nametag prefixes and suffixes get messed up.
           This is to prevent that, this reloads NTE every time MCMMO levels up
@@ -350,4 +349,8 @@ public class FernCommands extends FernSpigotAPI {
         messageListener.addListener(pluginMessageListener);
     }
 
+    @Override
+    public void cancelTask(int id) {
+        getServer().getScheduler().cancelTask(id);
+    }
 }

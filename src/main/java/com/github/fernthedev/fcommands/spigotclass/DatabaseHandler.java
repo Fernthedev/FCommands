@@ -89,7 +89,7 @@ public class DatabaseHandler {
             return;
         }
         if (!isSetup) {
-            Universal.getMethods().getLogger().info("Connecting to MySQL now.");
+           Universal.getMethods().getLogger().info("Connecting to MySQL now.");
         }
         connection = DriverManager.getConnection(url, username, password);
 
@@ -101,7 +101,7 @@ public class DatabaseHandler {
                 }
             }
 
-            Universal.getMethods().getLogger().info("Connected successfully");
+           Universal.getMethods().getLogger().info("Connected successfully");
             isSetup = true;
         }
     }
@@ -114,7 +114,7 @@ public class DatabaseHandler {
 
     static void setup() {
         if(!isSetup) {
-            Universal.getMethods().getLogger().info("Setting database connection");
+           Universal.getMethods().getLogger().info("Setting database connection");
         }
         fileManager = FilesManager.getInstance();
 

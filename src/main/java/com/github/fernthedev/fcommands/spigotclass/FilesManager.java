@@ -114,7 +114,6 @@ public class FilesManager {
         setCheck("Skylands",false);
         setCheck("NameColor",false);
         setCheck("NoAIonSpawn",false);
-        setCheck("AddShop",false);
         
         FernCommands.getInstance().saveConfig();
     }
