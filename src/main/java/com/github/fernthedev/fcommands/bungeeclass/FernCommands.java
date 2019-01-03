@@ -201,7 +201,7 @@ public class FernCommands extends FernBungeeAPI {
         } catch(Exception e) {
             e.printStackTrace();
         }
-        //weeeeeeeeeeee
+        //weeeeeeeeeeeeeeeee
 
         ipfile = null;
         seenfile = null;
@@ -210,7 +210,6 @@ public class FernCommands extends FernBungeeAPI {
         UUIDFetcher.stopHourTask();
         Seen.onDisable();
         HookManager.onDisable();
-        FileManager.onDisable();
         FileManager.onDisable();
         instance = null;
     }
