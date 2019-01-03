@@ -21,7 +21,7 @@ public class fernmain implements CommandExecutor {
                 case "reload":
                     reloadconfig.getInstance().onCommand(sender, command, s, args);
                     break;
-                case "hooks":
+                case "HookManager":
                     hooks.getInstance().onCommand(sender, command, s, args);
                     break;
                 default:
@@ -36,10 +36,10 @@ public class fernmain implements CommandExecutor {
                     help.getInstance().onCommand(sender,command,s,args);
             }else
                 if(arg1.equalsIgnoreCase("reload")) {
-                reloadconfig.getInstance().onCommand(sender, command, s, args);
+                ReloadConfig.getInstance().onCommand(sender, command, s, args);
             }else
-                if (arg1.equalsIgnoreCase("hooks")) {
-                        hooks.getInstance().onCommand(sender, command, s, args);
+                if (arg1.equalsIgnoreCase("HookManager")) {
+                        HookManager.getInstance().onCommand(sender, command, s, args);
                     }else {
                 sender.sendMessage(FernCommands.message("&cInvalid argument"));
                 help.getInstance().onCommand(sender,command,s,args);

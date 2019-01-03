@@ -23,15 +23,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-public class deleteip extends Command {
+public class DeleteIP extends Command {
 
-    private static deleteip ourInstance = new deleteip();
+    private static DeleteIP ourInstance = new DeleteIP();
 
-    public static deleteip getInstance() {
+    public static DeleteIP getInstance() {
         return ourInstance;
     }
 
-    public deleteip() {
+    public DeleteIP() {
         super("myip","fernc.myip.delete","me");
     }
 

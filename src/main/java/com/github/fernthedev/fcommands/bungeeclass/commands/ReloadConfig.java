@@ -9,16 +9,16 @@ import net.md_5.bungee.api.plugin.Command;
 
 import java.io.IOException;
 
-public class reloadconfig extends Command {
+public class ReloadConfig extends Command {
     public static FernCommands message;
     //String[] args;
-    private static reloadconfig ourInstance = new reloadconfig();
+    private static ReloadConfig ourInstance = new ReloadConfig();
 
-    public static reloadconfig getInstance() {
+    public static ReloadConfig getInstance() {
         return ourInstance;
     }
 
-    reloadconfig() {
+    ReloadConfig() {
         super("fernc", "fernc.reload", "ferncommand", "ferncommands");
     }
 
@@ -28,7 +28,7 @@ public class reloadconfig extends Command {
             sender.sendMessage(new FernCommands().message("&cNo arguments recieved(All,Config,Ip,Seen)"));
         } else {
             String which = strings[1].toLowerCase();
-            if (which.equals("all") || which.equals("ip") || which.equals("config") || which.equals("seen")) {
+            if (which.equals("all") || which.equals("ip") || which.equals("config") || which.equals("Seen")) {
                 try {
                     FileManager.getInstance().loadFiles(which,false);
                 }catch (IOException e) {

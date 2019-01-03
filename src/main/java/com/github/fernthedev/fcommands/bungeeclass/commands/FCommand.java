@@ -15,7 +15,7 @@ public abstract class FCommand extends Command {
         super(name, permission, aliases);
     }
 
-    BaseComponent[] msg(String text) {
+    protected BaseComponent[] msg(String text) {
         return new ComponentBuilder(ChatColor.translateAlternateColorCodes('&',text)).create();
     }
 
@@ -23,11 +23,11 @@ public abstract class FCommand extends Command {
      public abstract void execute(CommandSender sender, String[] args);
 
 
-    Logger logger() {
+    protected Logger logger() {
         return FernCommands.getInstance().getLogger();
     }
 
-    void sendMessage(CommandSender player, String message) {
+    protected void sendMessage(CommandSender player, String message) {
         player.sendMessage(msg(message));
     }
 }

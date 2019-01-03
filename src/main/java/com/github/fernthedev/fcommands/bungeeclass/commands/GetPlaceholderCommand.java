@@ -6,10 +6,10 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-public class getPlaceholderCommand extends FCommand {
+public class GetPlaceholderCommand extends FCommand {
 
 
-    public getPlaceholderCommand(String name, String permission, String... aliases) {
+    public GetPlaceholderCommand(String name, String permission, String... aliases) {
         super(name, permission, aliases);
     }
 

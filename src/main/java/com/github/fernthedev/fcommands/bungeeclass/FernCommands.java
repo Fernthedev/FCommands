@@ -4,9 +4,9 @@ package com.github.fernthedev.fcommands.bungeeclass;
 import com.github.fernthedev.fcommands.Universal.Channels;
 import com.github.fernthedev.fcommands.bungeeclass.commands.*;
 import com.github.fernthedev.fcommands.bungeeclass.commands.ip.AltsBan;
+import com.github.fernthedev.fcommands.bungeeclass.commands.ip.DeleteIP;
+import com.github.fernthedev.fcommands.bungeeclass.commands.ip.MainIP;
 import com.github.fernthedev.fcommands.bungeeclass.commands.ip.ShowAlts;
-import com.github.fernthedev.fcommands.bungeeclass.commands.ip.deleteip;
-import com.github.fernthedev.fcommands.bungeeclass.commands.ip.mainip;
 import com.github.fernthedev.fcommands.bungeeclass.placeholderapi.AskPlaceHolder;
 import com.github.fernthedev.fernapi.server.bungee.FernBungeeAPI;
 import com.github.fernthedev.fernapi.universal.UUIDFetcher;
@@ -61,11 +61,11 @@ public class FernCommands extends FernBungeeAPI {
         gson = new Gson();
         getLogger().info(ChatColor.BLUE + "ENABLED FERNCOMMANDS FOR BUNGEECORD");
         ipfile = new File(getDataFolder(), "ipdata.yml");
-        seenfile = new File(getDataFolder(), "seen.yml");
+        seenfile = new File(getDataFolder(), "Seen.yml");
         ipdeletefile = new File(FernCommands.getInstance().getDataFolder(),"ipdelete.yml");
         //configfile = new File(getDataFolder(), "config.yml");
         //configp = ConfigurationProvider.getProvider(YamlConfiguration.class);
-        new hooks();
+        new HookManager();
         new FileManager();
         if (!getDataFolder().exists()) {
             boolean mkdir = getDataFolder().mkdir();
@@ -98,7 +98,7 @@ public class FernCommands extends FernBungeeAPI {
         //CREATING SEEN FILE
         FileManager.getInstance().createseenFile();
         try {
-            FileManager.getInstance().loadFiles("seen",false);
+            FileManager.getInstance().loadFiles("Seen",false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -108,11 +108,12 @@ public class FernCommands extends FernBungeeAPI {
         //File seenfile = new File(getProxy().getPluginsFolder().getParentFile(), "config.yml");
 
 
-        getProxy().getPluginManager().registerListener(this, new servermaintenance());
+        getProxy().getPluginManager().registerListener(this, new ServerMaintenanceMOTD());
         //SEEN COMMAND
-        getProxy().getPluginManager().registerCommand(this, new seen());
-        getProxy().getPluginManager().registerListener(this, new seen());
-
+        if(FileManager.getConfigValues().isAllowSeenCommand()) {
+            getProxy().getPluginManager().registerCommand(this, new Seen());
+            getProxy().getPluginManager().registerListener(this, new Seen());
+        }
 
         try {
             FileManager.getInstance().createipFile();
@@ -124,7 +125,7 @@ public class FernCommands extends FernBungeeAPI {
         }
 
         //ADVANCEDBAN HOOK
-        if (hooks.getInstance().hasAdvancedBan()) {
+        if (HookManager.getInstance().hasAdvancedBan()) {
             getProxy().getLogger().info(ChatColor.GREEN + "FOUND ADVANCEDBAN! HOOKING IN API");
             getProxy().getPluginManager().registerListener(this,new AltsBan());
         }
@@ -141,7 +142,7 @@ public class FernCommands extends FernBungeeAPI {
         getProxy().getPluginManager().registerListener(this,new FernNick());
         getLogger().info("Registered fern nicks bungee channels.");
 
-        getProxy().getPluginManager().registerListener(this, new punishMOTD());
+        getProxy().getPluginManager().registerListener(this, new PunishMOTD());
 
         try {
             UUIDFetcher.addRequestTimer();
@@ -150,18 +151,35 @@ public class FernCommands extends FernBungeeAPI {
         }
 
         //MAIN FERN COMMAND MANAGER
-        getProxy().getPluginManager().registerCommand(this, new fernmain());
-        getProxy().getPluginManager().registerCommand(this,new ShowAlts());
-        getProxy().getPluginManager().registerCommand(this,new fernping());
-        getProxy().getPluginManager().registerCommand(this,new mainip());
-        getProxy().getPluginManager().registerCommand(this,new NameHistory());
-        getProxy().getPluginManager().registerCommand(this,new FernNick());
+        getProxy().getPluginManager().registerCommand(this, new FernMain());
 
-        getProxy().getPluginManager().registerCommand(this,new getPlaceholderCommand("bpapi","fernc.bpapi"));
+        if(FileManager.getConfigValues().isAllowIPShow()) {
+            getProxy().getPluginManager().registerCommand(this,new MainIP());
+        }
+        if(FileManager.getConfigValues().isShowAltsCommand()) {
+            getProxy().getPluginManager().registerCommand(this, new ShowAlts());
+        }
+
+        if(FileManager.getConfigValues().isAllowIPDelete()) {
+            DeleteIP.loadTasks();
+        }
+
+        if(FileManager.getConfigValues().isShowPing()) {
+            getProxy().getPluginManager().registerCommand(this, new FernPing());
+        }
+
+        if(FileManager.getConfigValues().isAllowNameHistory()) {
+            getProxy().getPluginManager().registerCommand(this, new NameHistory());
+        }
+        if(FileManager.getConfigValues().isGlobalNicks()) {
+            getProxy().getPluginManager().registerCommand(this, new FernNick());
+        }
+
+        getProxy().getPluginManager().registerCommand(this,new GetPlaceholderCommand("bpapi","fernc.bpapi"));
 
 
         getLogger().info("Registered fern nicks");
-        deleteip.loadTasks();
+
         run();
 
     }
@@ -186,11 +204,11 @@ public class FernCommands extends FernBungeeAPI {
 
         ipfile = null;
         seenfile = null;
-        fernmain.onDisable();
+        FernMain.onDisable();
         UUIDFetcher.stopRequestTimer();
         UUIDFetcher.stopHourTask();
-        seen.onDisable();
-        hooks.onDisable();
+        Seen.onDisable();
+        HookManager.onDisable();
         FileManager.onDisable();
         instance = null;
     }

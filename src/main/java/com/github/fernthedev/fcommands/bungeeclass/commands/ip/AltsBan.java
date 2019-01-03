@@ -2,7 +2,7 @@ package com.github.fernthedev.fcommands.bungeeclass.commands.ip;
 
 import com.github.fernthedev.fcommands.bungeeclass.FernCommands;
 import com.github.fernthedev.fcommands.bungeeclass.FileManager;
-import com.github.fernthedev.fcommands.bungeeclass.hooks;
+import com.github.fernthedev.fcommands.bungeeclass.HookManager;
 import com.github.fernthedev.fernapi.universal.UUIDFetcher;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
 import me.leoko.advancedban.manager.PunishmentManager;
@@ -23,7 +23,8 @@ import java.util.List;
 public class AltsBan implements Listener {
     @EventHandler
     public void onJoin(PostLoginEvent e) {
-        if (hooks.getInstance().hasAdvancedBan()) {
+
+        if (HookManager.getInstance().hasAdvancedBan()) {
             ProxiedPlayer player = e.getPlayer();
             Configuration ipconfig = new FileManager().getIpconfig();
 
@@ -230,60 +231,12 @@ public class AltsBan implements Listener {
 
             print("Players list is " + players.toString());
 
-            /*for (String uuid : players) {
-                if (!bannedPlayers.contains(uuid)) {
-                    print("The uuid is " + uuid);
-                    String playername;
-                    if (ProxyServer.getInstance().getPlayer(uuid) != null) {
-                        playername = ProxyServer.getInstance().getPlayer(uuid).getName();
-                    } else {
-                        playername = UUIDFetcher.getName(uuid);
-                    }
-
-                    print("A uuid is " + uuid + " and name is " + playername + " punishing now.");
-                    if (playername != null) {
-
-                        Punishment punishment = new Punishment(playername, uuid, e.getPunishment().getReason() + " &6From an alt which is " + UUIDFetcher.getName(e.getPunishment().getUuid()), e.getPunishment().getOperator(), e.getPunishment().getType(), e.getPunishment().getStart(), e.getPunishment().getEnd(), e.getPunishment().getCalculation(), -1);
-
-                        if (!PunishmentManager.get().getPunishments(uuid, punishment.getType(), true).contains(punishment)) {
-                            punishment.create(true);
-                            bannedPlayers.add(uuid);
-                        } else {
-                            bannedPlayers.add(uuid);
-                        }
-                    }
-                }
-            }*/
-
             print("Banned players are " + bannedPlayers.toString());
         } else {
             FernCommands.getInstance().printInLog(this, "Failed to load ips. UUID Player is " + uuidPlayer);
         }
 
     }
-
-    /*
-    public String getNameByUUI(String uuid) {
-        URL url = null;
-        InputStreamReader in = null;
-        try {
-            url = new URL("https://api.mojang.com/user/profiles/UUID/names".replace("UUID", uuid.replace("-", "")));
-            try {
-                in = new InputStreamReader(url.openStream());
-                return FernCommands.getGson().fromJson(in, String.class);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if(in != null)
-                    in.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        return "";
-    }*/
 
 
     public void print(Object log) {

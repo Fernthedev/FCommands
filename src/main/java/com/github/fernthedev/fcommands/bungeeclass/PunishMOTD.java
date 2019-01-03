@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class punishMOTD implements Listener {
+public class PunishMOTD implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void motdcheck(ProxyPingEvent eping) {
@@ -39,7 +39,7 @@ public class punishMOTD implements Listener {
 
         try {
             //ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
-            new FileManager().loadFiles("ip",true);
+            new FileManager().loadFiles("ip", true);
             //ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, configfile);
             ipfileloaded = true;
         } catch (IOException e) {
@@ -49,26 +49,29 @@ public class punishMOTD implements Listener {
 
         List<String> players = ipconfig.getStringList(hostAddress);
 
-        if(ipfileloaded) {
-           // for (String key : players) {
-                //getProxy.getLogger().info("just the key below fern");
-               // getProxy.getLogger().info(key);
-          //  }
+        if (ipfileloaded) {
+            // for (String key : players) {
+            //getProxy.getLogger().info("just the key below fern");
+            // getProxy.getLogger().info(key);
+            //  }
             if (players.isEmpty()) {
                 FernCommands.getInstance().getLogger().warning("Unable to find player, new ip?" + hostAddress);
                 //getProxy.getLogger().info("detected players: " + players);
-               // getProxy.getLogger().info("192.168.2.11's players " + ipconfig.getStringList("192 168 2 11"));
+                // getProxy.getLogger().info("192.168.2.11's players " + ipconfig.getStringList("192 168 2 11"));
             } else {
-                    List<String> playernames = new ArrayList<>();
-                    for(String uuid : players) {
-                        uuid = uuid.replaceAll("-","");
-                        String name = UUIDFetcher.getName(uuid);
-                        playernames.add(name);
-                    }
-                    FernCommands.getInstance().getLogger().info("Pinged by " + hostAddress + " and uuid is " + players.toString() + " the player names are " + playernames.toString());
-                for (String checkedPlayer : players) {
-                    if (hooks.getInstance().hasAdvancedBan() && PunishmentManager.get().isBanned(checkedPlayer)) {
-                        //getProxy.getLogger().info("Pinged by " + hostAddress + " and uuid is " + checkedPlayer);
+                List<String> playernames = new ArrayList<>();
+                for (String uuid : players) {
+                    uuid = uuid.replaceAll("-", "");
+                    String name = UUIDFetcher.getName(uuid);
+                    playernames.add(name);
+                }
+                FernCommands.getInstance().getLogger().info("Pinged by " + hostAddress + " and uuid is " + players.toString() + " the player names are " + playernames.toString());
+
+                if (HookManager.getInstance().hasAdvancedBan() && FileManager.getConfigValues().isPunishMotd()) {
+
+                    for (String checkedPlayer : players) {
+                        if (PunishmentManager.get().isBanned(checkedPlayer)) {
+                            //getProxy.getLogger().info("Pinged by " + hostAddress + " and uuid is " + checkedPlayer);
 
                             PunishmentManager.get().getBan(checkedPlayer);
                             //PERM BAN
@@ -87,7 +90,6 @@ public class punishMOTD implements Listener {
                                 //TEMP BAN
                             } else if (PunishmentManager.get().getBan(checkedPlayer).getType() == PunishmentType.TEMP_BAN) {
                                 long time = PunishmentManager.get().getBan(checkedPlayer).getEnd();
-
 
 
                                 SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm:ss");
@@ -115,14 +117,16 @@ public class punishMOTD implements Listener {
 
                             }
                         }
+                    }
                 }
+
             }
         }
 
 
         //eping.getConnection().
         //ProxiedPlayer Playername = ProxyServer.getInstance().getPlayer(uuid);
-       // ProxyServer.getInstance().getLogger().info("This is who pinged ur server: " + uuid + " and the name is: " + Playername + " and also the adress: " + hostAddress);
+        // ProxyServer.getInstance().getLogger().info("This is who pinged ur server: " + uuid + " and the name is: " + Playername + " and also the adress: " + hostAddress);
 
 
     }
@@ -130,33 +134,34 @@ public class punishMOTD implements Listener {
 
     @EventHandler
     public void onLoginIp(PostLoginEvent event) {
-        Logger log = FernCommands.getInstance().getLogger();
-        String player = event.getPlayer().getUniqueId().toString();
-        File ipfile = FernCommands.getIpfile();
-        log.info("Player " + event.getPlayer() + " has joined.");
-        log.info(event.getPlayer().getAddress().getHostString().replaceAll("\\.", " ") + " is the ip of player");
+        if(FileManager.getConfigValues().isCacheIps()) {
+            Logger log = FernCommands.getInstance().getLogger();
+            String player = event.getPlayer().getUniqueId().toString();
+            File ipfile = FernCommands.getIpfile();
+            log.info("Player " + event.getPlayer() + " has joined.");
+            log.info(event.getPlayer().getAddress().getHostString().replaceAll("\\.", " ") + " is the ip of player");
 
-        String ip = event.getPlayer().getAddress().getHostString().replaceAll("\\.", " ");
-        log.info("proxy list fern" + ip + " " + player);
+            String ip = event.getPlayer().getAddress().getHostString().replaceAll("\\.", " ");
+            log.info("proxy list fern" + ip + " " + player);
 
 
-        try {
-            FileManager.getInstance().loadFile(ipfile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Configuration ipconfig = new FileManager().getIpconfig();
-
-        List<String> ipplist = ipconfig.getStringList(ip);
-        if(!ipconfig.getStringList(ip).contains(player)){
-                log.info("Saving new player " + player + " to ip " + ip);
             try {
-                ipconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
+                FileManager.getInstance().loadFile(ipfile);
             } catch (IOException e) {
-                log.warning("unable to load file, saving anyways");
+                e.printStackTrace();
             }
-            ipplist.add(player);
-            ipconfig.set(ip,ipplist);
+            Configuration ipconfig = new FileManager().getIpconfig();
+
+            List<String> ipplist = ipconfig.getStringList(ip);
+            if (!ipconfig.getStringList(ip).contains(player)) {
+                log.info("Saving new player " + player + " to ip " + ip);
+                try {
+                    ipconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
+                } catch (IOException e) {
+                    log.warning("unable to load file, saving anyways");
+                }
+                ipplist.add(player);
+                ipconfig.set(ip, ipplist);
                 try {
                     ConfigurationProvider.getProvider(YamlConfiguration.class).save(ipconfig, ipfile);
                     //ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, configfile);
@@ -168,16 +173,17 @@ public class punishMOTD implements Listener {
                 if(!ipconfig.getSection(ip).getKeys().contains(player)) {
                     log.warning("Unable to save ip");
                 }*/
+            }
         }
     }
 
     public BaseComponent message(String text) {
-        return new TextComponent(ChatColor.translateAlternateColorCodes('&',text));
+        return new TextComponent(ChatColor.translateAlternateColorCodes('&', text));
     }
 
     @SuppressWarnings("unused")
-    public BaseComponent[] message(String text,boolean no) {
-        return new ComponentBuilder(ChatColor.translateAlternateColorCodes('&',text)).create();
+    public BaseComponent[] message(String text, boolean no) {
+        return new ComponentBuilder(ChatColor.translateAlternateColorCodes('&', text)).create();
     }
 
 }

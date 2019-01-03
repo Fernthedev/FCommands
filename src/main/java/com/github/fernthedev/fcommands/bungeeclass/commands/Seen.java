@@ -25,27 +25,27 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class seen extends Command implements Listener {
+public class Seen extends Command implements Listener {
     private static File seenfile = FernCommands.getInstance().getSeenfile();
     private static Logger getLogger = FernCommands.getInstance().getLogger();
     private static FernCommands bungeee = new FernCommands();
 
 
 
-    public seen() {
-        super("seen", "fernc.seen", "saw", "swho");
+    public Seen() {
+        super("Seen", "fernc.Seen", "saw", "swho");
     }
 
     @Override
     public void execute(CommandSender sender, String[] strings) {
         try {
-            FileManager.getInstance().loadFiles("seen", true);
+            FileManager.getInstance().loadFiles("Seen", true);
         } catch (IOException e) {
             e.printStackTrace();
         }
         Configuration seenconfig = new FileManager().getSeenconfig();
         if (strings.length == 0) {
-            sender.sendMessage(new FernCommands().message("&cPlease use the command as followed: /seen <player>"));
+            sender.sendMessage(new FernCommands().message("&cPlease use the command as followed: /Seen <player>"));
 
         } else {
             String ptarget = strings[0];
@@ -130,7 +130,7 @@ public class seen extends Command implements Listener {
     public void onLeave(PlayerDisconnectEvent e) {
         if(e.getPlayer().getServer() == null) return;
         try {
-            FileManager.getInstance().loadFiles("seen",true);
+            FileManager.getInstance().loadFiles("Seen",true);
         } catch (IOException e1) {
             e1.printStackTrace();
         }
@@ -143,9 +143,9 @@ public class seen extends Command implements Listener {
 
 //        Configuration sconfig = new FileManager().getConfig();
         try {
-            FileManager.getInstance().loadFiles("seen",true);
+            FileManager.getInstance().loadFiles("Seen",true);
         } catch (IOException e1) {
-            getLogger.warning("unable to load seen file");
+            getLogger.warning("unable to load Seen file");
         }
 
         Configuration seenplist = seenconfig.getSection(UUID);
@@ -172,7 +172,7 @@ public class seen extends Command implements Listener {
             //ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, configfile);
         } catch (IOException ee) {
             ee.printStackTrace();
-            getLogger.info("Unable to save seen.yml file");
+            getLogger.info("Unable to save Seen.yml file");
         }
     }
 

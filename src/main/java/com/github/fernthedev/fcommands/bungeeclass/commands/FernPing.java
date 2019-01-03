@@ -10,8 +10,8 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
-public class fernping extends Command {
-    public fernping() {
+public class FernPing extends Command {
+    public FernPing() {
         super("fernb","fern.test", "fernbungee");
     }
 

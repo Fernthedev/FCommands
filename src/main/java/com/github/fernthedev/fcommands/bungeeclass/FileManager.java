@@ -1,5 +1,8 @@
 package com.github.fernthedev.fcommands.bungeeclass;
 
+
+import com.github.fernthedev.fcommands.bungeeclass.files.ConfigManager;
+import com.github.fernthedev.fcommands.bungeeclass.files.ConfigValues;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -7,8 +10,6 @@ import net.md_5.bungee.config.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class FileManager {
@@ -22,6 +23,8 @@ public class FileManager {
     private static Configuration ipconfig;
     private static Configuration seenconfig;
     private static Configuration deleteipconfig;
+
+    private static ConfigManager configManager;
 
     public File getConfigfile() {
         return configfile;
@@ -38,9 +41,11 @@ public class FileManager {
         thisinstance = this;
         deleteipfile = new File(FernCommands.getInstance().getDataFolder(),"ipdelete.yml");
         ipfile = new File(FernCommands.getInstance().getDataFolder(), "ipdata.yml");
-        seenfile = new File(FernCommands.getInstance().getDataFolder(), "seen.yml");
-        configfile = new File(FernCommands.getInstance().getDataFolder(), "config.yml");
+        seenfile = new File(FernCommands.getInstance().getDataFolder(), "Seen.yml");
+        configfile = new File(FernCommands.getInstance().getDataFolder(), "config.json");
         ConfigurationProvider configp = ConfigurationProvider.getProvider(YamlConfiguration.class);
+
+        configManager = new ConfigManager();
     }
 
     /**
@@ -70,7 +75,7 @@ public class FileManager {
 
     /**
       Method for loading config files
-      @param which Which file to load (seen,config,ip,all)
+      @param which Which file to load (Seen,config,ip,all)
      */
     @SuppressWarnings("RedundantThrows")
     public void loadFiles(String which,boolean silent) throws IOException {
@@ -83,6 +88,8 @@ public class FileManager {
         boolean goconfig = which.equalsIgnoreCase("config") || which.equalsIgnoreCase("all");
         //CONFIG
         if (goconfig && configfile.exists()) {
+            configManager.load();
+            /*
             try {
                 config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configfile);
             } catch (IOException e) {
@@ -90,7 +97,7 @@ public class FileManager {
                 e.printStackTrace();
             }
             if(!silent)
-            FernCommands.getInstance().getLogger().info("Config was reloaded  " + which);
+            FernCommands.getInstance().getLogger().info("Config was reloaded  " + which);*/
         }else if(goconfig){
             FernCommands.getInstance().getLogger().warning("Tried to reload config, although file doesn't exist");
             FernCommands.getInstance().getLogger().warning("Creating config");
@@ -99,7 +106,7 @@ public class FileManager {
 
 
         //SEEN
-        boolean goseen = which.equalsIgnoreCase("seen") || which.equalsIgnoreCase("all");
+        boolean goseen = which.equalsIgnoreCase("Seen") || which.equalsIgnoreCase("all");
         if (seenfile.exists() && goseen) {
             try {
                 seenconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(seenfile);
@@ -107,20 +114,20 @@ public class FileManager {
                 FernCommands.getInstance().getProxy().getLogger().info("Unable to load seenconfig. Error: " + e.getProblem());
 
             } catch (IOException e) {
-                FernCommands.getInstance().getProxy().getLogger().warning(ChatColor.RED + "failed to load seen config");
+                FernCommands.getInstance().getProxy().getLogger().warning(ChatColor.RED + "failed to load Seen config");
                 e.printStackTrace();
             }
             if(!silent)
             FernCommands.getInstance().getLogger().info("Seen Config was reloaded  " + which);
         } else if(goseen) {
-            FernCommands.getInstance().getLogger().warning("Tried to reload seen config, although file doesn't exist");
+            FernCommands.getInstance().getLogger().warning("Tried to reload Seen config, although file doesn't exist");
             FernCommands.getInstance().getLogger().warning("CREATING SEEN FILE!");
             createseenFile();
         }
 
         //IP
         boolean goip = which.equalsIgnoreCase("ip") || which.equalsIgnoreCase("all");
-        if (hooks.getInstance().hasAdvancedBan()) {
+        if (HookManager.getInstance().hasAdvancedBan()) {
             if (ipfile.exists() && (which.equals("ip") || which.equals("all"))) {
                 try {
                     ipconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
@@ -139,10 +146,10 @@ public class FileManager {
             FernCommands.getInstance().getLogger().warning("Tried to reload/create ips although advancedban isn't loaded, so why load the file?");
         }
 
-        //deleteip
+        //DeleteIP
         //IP
         boolean goipdelete = which.equalsIgnoreCase("ipdelete") || which.equalsIgnoreCase("all");
-        if (hooks.getInstance().hasAdvancedBan()) {
+        if (HookManager.getInstance().hasAdvancedBan()) {
             if (deleteipfile.exists() && goipdelete) {
                 try {
                     deleteipconfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(deleteipfile);
@@ -179,13 +186,13 @@ public class FileManager {
 
 
     /**
-     * Method for creating seen config
+     * Method for creating Seen config
      */
     public void createseenFile() {
-        File SeenFile = new File(FernCommands.getInstance().getDataFolder(), "seen.yml");
-        if (!SeenFile.exists()) {
+        File seenFile = new File(FernCommands.getInstance().getDataFolder(), "Seen.yml");
+        if (!seenFile.exists()) {
             try {
-                SeenFile.createNewFile();
+                seenFile.createNewFile();
             } catch (IOException e) {
                 throw new RuntimeException("Unable to create configuration file", e);
             }
@@ -197,10 +204,10 @@ public class FileManager {
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void createipFile() {
-        File IpFile = new File(FernCommands.getInstance().getDataFolder(), "ipdata.yml");
-        if (!IpFile.exists()) {
+        File ipFile = new File(FernCommands.getInstance().getDataFolder(), "ipdata.yml");
+        if (!ipFile.exists()) {
             try {
-                IpFile.createNewFile();
+                ipFile.createNewFile();
             } catch (IOException e) {
                 throw new RuntimeException("Unable to create configuration file", e);
             }
@@ -244,12 +251,9 @@ public class FileManager {
             FernCommands.getInstance().getDataFolder().mkdir();
         }
         File file = new File(FernCommands.getInstance().getDataFolder(), "config.yml");
+
         if (!file.exists()) {
-            try (InputStream in = FernCommands.getInstance().getResourceAsStream("config.yml")) {
-                Files.copy(in, file.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            configManager.load();
         }
     }
 
@@ -298,7 +302,7 @@ public class FileManager {
 
     public enum WhichFile {
         IP("ip")
-        ,CONFIG("config"),SEEN("seen"),DELETEIP("ipdelete"),ALL("all");
+        ,CONFIG("config"),SEEN("Seen"),DELETEIP("ipdelete"),ALL("all");
 
         private String value;
 
@@ -312,7 +316,11 @@ public class FileManager {
         }
     }
 
+    public static ConfigManager getConfigManager() {
+        return configManager;
+    }
 
-
-
+    public static ConfigValues getConfigValues() {
+        return configManager.getConfigValues();
+    }
 }

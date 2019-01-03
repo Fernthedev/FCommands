@@ -14,8 +14,8 @@ public class hooks implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (args.length != 0 && (args[0].equals("hooks"))) {
-        if(sender.hasPermission("fernc.hooks")) {
+        if (args.length != 0 && (args[0].equals("HookManager"))) {
+        if(sender.hasPermission("fernc.HookManager")) {
                 if (FernCommands.getHookManager().isVaultEnabled()) {
                     sender.sendMessage(FernCommands.message("&bVault:&aHooked"));
                     if (FernCommands.getChat().isEnabled()) {

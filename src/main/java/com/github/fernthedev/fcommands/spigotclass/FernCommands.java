@@ -216,8 +216,8 @@ public class FernCommands extends FernSpigotAPI {
         /*
         REGISTERING DEFAULT COMMANDS
          */
-        //this.getCommand("fern").setExecutor(new reloadconfig());
-        //this.getCommand("fern").setExecutor(new hooks());
+        //this.getCommand("fern").setExecutor(new ReloadConfig());
+        //this.getCommand("fern").setExecutor(new HookManager());
         this.getCommand("fern").setExecutor(new fernmain());
 
 

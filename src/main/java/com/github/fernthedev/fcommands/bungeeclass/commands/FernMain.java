@@ -4,15 +4,15 @@ import com.github.fernthedev.fcommands.bungeeclass.FernCommands;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 
-public class fernmain extends Command {
+public class FernMain extends Command {
 
-    private static fernmain ourInstance = new fernmain();
+    private static FernMain ourInstance = new FernMain();
 
-    public static fernmain getInstance() {
+    public static FernMain getInstance() {
         return ourInstance;
     }
 
-    public fernmain() {
+    public FernMain() {
         super("fernc", "fernc.help");
     }
 
@@ -22,7 +22,7 @@ public class fernmain extends Command {
                 sender.sendMessage(new FernCommands().message("&9Hello there. FernCommands are running"));
         }else{
             if(args[0].equalsIgnoreCase("reload")) {
-                reloadconfig.getInstance().execute(sender,args);
+                ReloadConfig.getInstance().execute(sender,args);
             }else{
                 sender.sendMessage(new FernCommands().message("&cWrong arguments recieved "+ "\"" + args[0] + "\"" + " is not valid. (reload)" ));
             }

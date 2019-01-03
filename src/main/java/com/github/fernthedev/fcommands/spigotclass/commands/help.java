@@ -14,7 +14,7 @@ public class help implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        sender.sendMessage(FernCommands.message("&b/fern hooks &f Gets what compatible plugins are hooked with FernCommands"));
+        sender.sendMessage(FernCommands.message("&b/fern HookManager &f Gets what compatible plugins are hooked with FernCommands"));
         sender.sendMessage(FernCommands.message("&b/fern reload &f Reloads config"));
         return true;
     }

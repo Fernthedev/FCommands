@@ -1,5 +1,7 @@
 package com.github.fernthedev.fcommands.bungeeclass;
 
+import com.github.fernthedev.fcommands.bungeeclass.files.ConfigManager;
+import com.github.fernthedev.fcommands.bungeeclass.files.ConfigValues;
 import com.github.fernthedev.fernapi.universal.Universal;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.scheduler.TaskScheduler;
@@ -11,15 +13,11 @@ import java.sql.Statement;
 
 public class DatabaseHandler {
 
-    //DataBase vars.
-    private static String username; //Enter in your db username
-    private static String password; //Enter your password for the db
-    private static String url; //Enter URL w/db name
-    private static String port;
-    private static String urlHost;
-    private static String database;
 
+    private static String url = ""; //Enter URL w/db name
     private static boolean scheduled;
+
+    private static ConfigValues configValues;
 
     private static TaskScheduler scheduler;
 
@@ -37,16 +35,17 @@ public class DatabaseHandler {
                 openConnection();
                 Statement statement = connection.createStatement();
             } catch(ClassNotFoundException | SQLException e) {
-                Universal.getMethods().getLogger().info("The user is " + username + " with password " + password + " with database " + database + " url being " + url);
+                Universal.getMethods().getLogger().info("The user is " + configValues.getUsername() + " with password " + configValues.getPassword() + " with database " + configValues.getDatabase() + " url being " + url);
                 e.printStackTrace();
             }
         };
         scheduled = true;
         ProxyServer.getInstance().getScheduler().runAsync(FernCommands.getInstance(),runnable);
 
-        if(!FernCommands.getRunnables().isEmpty())
-        for(Runnable runnable1 : FernCommands.getRunnables()) {
-            ProxyServer.getInstance().getScheduler().runAsync(FernCommands.getInstance(),runnable1);
+        if(!FernCommands.getRunnables().isEmpty()) {
+            for (Runnable runnable1 : FernCommands.getRunnables()) {
+                ProxyServer.getInstance().getScheduler().runAsync(FernCommands.getInstance(), runnable1);
+            }
         }
     }
 
@@ -60,7 +59,7 @@ public class DatabaseHandler {
                 return;
             }
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection(url,username,password);
+            connection = DriverManager.getConnection(url,configValues.getUsername(),configValues.getPassword());
             Universal.getMethods().getLogger().info("Connection successful to MySQL");
         }
     }
@@ -71,27 +70,11 @@ public class DatabaseHandler {
     }
 
     static void setup() {
-        FileManager fileManager = new FileManager();
+        ConfigManager configManager = FileManager.getConfigManager();
+        configValues = configManager.getConfigValues();
 
 
-        username = fileManager.getValue("DBUsername","root");
-        Universal.getMethods().getLogger().info("Set root in config." + username);
-
-        password = fileManager.getValue("DBPass","pass");
-        Universal.getMethods().getLogger().info("Set pass in config." + password);
-
-
-        database = fileManager.getValue("DB","database");
-        Universal.getMethods().getLogger().info("Set database in config." + database);
-
-        port = fileManager.getValue("DBPort","3306");
-        Universal.getMethods().getLogger().info("Set port in config." + port);
-
-        urlHost = fileManager.getValue("DBHost","localhost");
-        Universal.getMethods().getLogger().info("Set host in config." + urlHost);
-
-
-        url = "jdbc:mysql://%host%:%port%/%database%".replaceAll("%host%",urlHost).replaceAll("%port%",port).replaceAll("%database%",database);
+        url = "jdbc:mysql://%host%:%port%/%database%".replaceAll("%host%",configValues.getUrlHost()).replaceAll("%port%",configValues.getPort()).replaceAll("%database%",configValues.getDatabase());
 
         scheduler = ProxyServer.getInstance().getScheduler();
         new DatabaseHandler(false);

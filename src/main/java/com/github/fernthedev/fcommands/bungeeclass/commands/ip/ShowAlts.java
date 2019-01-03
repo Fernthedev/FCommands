@@ -131,30 +131,6 @@ public class ShowAlts extends Command {
         }
     }
 
-    /*
-    // Get Name from UUID
-    public String getNameByUUIDe(String uuid) {
-        URL url = null;
-        InputStreamReader in = null;
-        try {
-            url = new URL("https://api.mojang.com/user/profiles/UUID/names".replace("UUID", uuid.replace("-", "")));
-            try {
-                in = new InputStreamReader(url.openStream());
-                return FernCommands.getGson().fromJson(in, String.class);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if(in != null)
-                in.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        return "";
-    }*/
-
 
     private BaseComponent[] msg(String text) {
         return new ComponentBuilder(ChatColor.translateAlternateColorCodes('&',text)).create();

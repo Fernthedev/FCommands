@@ -2,18 +2,18 @@ package com.github.fernthedev.fcommands.bungeeclass;
 
 import net.md_5.bungee.api.ProxyServer;
 
-public class hooks {
+public class HookManager {
 
     private static boolean isAdvancedBanEnabled = false;
 
-    private static hooks thisInstance;
+    private static HookManager thisInstance;
 
-    public hooks() {
+    public HookManager() {
         thisInstance = this;
         loadHooks();
     }
 
-    public static hooks getInstance() {
+    public static HookManager getInstance() {
         return thisInstance;
     }
 
