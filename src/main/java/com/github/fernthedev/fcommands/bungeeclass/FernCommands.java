@@ -189,7 +189,7 @@ public class FernCommands extends FernBungeeAPI {
     @Override
     public void onDisable(){
         instance = this;
-        getLogger().info(ChatColor.AQUA + "DISABLED FERNCOMMANDS FOR BUNGEECORD");
+        getLogger().info(ChatColor.GREEN + "DISABLED FERNCOMMANDS FOR BUNGEECORD");
 
         DatabaseHandler.getScheduler().cancel(this);
         // invoke on disable.
