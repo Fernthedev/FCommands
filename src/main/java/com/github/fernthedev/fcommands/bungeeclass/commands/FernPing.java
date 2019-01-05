@@ -42,9 +42,12 @@ public class FernPing extends Command {
             } else {
                 ProxiedPlayer p = ProxyServer.getInstance().getPlayer(args[0]);
                 if (p != null) {
+
                     //is connected
 
-                    if(p.hasPermission("sv.see")) {
+
+
+                    if(sender.hasPermission("sv.see")) {
                         sender.sendMessage(message("&c" + p + "'s &aFernPing is " + p.getPing()));
                     } else {
                         AskPlaceHolder askPlaceHolder = new AskPlaceHolder(p, "%fvanish_isvanished%");

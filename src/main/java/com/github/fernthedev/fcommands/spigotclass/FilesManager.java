@@ -52,7 +52,15 @@ public class FilesManager {
         }
         return null;
     }
-
+    public boolean getValue(String val, boolean defval) {
+        if(val != null) {
+            if (config.get(val) == null) {
+                config.set(val, defval);
+            }
+            return config.getBoolean(val);
+        }
+        return false;
+    }
 
     /**
      *

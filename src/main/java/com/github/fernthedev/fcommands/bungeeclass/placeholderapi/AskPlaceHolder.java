@@ -133,7 +133,7 @@ public class AskPlaceHolder implements Listener {
                         return;
                     }
                     if (channel.equalsIgnoreCase("Forward") && subchannel.equalsIgnoreCase(Channels.PlaceHolderValue)) {
-                        getLogger().info("It is a bungeecord message");
+                       // getLogger().info("It is a bungeecord message");
                         FernCommands.getInstance().getLogger().info("It is from current server.");
 
                         String placeholder = in.readUTF();
@@ -142,9 +142,9 @@ public class AskPlaceHolder implements Listener {
 
                         String uuide = in.readUTF();
 
-                        getLogger().info("Channel is " + channel + " and server is" + server + " and subchannel is " + subchannel + " and placeholder is " + placeholder);
+                       // getLogger().info("Channel is " + channel + " and server is" + server + " and subchannel is " + subchannel + " and placeholder is " + placeholder);
 
-                        getLogger().info("The message is for a placeholder. Running code!");
+                     //   getLogger().info("The message is for a placeholder. Running code!");
 
                         AskPlaceHolder instance = null;
                         if (!instances.isEmpty()) {
@@ -166,7 +166,7 @@ public class AskPlaceHolder implements Listener {
 
                             instance.checked = true;
                             if (instance.runnableset) {
-                                getLogger().info("Runnable is set because we checked");
+                               // getLogger().info("Runnable is set because we checked");
                             } else {
                                 getLogger().info("Runnable is not set because we checked");
                             }
@@ -186,19 +186,19 @@ public class AskPlaceHolder implements Listener {
 
     @Deprecated
     private void removeInstance(AskPlaceHolder askPlaceHolder) {
-        getLogger().info("Removed an instance from list");
+      //  getLogger().info("Removed an instance from list");
         instances.remove(askPlaceHolder);
     }
 
     @SuppressWarnings("unused")
     private void removeInstance() {
-        getLogger().info("Removed an instance from themselves to the list");
+       // getLogger().info("Removed an instance from themselves to the list");
         instances.remove(this);
     }
 
     private void cancelTask() {
-        getLogger().info("Task cancelled");
-        getLogger().info("Cancelled instance with uuid of " + uuid);
+     //   getLogger().info("Task cancelled");
+   //     getLogger().info("Cancelled instance with uuid of " + uuid);
         removeInstance();
         taske.cancel();
         taske.purge();
@@ -208,7 +208,7 @@ public class AskPlaceHolder implements Listener {
     public void runTask() {
         taske = new Timer();
 
-        getLogger().info("This instance uuid is " + uuid);
+        //getLogger().info("This instance uuid is " + uuid);
 
         taske.schedule(new TimerTask() {
             AskPlaceHolder instance = null;
@@ -216,19 +216,19 @@ public class AskPlaceHolder implements Listener {
 
             @Override
             public void run() {
-                getLogger().info("Ran a timer");
+               // getLogger().info("Ran a timer");
                 if(count == 0) {
                 if (instance == null) {
                     if(!instances.isEmpty()) {
                         for (AskPlaceHolder askPlaceHolder : instances) {
                             if (askPlaceHolder.uuid.equals(uuid)) {
                                 instance = askPlaceHolder;
-                                getLogger().info("Found on the list an instance with uuid " + askPlaceHolder.uuid);
-                                getLogger().info("It is equal to current uuid " + uuid);
+                      //          getLogger().info("Found on the list an instance with uuid " + askPlaceHolder.uuid);
+                     //           getLogger().info("It is equal to current uuid " + uuid);
                             }
                         }
                     }else{
-                        getLogger().info("There are no instances while running timer");
+                    //    getLogger().info("There are no instances while running timer");
                         count++;
                         cancelTask();
                     }

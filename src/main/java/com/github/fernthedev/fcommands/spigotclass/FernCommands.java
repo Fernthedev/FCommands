@@ -10,6 +10,7 @@ import com.github.fernthedev.fcommands.spigotclass.ncp.NCPHandle;
 import com.github.fernthedev.fcommands.spigotclass.ncp.bungeencp;
 import com.github.fernthedev.fcommands.spigotclass.ncp.cooldown;
 import com.github.fernthedev.fcommands.spigotclass.placeholderapi.HookPlaceHolderAPI;
+import com.github.fernthedev.fcommands.spigotclass.shop.ChestImport;
 import com.github.fernthedev.fernapi.server.spigot.FernSpigotAPI;
 import com.google.gson.Gson;
 import lombok.NonNull;
@@ -245,10 +246,10 @@ public class FernCommands extends FernSpigotAPI {
         if (config.getBoolean("ItemBurn"))
             this.getServer().getPluginManager().registerEvents(new LavaBurn(), this);
 
-        /*if(config.getBoolean("AddShop")) {
+        if(FilesManager.getInstance().getValue("AddShop",false)) {
             ChestImport chestImport = new ChestImport();
             this.getCommand("fshop").setExecutor(chestImport);
-        }*/
+        }
         /*
           If MCMMO and NTE are enabled, when MCMMO levels up, nametag prefixes and suffixes get messed up.
           This is to prevent that, this reloads NTE every time MCMMO levels up

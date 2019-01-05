@@ -41,7 +41,7 @@ public class FileManager {
         thisinstance = this;
         deleteipfile = new File(FernCommands.getInstance().getDataFolder(),"ipdelete.yml");
         ipfile = new File(FernCommands.getInstance().getDataFolder(), "ipdata.yml");
-        seenfile = new File(FernCommands.getInstance().getDataFolder(), "Seen.yml");
+        seenfile = new File(FernCommands.getInstance().getDataFolder(), "seen.yml");
         configfile = new File(FernCommands.getInstance().getDataFolder(), "config.json");
         ConfigurationProvider configp = ConfigurationProvider.getProvider(YamlConfiguration.class);
 

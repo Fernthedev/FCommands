@@ -22,7 +22,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 public class Seen extends Command implements Listener {
@@ -134,12 +137,12 @@ public class Seen extends Command implements Listener {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-        Configuration seenconfig = new FileManager().getSeenconfig();
+        Configuration seenConfig = new FileManager().getSeenconfig();
         ProxiedPlayer player = e.getPlayer();
-        String playere = player.getDisplayName();
-        //String UUID = UUIDManager.get().getUUID(playere);
-        UUID UUIDE = UUID.nameUUIDFromBytes(("OfflinePlayer:" + playere).getBytes(StandardCharsets.UTF_8));
-        String UUID = UUIDE.toString();
+        String playerE = player.getDisplayName();
+        //String uuid = UUIDManager.get().getUUID(playerE);
+        String uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + playerE).getBytes(StandardCharsets.UTF_8)).toString();
+
 
 //        Configuration sconfig = new FileManager().getConfig();
         try {
@@ -148,7 +151,7 @@ public class Seen extends Command implements Listener {
             getLogger.warning("unable to load Seen file");
         }
 
-        Configuration seenplist = seenconfig.getSection(UUID);
+        Configuration seenplist = seenConfig.getSection(uuid);
         //Calendar cal = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM-yyyy dd hh:mm aa",Locale.US);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -165,10 +168,10 @@ public class Seen extends Command implements Listener {
         for(String ee : seenplist.getKeys()) {
             getLogger.info(ee + " fern");
         }
-        seenconfig.set(UUID,null);
-        seenconfig.set(UUID,seenplist);
+        seenConfig.set(uuid,null);
+        seenConfig.set(uuid,seenplist);
         try {
-            ConfigurationProvider.getProvider(YamlConfiguration.class).save(seenconfig,seenfile);
+            ConfigurationProvider.getProvider(YamlConfiguration.class).save(seenConfig,seenfile);
             //ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, configfile);
         } catch (IOException ee) {
             ee.printStackTrace();

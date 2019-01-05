@@ -13,6 +13,7 @@ import com.github.fernthedev.fernapi.universal.UUIDFetcher;
 import com.github.fernthedev.fernapi.universal.Universal;
 import com.google.gson.Gson;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -61,7 +62,7 @@ public class FernCommands extends FernBungeeAPI {
         gson = new Gson();
         getLogger().info(ChatColor.BLUE + "ENABLED FERNCOMMANDS FOR BUNGEECORD");
         ipfile = new File(getDataFolder(), "ipdata.yml");
-        seenfile = new File(getDataFolder(), "Seen.yml");
+        seenfile = new File(getDataFolder(), "seen.yml");
         ipdeletefile = new File(FernCommands.getInstance().getDataFolder(),"ipdelete.yml");
         //configfile = new File(getDataFolder(), "config.yml");
         //configp = ConfigurationProvider.getProvider(YamlConfiguration.class);
@@ -178,6 +179,7 @@ public class FernCommands extends FernBungeeAPI {
         getProxy().getPluginManager().registerCommand(this,new GetPlaceholderCommand("bpapi","fernc.bpapi"));
 
 
+        ProxyServer.getInstance().
         getLogger().info("Registered fern nicks");
 
         run();
