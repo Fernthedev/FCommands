@@ -12,7 +12,7 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class FernPing extends Command {
     public FernPing() {
-        super("fernb","fern.test", "fernbungee");
+        super("fernb","fern.Test", "fernbungee");
     }
 
     @Override
@@ -86,6 +86,5 @@ public class FernPing extends Command {
 
     private BaseComponent[] message(String text) {
         return new ComponentBuilder(ChatColor.translateAlternateColorCodes('&',text)).create();
-
     }
 }

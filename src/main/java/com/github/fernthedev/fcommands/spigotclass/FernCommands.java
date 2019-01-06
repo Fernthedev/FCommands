@@ -1,7 +1,7 @@
 package com.github.fernthedev.fcommands.spigotclass;
 
 import com.github.fernthedev.fcommands.Universal.Channels;
-import com.github.fernthedev.fcommands.spigotclass.commands.fernmain;
+import com.github.fernthedev.fcommands.spigotclass.commands.FernMain;
 import com.github.fernthedev.fcommands.spigotclass.entity.NoAI;
 import com.github.fernthedev.fcommands.spigotclass.gui.namecolor;
 import com.github.fernthedev.fcommands.spigotclass.hooks.HookManager;
@@ -219,7 +219,7 @@ public class FernCommands extends FernSpigotAPI {
          */
         //this.getCommand("fern").setExecutor(new ReloadConfig());
         //this.getCommand("fern").setExecutor(new HookManager());
-        this.getCommand("fern").setExecutor(new fernmain());
+        this.getCommand("fern").setExecutor(new FernMain());
 
 
         /*

@@ -5,10 +5,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class help implements CommandExecutor {
-    private static help ourInstance = new help();
+public class Help implements CommandExecutor {
+    private static Help ourInstance = new Help();
 
-    public static help getInstance() {
+    public static Help getInstance() {
         return ourInstance;
     }
 

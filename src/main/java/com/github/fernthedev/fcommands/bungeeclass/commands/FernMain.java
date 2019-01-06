@@ -13,7 +13,7 @@ public class FernMain extends Command {
     }
 
     public FernMain() {
-        super("fernc", "fernc.help");
+        super("fernc", "fernc.Help");
     }
 
     @Override

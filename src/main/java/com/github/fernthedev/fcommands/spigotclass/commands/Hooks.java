@@ -5,10 +5,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class hooks implements CommandExecutor {
-    private static hooks ourInstance = new hooks();
+public class Hooks implements CommandExecutor {
+    private static Hooks ourInstance = new Hooks();
 
-    public static hooks getInstance() {
+    public static Hooks getInstance() {
         return ourInstance;
     }
 

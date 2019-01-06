@@ -27,7 +27,7 @@ public class namecolor implements CommandExecutor, Listener {
         if ((sender instanceof Player)) {
             Player p = (Player) sender;
             if (cmd.getName().equalsIgnoreCase("namecolor") && sender.hasPermission("fernc.namecolor")) {
-// Here we create our named help "inventory"
+// Here we create our named Help "inventory"
                 Inventory namecolor = Bukkit.getServer().createInventory(p, 27, "NameColor");
 
                 //Here you define our item
@@ -35,7 +35,7 @@ public class namecolor implements CommandExecutor, Listener {
                 ItemMeta metaref1 = ref1.getItemMeta();
                 ArrayList<String> lore = new ArrayList<String>();
 
-                //lore.add("test");
+                //lore.add("Test");
 
                 metaref1.setLore(lore);
                 metaref1.setDisplayName(message("&cExit"));

@@ -8,6 +8,8 @@ import org.bukkit.command.CommandSender;
 import java.util.logging.Logger;
 
 public abstract class FCommand implements CommandExecutor {
+
+
     @Override
     public abstract boolean onCommand(CommandSender sender, Command command, String name, String[] args);
 

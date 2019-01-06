@@ -10,10 +10,10 @@ import org.bukkit.configuration.InvalidConfigurationException;
 
 import java.io.IOException;
 
-public class reloadconfig implements CommandExecutor {
-    private static reloadconfig ourInstance = new reloadconfig();
+public class ReloadConfig implements CommandExecutor {
+    private static ReloadConfig ourInstance = new ReloadConfig();
 
-    public static reloadconfig getInstance() {
+    public static ReloadConfig getInstance() {
         return ourInstance;
     }
 

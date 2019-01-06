@@ -2,10 +2,10 @@ package com.github.fernthedev.fcommands.spigotclass.hooks;
 
 import com.earth2me.essentials.Essentials;
 import com.github.fernthedev.fcommands.spigotclass.FernCommands;
-import com.github.fernthedev.fcommands.spigotclass.placeholderapi.VanishPlaceholder;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.github.fernthedev.fcommands.spigotclass.nick.NickJoin;
 import com.github.fernthedev.fcommands.spigotclass.nick.NickReload;
+import com.github.fernthedev.fcommands.spigotclass.placeholderapi.VanishPlaceholder;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
@@ -85,6 +85,7 @@ public class HookManager {
         if(isPlaceHolderAPI) {
             //Registering placeholder will be use here
             new VanishPlaceholder().register();
+
             getLogger().info("HOOKED PLACEHOLDERAPI");
             //messageListener.addListener(new HookPlaceHolderAPI());
             getLogger().info("HOOKED PLACEHOLDERAPI BUNGEE MESSAGING");
