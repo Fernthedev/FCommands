@@ -24,9 +24,6 @@ public class FernMain implements CommandExecutor {
                 case "hookmanager":
                     Hooks.getInstance().onCommand(sender, command, s, args);
                     break;
-                case "test":
-                    Test.getInstance().onCommand(sender,command,s,args);
-                    break;
                 default:
                     sender.sendMessage(FernCommands.message("&cInvalid argument"));
                     Help.getInstance().onCommand(sender,command,s,args);
