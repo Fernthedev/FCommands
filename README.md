@@ -39,12 +39,12 @@ A plugin I made because I get bored
 
 # Universal API (API for both spigot & bungee):
 - Get Placeholder from spigot server, but within java code. 
-- UUID Fetcher (is being replaced by [FernAPI](https://github.com/Fernthedev/FernAPI)
+- UUID Fetcher (is being replaced by [FernAPI](https://github.com/Fernthedev/FernAPI))
 
 
 
 ## Api Usage:
-Get Placeholder from spigot server. Example:
+Get Placeholder from spigot server. Example: (Bungee only)
 ```java
 AskPlaceHolder askPlaceHolder = new AskPlaceHolder(Player,PlaceHolder);
 
