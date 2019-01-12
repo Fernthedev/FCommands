@@ -19,6 +19,7 @@ public class ConfigValues {
     private boolean allowSeenCommand = false;
     private boolean punishMotd = false;
     private String offlineServerMotd = "&cSERVER UNDER MAINTENANCE!";
+    private PunishValues punishValues = new PunishValues();
 
     //DataBase vars.
     private String username = "root"; //Enter in your db username
@@ -26,6 +27,14 @@ public class ConfigValues {
     private String port = "3306";
     private String urlHost = "localhost";
     private String database = "database";
+
+    public PunishValues getPunishValues() {
+        return punishValues;
+    }
+
+    public void setPunishValues(PunishValues punishValues) {
+        this.punishValues = punishValues;
+    }
 
     public boolean isCacheIps() {
         return cacheIps;

@@ -1,8 +1,8 @@
 package com.github.fernthedev.fcommands.bungeeclass;
 
+import com.github.fernthedev.fcommands.bungeeclass.files.PunishValues;
 import com.github.fernthedev.fernapi.universal.UUIDFetcher;
 import me.leoko.advancedban.manager.PunishmentManager;
-import me.leoko.advancedban.manager.TimeManager;
 import me.leoko.advancedban.utils.PunishmentType;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ServerPing;
@@ -67,6 +67,9 @@ public class PunishMOTD implements Listener {
                 }
                 FernCommands.getInstance().getLogger().info("Pinged by " + hostAddress + " and uuid is " + players.toString() + " the player names are " + playernames.toString());
 
+                PunishValues punishValues = FileManager.getConfigValues().getPunishValues();
+
+
                 if (HookManager.getInstance().hasAdvancedBan() && FileManager.getConfigValues().isPunishMotd()) {
 
                     for (String checkedPlayer : players) {
@@ -77,18 +80,13 @@ public class PunishMOTD implements Listener {
                             //PERM BAN
                             BaseComponent message;
 
-                            if (PunishmentManager.get().getBan(checkedPlayer).getType() == PunishmentType.BAN) {
+                            if (PunishmentManager.get().getBan(checkedPlayer).getType() == PunishmentType.BAN || PunishmentManager.get().getBan(checkedPlayer).getType() == PunishmentType.IP_BAN) {
                                 FernCommands.getInstance().getLogger().info("Player pinged, and is permanently banned" + checkedPlayer);
-                                message = message("&c&lYOU HAVE BEEN PERMANENTLY BANNED");
+                                message = message(punishValues.getPermBan());
                                 pingResponse.setDescriptionComponent(message);
                                 eping.setResponse(pingResponse);
                                 //PERM IP_BAN
-                            } else if (PunishmentManager.get().getBan(checkedPlayer).getType() == PunishmentType.IP_BAN) {
-                                message = message("&c&lYOUR IP HAS BEEN PERMANENTLY BANNED");
-                                pingResponse.setDescriptionComponent(message);
-                                eping.setResponse(pingResponse);
-                                //TEMP BAN
-                            } else if (PunishmentManager.get().getBan(checkedPlayer).getType() == PunishmentType.TEMP_BAN) {
+                            }  else if (PunishmentManager.get().getBan(checkedPlayer).getType() == PunishmentType.TEMP_BAN || PunishmentManager.get().getBan(checkedPlayer).getType() == PunishmentType.TEMP_IP_BAN) {
                                 long time = PunishmentManager.get().getBan(checkedPlayer).getEnd();
 
 
@@ -96,25 +94,12 @@ public class PunishMOTD implements Listener {
                                 String hms = sdf.format(time);
 
                                 sdf.format(time - 1);
-                                message = message("&c&lYOU HAVE BEEN BANNED UNTIL " + hms);
+                                message = message(punishValues.getTempBan().replaceAll("%time%",hms));
                                 pingResponse.setDescriptionComponent(message);
 
                                 eping.setResponse(pingResponse);
                                 //TEMP IP_BAN
                                 //  }
-                            } else if (PunishmentManager.get().getBan(checkedPlayer).getType() == PunishmentType.TEMP_IP_BAN) {
-                                long time = TimeManager.getTime() + PunishmentManager.get().getBan(checkedPlayer).getEnd();
-
-                                SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm:ss");
-                                String hms = sdf.format(time);
-                                message = message("&c&lYOUR IP HAS BEEN BANNED UNTIL " + hms);
-
-
-                                pingResponse.setDescriptionComponent(message);
-
-
-                                eping.setResponse(pingResponse);
-
                             }
                         }
                     }
