@@ -91,7 +91,7 @@ public class AskPlaceHolder implements Listener {
 
         outputStream = stream;
 
-        FernCommands.getInstance().getLogger().info("Request sent");
+        //FernCommands.getInstance().getLogger().info("Request sent");
         checked = false;
     }
 
@@ -134,7 +134,7 @@ public class AskPlaceHolder implements Listener {
                     }
                     if (channel.equalsIgnoreCase("Forward") && subchannel.equalsIgnoreCase(Channels.PlaceHolderValue)) {
                        // getLogger().info("It is a bungeecord message");
-                        FernCommands.getInstance().getLogger().info("It is from current server.");
+                       // FernCommands.getInstance().getLogger().info("It is from current server.");
 
                         String placeholder = in.readUTF();
 
