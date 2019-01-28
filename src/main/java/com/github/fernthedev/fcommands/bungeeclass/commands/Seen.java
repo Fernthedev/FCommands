@@ -2,8 +2,8 @@ package com.github.fernthedev.fcommands.bungeeclass.commands;
 
 import com.github.fernthedev.fcommands.bungeeclass.FernCommands;
 import com.github.fernthedev.fcommands.bungeeclass.FileManager;
-import com.github.fernthedev.fcommands.bungeeclass.MessageRunnable;
-import com.github.fernthedev.fcommands.bungeeclass.placeholderapi.AskPlaceHolder;
+import com.github.fernthedev.fernapi.server.bungee.network.AskPlaceHolder;
+import com.github.fernthedev.fernapi.server.bungee.network.MessageRunnable;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;

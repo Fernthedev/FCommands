@@ -7,7 +7,6 @@ import com.github.fernthedev.fcommands.bungeeclass.commands.ip.AltsBan;
 import com.github.fernthedev.fcommands.bungeeclass.commands.ip.DeleteIP;
 import com.github.fernthedev.fcommands.bungeeclass.commands.ip.MainIP;
 import com.github.fernthedev.fcommands.bungeeclass.commands.ip.ShowAlts;
-import com.github.fernthedev.fcommands.bungeeclass.placeholderapi.AskPlaceHolder;
 import com.github.fernthedev.fernapi.server.bungee.FernBungeeAPI;
 import com.github.fernthedev.fernapi.universal.UUIDFetcher;
 import com.github.fernthedev.fernapi.universal.Universal;
@@ -18,7 +17,6 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -130,7 +128,8 @@ public class FernCommands extends FernBungeeAPI {
             getProxy().getPluginManager().registerListener(this,new AltsBan());
         }
 
-        getProxy().getPluginManager().registerListener(this,new AskPlaceHolder());
+        //////////////////////////////////////////////////getProxy().getPluginManager().registerListener(this,new AskPlaceHolder());
+
         //getProxy().getPluginManager().registerListener(this,new UUIDSpoofChecker()  );
         getProxy().registerChannel("GetPlaceHolderAPI");
         getProxy().registerChannel("PlaceHolderValue");
@@ -254,7 +253,7 @@ public class FernCommands extends FernBungeeAPI {
         return seenfile;
     }
 
-    @Nonnull
+
     public static FernCommands getInstance() {
         return instance;
     }

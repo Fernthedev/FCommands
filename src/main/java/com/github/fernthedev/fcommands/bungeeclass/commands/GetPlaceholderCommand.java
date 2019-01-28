@@ -1,7 +1,7 @@
 package com.github.fernthedev.fcommands.bungeeclass.commands;
 
-import com.github.fernthedev.fcommands.bungeeclass.MessageRunnable;
-import com.github.fernthedev.fcommands.bungeeclass.placeholderapi.AskPlaceHolder;
+import com.github.fernthedev.fernapi.server.bungee.network.AskPlaceHolder;
+import com.github.fernthedev.fernapi.server.bungee.network.MessageRunnable;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -28,6 +28,7 @@ public class GetPlaceholderCommand extends FCommand {
             askPlaceHolder.setRunnable(new MessageRunnable() {
                 @Override
                 public void run() {
+                    System.out.println("Called");
                     super.run();
                     sender.sendMessage(msg("&aThe player's placeholder value of " + args[1] + " is " + askPlaceHolder.getPlaceHolderResult()));
                 }

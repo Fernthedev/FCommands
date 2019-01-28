@@ -1,6 +1,5 @@
 package com.github.fernthedev.fcommands.spigotclass;
 
-import com.github.fernthedev.fcommands.Universal.Channels;
 import com.github.fernthedev.fcommands.spigotclass.commands.FernMain;
 import com.github.fernthedev.fcommands.spigotclass.entity.NoAI;
 import com.github.fernthedev.fcommands.spigotclass.gui.namecolor;
@@ -9,7 +8,6 @@ import com.github.fernthedev.fcommands.spigotclass.misc.*;
 import com.github.fernthedev.fcommands.spigotclass.ncp.NCPHandle;
 import com.github.fernthedev.fcommands.spigotclass.ncp.bungeencp;
 import com.github.fernthedev.fcommands.spigotclass.ncp.cooldown;
-import com.github.fernthedev.fcommands.spigotclass.placeholderapi.HookPlaceHolderAPI;
 import com.github.fernthedev.fcommands.spigotclass.shop.ChestImport;
 import com.github.fernthedev.fernapi.server.spigot.FernSpigotAPI;
 import com.google.gson.Gson;
@@ -75,8 +73,8 @@ public class FernCommands extends FernSpigotAPI {
 
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 
-        this.getServer().getMessenger().registerOutgoingPluginChannel(this, Channels.PlaceHolderBungeeChannel);
-        this.getServer().getMessenger().registerIncomingPluginChannel(this, Channels.PlaceHolderBungeeChannel, new HookPlaceHolderAPI() );
+        //this.getServer().getMessenger().registerOutgoingPluginChannel(this, Channels.PlaceHolderBungeeChannel);
+///////////////////////////////        //this.getServer().getMessenger().registerIncomingPluginChannel(this, Channels.PlaceHolderBungeeChannel, new HookPlaceHolderAPI() );
 
         getLogger().info("Connecting to mysql");
         DatabaseHandler.setup();
