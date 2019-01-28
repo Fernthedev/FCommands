@@ -44,7 +44,7 @@ A plugin I made because I get bored
 
 
 ## Api Usage:
-Get Placeholder from spigot server. Example: (Bungee only)
+Get Placeholder from spigot server. Example: (Bungee only) (This is from the [FernAPI], it is highly suggested to use it from there instead of here)
 ```java
 AskPlaceHolder askPlaceHolder = new AskPlaceHolder(Player,PlaceHolder);
 
