@@ -1,12 +1,13 @@
 package com.github.fernthedev.fcommands.bungeeclass.commands;
 
+import com.github.fernthedev.fernapi.server.bungee.FernCommand;
 import com.github.fernthedev.fernapi.server.bungee.network.AskPlaceHolder;
 import com.github.fernthedev.fernapi.server.bungee.network.MessageRunnable;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-public class GetPlaceholderCommand extends FCommand {
+public class GetPlaceholderCommand extends FernCommand {
 
 
     public GetPlaceholderCommand(String name, String permission, String... aliases) {
@@ -30,11 +31,11 @@ public class GetPlaceholderCommand extends FCommand {
                 public void run() {
                     System.out.println("Called");
                     super.run();
-                    sender.sendMessage(msg("&aThe player's placeholder value of " + args[1] + " is " + askPlaceHolder.getPlaceHolderResult()));
+                    sender.sendMessage(message("&aThe player's placeholder value of " + args[1] + " is " + askPlaceHolder.getPlaceHolderResult()));
                 }
             });
         }else{
-            sender.sendMessage(msg("&cInsufficient arguments. Usage: bpapi {player} {placeholder}"));
+            sender.sendMessage(message("&cInsufficient arguments. Usage: bpapi {player} {placeholder}"));
         }
     }
 

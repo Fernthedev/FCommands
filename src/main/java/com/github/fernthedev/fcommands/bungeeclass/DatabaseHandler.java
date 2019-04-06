@@ -26,27 +26,7 @@ public class DatabaseHandler {
 
     @SuppressWarnings("unused")
      void setupSchedule() {
-        if(scheduler != null && scheduled) {
-            scheduler.cancel(FernCommands.getInstance());
-            scheduled =false;
-        }
-        Runnable runnable = () -> {
-            try {
-                openConnection();
-                Statement statement = connection.createStatement();
-            } catch(ClassNotFoundException | SQLException e) {
-                Universal.getMethods().getLogger().info("The user is " + configValues.getUsername() + " with password " + configValues.getPassword() + " with database " + configValues.getDatabase() + " url being " + url);
-                e.printStackTrace();
-            }
-        };
-        scheduled = true;
-        ProxyServer.getInstance().getScheduler().runAsync(FernCommands.getInstance(),runnable);
 
-        if(!FernCommands.getRunnables().isEmpty()) {
-            for (Runnable runnable1 : FernCommands.getRunnables()) {
-                ProxyServer.getInstance().getScheduler().runAsync(FernCommands.getInstance(), runnable1);
-            }
-        }
     }
 
     public void openConnection() throws SQLException, ClassNotFoundException {

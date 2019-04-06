@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 public class PunishMOTD implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void motdcheck(ProxyPingEvent eping) {
+    public void motdCheck(ProxyPingEvent eping) {
 
         boolean ipfileloaded;
 

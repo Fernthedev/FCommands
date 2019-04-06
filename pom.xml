@@ -41,6 +41,10 @@
             <id>vault-repo</id>
             <url>http://nexus.hc.to/content/repositories/pub_releases</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <build>
@@ -160,11 +164,10 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- This uses the FernAPI dependency, just use [clean publishToMavenLocal] with this: https://github.com/Fernthedev/FernAPI -->
         <dependency>
             <groupId>com.github.fernthedev</groupId>
             <artifactId>fernapi</artifactId>
-            <version>1.1</version>
+            <version>1.6.4</version>
             <scope>compile</scope>
         </dependency>
 

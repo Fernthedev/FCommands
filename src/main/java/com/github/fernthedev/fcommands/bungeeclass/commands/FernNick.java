@@ -2,6 +2,7 @@ package com.github.fernthedev.fcommands.bungeeclass.commands;
 
 import com.github.fernthedev.fcommands.bungeeclass.DatabaseHandler;
 import com.github.fernthedev.fcommands.bungeeclass.FernCommands;
+import com.github.fernthedev.fernapi.server.bungee.FernCommand;
 import com.github.fernthedev.fernapi.universal.Universal;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -16,7 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class FernNick extends FCommand implements Listener {
+public class FernNick extends FernCommand implements Listener {
     public FernNick() {
         super("fnick", "fernc.nick", "gnick","nick","fnick");
         setupTable();
