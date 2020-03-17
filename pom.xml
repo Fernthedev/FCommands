@@ -167,7 +167,7 @@
         <dependency>
             <groupId>com.github.fernthedev</groupId>
             <artifactId>fernapi</artifactId>
-            <version>1.6.4</version>
+            <version>1.7.4</version>
             <scope>compile</scope>
         </dependency>
 
