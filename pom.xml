@@ -247,7 +247,7 @@
        <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-youtube</artifactId>
-            <version>v3-rev193-1.23.0</version>
+            <version>v3-rev20200312-1.30.9</version>
         </dependency>
         <dependency>
             <groupId>com.google.oauth-client</groupId>
