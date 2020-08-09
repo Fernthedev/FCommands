@@ -122,6 +122,10 @@ public class FilesManager {
         setCheck("Skylands",false);
         setCheck("NameColor",false);
         setCheck("NoAIonSpawn",false);
+        setCheck("RandomKick", false);
+        setCheck("RandomKickMessageCountdown", "&c&lRemoving trash in %count%");
+        setCheck("RandomKickMessage", "&a&lRemoved %player% which is trash");
+        setCheck("RandomKickCountTimeSeconds", 5 * 60);
         
         FernCommands.getInstance().saveConfig();
     }
@@ -153,4 +157,14 @@ public class FilesManager {
 
     }
 
+    public int getValue(String val, int defval) {
+
+        if (val != null) {
+            if (config.get(val) == null) {
+                config.set(val, defval);
+            }
+            return config.getInt(val);
+        }
+        return 0;
+    }
 }

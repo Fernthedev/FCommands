@@ -28,7 +28,7 @@ public class MessageListener implements PluginMessageListener {
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
        //FernCommands.getInstance().getLogger().info("Received a message. Calling all other events at channel " + channel);
      for(PluginMessageListener listener: listeners) {
-         //FernCommands.getInstance().getLogger().info("Launched plugin messaging event for " + listener);
+         //FernCommands.getInstance().getLogger().info("Launched plugin Messaging event for " + listener);
 
          listener.onPluginMessageReceived(channel,player,message);
      }

@@ -1,6 +1,7 @@
 package com.github.fernthedev.fcommands.spigotclass.misc;
 
 import com.github.fernthedev.fcommands.spigotclass.FernCommands;
+import com.github.fernthedev.fcommands.spigotclass.hooks.HookManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -75,12 +76,12 @@ public class skylands implements Listener {
                     player.sendMessage("Found a place checking if you can build. It's at " + goworld.getX() + " " + goworld.getY() + " " + goworld.getZ());
 
 
-                    if(FernCommands.getHookManager().isIsWorldGuard()) {
-                        if(!FernCommands.getHookManager().getWorldGuardPlugin().canBuild(player,goworld)) {
-                            player.sendMessage("You can't build here? why. Lets find another place");
-                        }
-                        while (!FernCommands.getHookManager()
-                                .getWorldGuardPlugin().canBuild(player, goworld)) {
+                    if(HookManager.isWorldGuard()) {
+//                        if(!FernCommands.getHookManager().getWorldGuardPlugin().(player,goworld)) {
+//                            player.sendMessage("You can't build here? why. Lets find another place");
+//                        }
+//                        while (!FernCommands.getHookManager()
+//                                .getWorldGuardPlugin().canBuild(player, goworld)) {
                             Random random = new Random();
                             goworld.setX(random.nextDouble());
                             goworld.setZ(random.nextDouble());
@@ -107,7 +108,7 @@ public class skylands implements Listener {
                                 player.sendMessage("Found a new place checking if you can build. It's at " + goworld.getX() + " " + goworld.getY() + " " + goworld.getZ());
                             }
                         }
-                    }
+//                    }
 
 
                     //if((goworld.getBlock().getType() == Material.AIR)) {

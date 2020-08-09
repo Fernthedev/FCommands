@@ -1,6 +1,7 @@
 package com.github.fernthedev.fcommands.spigotclass.commands;
 
 import com.github.fernthedev.fcommands.spigotclass.FernCommands;
+import com.github.fernthedev.fcommands.spigotclass.hooks.HookManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,8 +16,8 @@ public class Hooks implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (args.length != 0 && (args[0].equals("HookManager"))) {
-        if(sender.hasPermission("fernc.HookManager")) {
-                if (FernCommands.getHookManager().isVaultEnabled()) {
+            if (sender.hasPermission("fernc.HookManager")) {
+                if (HookManager.isVault()) {
                     sender.sendMessage(FernCommands.message("&bVault:&aHooked"));
                     if (FernCommands.getChat().isEnabled()) {
                         sender.sendMessage(FernCommands.message("&b(Vault) Chat:&aHooked"));
@@ -37,12 +38,12 @@ public class Hooks implements CommandExecutor {
                     sender.sendMessage(FernCommands.message("&bVault:&cUnhooked"));
                 }
 
-                if(FernCommands.getHookManager().isIsWorldGuard())
+                if (HookManager.isWorldGuard())
                     sender.sendMessage(FernCommands.message("&bWorldGuard:&aHooked"));
                 else
                     sender.sendMessage(FernCommands.message("&bWorldGuard:&cUnhooked"));
 
-                if (FernCommands.getHookManager().isNTEEnabled()) {
+                if (HookManager.isNte()) {
                     sender.sendMessage(FernCommands.message("&bNametagEdit:&aHooked"));
                 } else {
                     sender.sendMessage(FernCommands.message("&bNametagEdit:&cUnhooked"));

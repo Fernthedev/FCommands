@@ -6,14 +6,8 @@ public class HookManager {
 
     private static boolean isAdvancedBanEnabled = false;
 
-    private static HookManager instance;
-
     public HookManager() {
         loadHooks();
-    }
-
-    public static HookManager getInstance() {
-        return instance == null ? instance = new HookManager() : instance;
     }
 
     public void loadHooks() {
@@ -36,6 +30,5 @@ public class HookManager {
 
     public static void onDisable() {
         isAdvancedBanEnabled = false;
-        instance = null;
     }
 }

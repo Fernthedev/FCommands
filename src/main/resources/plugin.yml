@@ -1,8 +1,9 @@
 name: FernCommands
-version: 1.0
+version: ${version}
 main: com.github.fernthedev.fcommands.spigotclass.FernCommands
 author: fernthedev
 description: Commands for the ferns out there :P
+api-version: 1.14
 commands:
    fboot:
       description: Crafts water walking boots

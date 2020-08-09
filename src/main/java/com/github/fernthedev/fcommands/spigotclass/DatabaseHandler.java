@@ -1,6 +1,6 @@
 package com.github.fernthedev.fcommands.spigotclass;
 
-import com.github.fernthedev.fcommands.Universal.DatabaseInterface;
+import com.github.fernthedev.fcommands.universal.DatabaseInterface;
 import com.github.fernthedev.fernapi.universal.Universal;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
@@ -14,6 +14,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
+// TODO: Remove this in favor of Universal DatabaseHandler
 public class DatabaseHandler {
     private static FilesManager fileManager;
     private static Configuration config;
@@ -110,8 +112,14 @@ public class DatabaseHandler {
 
     private DatabaseHandler(boolean itself) {
         setupSchedule();
+        try {
+            openConnection();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
+    @Deprecated
     static void setup() {
         if(!isSetup) {
            Universal.getMethods().getLogger().info("Setting database connection");
@@ -119,6 +127,7 @@ public class DatabaseHandler {
         fileManager = FilesManager.getInstance();
 
         scheduler = Bukkit.getScheduler();
+
         new DatabaseHandler(false);
 
         config = FilesManager.config;

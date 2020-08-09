@@ -1,16 +1,18 @@
 package com.github.fernthedev.fcommands.spigotclass;
 
+import com.github.fernthedev.fcommands.universal.DBManager;
+import com.github.fernthedev.fcommands.universal.UniversalMysql;
 import com.github.fernthedev.fcommands.spigotclass.commands.FernMain;
-import com.github.fernthedev.fcommands.spigotclass.entity.NoAI;
-import com.github.fernthedev.fcommands.spigotclass.gui.namecolor;
+import com.github.fernthedev.fcommands.spigotclass.gui.NameColor;
 import com.github.fernthedev.fcommands.spigotclass.hooks.HookManager;
 import com.github.fernthedev.fcommands.spigotclass.misc.*;
+import com.github.fernthedev.fcommands.spigotclass.ncp.BungeeNCP;
+import com.github.fernthedev.fcommands.spigotclass.ncp.Cooldown;
 import com.github.fernthedev.fcommands.spigotclass.ncp.NCPHandle;
-import com.github.fernthedev.fcommands.spigotclass.ncp.bungeencp;
-import com.github.fernthedev.fcommands.spigotclass.ncp.cooldown;
 import com.github.fernthedev.fcommands.spigotclass.shop.ChestImport;
 import com.github.fernthedev.fernapi.server.spigot.FernSpigotAPI;
 import com.google.gson.Gson;
+import lombok.Getter;
 import lombok.NonNull;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
@@ -25,7 +27,6 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -37,7 +38,7 @@ public class FernCommands extends FernSpigotAPI {
     public static String SERVER_NAME;
     private static Gson gson;
     private boolean isStaffMemberOnline = false;
-    private static com.github.fernthedev.fcommands.spigotclass.ncp.cooldown cooldown;
+    private static Cooldown cooldown;
     private static final Logger log = Logger.getLogger("Minecraft");
     private static Economy econ = null;
     private static Permission perms = null;
@@ -48,7 +49,6 @@ public class FernCommands extends FernSpigotAPI {
     }
 
     private static HookManager hookManager;
-    private static Connection connection;
 
     private MessageListener messageListener;
 
@@ -58,28 +58,37 @@ public class FernCommands extends FernSpigotAPI {
         return runnables;
     }
 
+    @Getter
+    private static DBManager databaseManager;
 
+    @Override
     public void onEnable() {
         super.onEnable();
-        
+
         instance = this;
         config = this.getConfig();
         gson = new Gson();
         SERVER_NAME = null;
-        cooldown = new cooldown();
+        cooldown = new Cooldown();
 
         hookManager = new HookManager();
 
 
-        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 
-        //this.getServer().getMessenger().registerOutgoingPluginChannel(this, Channels.PlaceHolderBungeeChannel);
-///////////////////////////////        //this.getServer().getMessenger().registerIncomingPluginChannel(this, Channels.PlaceHolderBungeeChannel, new HookPlaceHolderAPI() );
+        //getServer().getMessenger().registerOutgoingPluginChannel(this, Channels.PlaceHolderBungeeChannel);
+///////////////////////////////        //getServer().getMessenger().registerIncomingPluginChannel(this, Channels.PlaceHolderBungeeChannel, new HookPlaceHolderAPI() );
 
-        getLogger().info("Connecting to mysql");
-        DatabaseHandler.setup();
+//        DatabaseHandler.setup();
+        FilesManager fileManager = FilesManager.getInstance();
+        String username = fileManager.getValue("DBUsername","root");
+        String password = fileManager.getValue("DBPass","pass");
+        String port = fileManager.getValue("DBPort","3306");
+        String urlHost = fileManager.getValue("DBHost","localhost");
+        String database = fileManager.getValue("DB","database");
 
-        connection = DatabaseHandler.getConnection();
+        databaseManager = new DBManager(username, password, port, urlHost, database);
+        UniversalMysql.setDatabaseManager(databaseManager);
 
         try {
             FilesManager.getInstance().reloadConfig("all");
@@ -91,9 +100,9 @@ public class FernCommands extends FernSpigotAPI {
 
 
         messageListener = new MessageListener();
-        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", messageListener);
+        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", messageListener);
 
-        messaging.sendRequest("GetServer");
+        Messaging.sendRequest("GetServer");
 
         hookManager.registerPlugins();
 
@@ -124,26 +133,28 @@ public class FernCommands extends FernSpigotAPI {
         return gson;
     }
 
+    @Override
     public void onDisable() {
+        super.onDisable();
         if(hookManager.isNCPEnabled())
         NCPHandle.onDisable();
         // Unregister outgoing plugin channel if it's registered
-        if (this.getServer().getMessenger().isOutgoingChannelRegistered(this, "BungeeCord"))
-            this.getServer().getMessenger().unregisterOutgoingPluginChannel(this, "BungeeCord");
+        if (getServer().getMessenger().isOutgoingChannelRegistered(this, "BungeeCord"))
+            getServer().getMessenger().unregisterOutgoingPluginChannel(this, "BungeeCord");
         // Unregister incoming plugin channel if it's registered
-        if (this.getServer().getMessenger().isIncomingChannelRegistered(this, "BungeeCord"))
-            this.getServer().getMessenger().unregisterIncomingPluginChannel(this, "BungeeCord");
+        if (getServer().getMessenger().isIncomingChannelRegistered(this, "BungeeCord"))
+            getServer().getMessenger().unregisterIncomingPluginChannel(this, "BungeeCord");
 
-        DatabaseHandler.getScheduler().cancelTasks(this);
-        // invoke on disable.
-        try { //using a try catch to catch connection errors (like wrong sql password...)
-            if (connection!=null && !connection.isClosed()){ //checking if connection isn't null to
-                //avoid receiving a nullpointer
-                connection.close(); //closing the connection field variable.
-            }
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+//        DatabaseHandler.getScheduler().cancelTasks(this);
+//        // invoke on disable.
+//        try { //using a try catch to catch connection errors (like wrong sql password...)
+//            if (connection!=null && !connection.isClosed()){ //checking if connection isn't null to
+//                //avoid receiving a nullpointer
+//                connection.close(); //closing the connection field variable.
+//            }
+//        } catch(Exception e) {
+//            e.printStackTrace();
+//        }
 
         // Kill any async tasks that may be left over
         getServer().getScheduler().cancelTasks(instance);
@@ -160,7 +171,7 @@ public class FernCommands extends FernSpigotAPI {
 
 
     public void checkForStaffMembers() {
-        for (Player onlineplayer : this.getServer().getOnlinePlayers()) {
+        for (Player onlineplayer : getServer().getOnlinePlayers()) {
             if (!onlineplayer.hasPermission("nocheatplus.notify"))
                 continue;
 
@@ -174,7 +185,7 @@ public class FernCommands extends FernSpigotAPI {
     }
 
     @NonNull
-    public static cooldown getCooldownManager() {
+    public static Cooldown getCooldownManager() {
         return cooldown;
     }
 
@@ -197,18 +208,17 @@ public class FernCommands extends FernSpigotAPI {
         This disables damage from enderpearls being thrown
          */
         if (config.getBoolean("nodmgepearl"))
-            this.getServer().getPluginManager().registerEvents(new godpearl(), this);
+            getServer().getPluginManager().registerEvents(new godpearl(), this);
         /*
         This disables the IG Door farm
          */
         if (config.getBoolean("NoIgDoorFarm"))
-            this.getServer().getPluginManager().registerEvents(new igdoorfarm(), this);
+            getServer().getPluginManager().registerEvents(new igdoorfarm(), this);
         /*
         This registers a namecolor and listener for tpbow
          */
         if (config.getBoolean("tpbow")) {
-            this.getServer().getPluginManager().registerEvents(new ridebow(), this);
-            this.getCommand("craftrb").setExecutor(new ridebow());
+            getServer().getPluginManager().registerEvents(new RideBow(this), this);
         }
 
 
@@ -224,70 +234,59 @@ public class FernCommands extends FernSpigotAPI {
         This allows you to recieve NCP notifications on other servers using bungeecord messaging
          */
         if (config.getBoolean("BungeeNCP"))
-            //if (this.getServer().getPluginManager().getPlugin("NoCheatPlus") != null) {
+            //if (getServer().getPluginManager().getPlugin("NoCheatPlus") != null) {
             if(hookManager.isNCPEnabled()) {
                 NCPHandle.register();
-                messageListener.addListener(new bungeencp());
-               // this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new bungeencp());
-                this.getServer().getPluginManager().registerEvents(new bungeencp(), this);
+                messageListener.addListener(new BungeeNCP());
+               // getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new bungeencp());
+                getServer().getPluginManager().registerEvents(new BungeeNCP(), this);
                 getLogger().info("FOUND NOCHEATPLUS, ENABLING BUNGEECORD MODE");
             }
         /*
         This is a funny prank, when you go to sleep it burns you
          */
         if (config.getBoolean("BedFire"))
-            this.getServer().getPluginManager().registerEvents(new BedFire(), this);
+            getServer().getPluginManager().registerEvents(new BedFire(), this);
 
         /*
         This makes you burn if you pick up lava or hurt you if you pick up cactus.
          */
         if (config.getBoolean("ItemBurn"))
-            this.getServer().getPluginManager().registerEvents(new LavaBurn(), this);
+            getServer().getPluginManager().registerEvents(new LavaBurn(), this);
 
         if(FilesManager.getInstance().getValue("AddShop",false)) {
             ChestImport chestImport = new ChestImport();
             this.getCommand("fshop").setExecutor(chestImport);
-        }
-        /*
-          If MCMMO and NTE are enabled, when MCMMO levels up, nametag prefixes and suffixes get messed up.
-          This is to prevent that, this reloads NTE every time MCMMO levels up
-         */
-        if (Bukkit.getServer().getPluginManager().isPluginEnabled("McMMO")) {
-            hookManager.hook();
-            if (hookManager.isNTEEnabled()) {
-                    getLogger().info("FOUND MCMMO AND NAMETAGEDIT IN PLUGINS, ENABLING AUTO RELOAD");
-                    this.getServer().getPluginManager().registerEvents(new NTEmcMMO(), this);
-            }
         }
 
         /*
         This adds the skylands using SB-Skyland or any world you want and MultiVerse
         */
         if(config.getBoolean("Skylands")) {
-            if (this.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
+            if (getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
                 getLogger().info("Found Multiverse, checking to see skylands are enabled");
-                if (this.getServer().getPluginManager().isPluginEnabled("SB-Skylands")) {
+                if (getServer().getPluginManager().isPluginEnabled("SB-Skylands")) {
                     if (Bukkit.getWorld("skyland") != null)
                         getLogger().info("Found skylands, enabling enderpearl and overworld fall");
-                    this.getServer().getPluginManager().registerEvents(new skylands(), this);
+                    getServer().getPluginManager().registerEvents(new skylands(), this);
                 }
             }
         }
 
-        if(config.getBoolean("NoAIonSpawn")) {
-            this.getServer().getPluginManager().registerEvents(new NoAI(),this);
-        }
+//        if(config.getBoolean("NoAIonSpawn")) {
+//            getServer().getPluginManager().registerEvents(new NoAI(),this);
+//        }
 
         if(config.getBoolean("NameColor")) {
-            if((hookManager.isVaultEnabled() && getChat().isEnabled()) || hookManager.isNTEEnabled()) {
-             this.getServer().getPluginManager().registerEvents(new namecolor(),this);
-             this.getCommand("namecolor").setExecutor(new namecolor());
+            if((HookManager.isVault() && getChat().isEnabled()) || HookManager.isNte()) {
+             getServer().getPluginManager().registerEvents(new NameColor(),this);
+             getCommand("namecolor").setExecutor(new NameColor());
             }else{
                 getLogger().warning("Tried to start NameColor, but no compatible chat formatter (Vault) or nametag changer (NametagEdit) has been found. To work it needs one of these");
             }
         }
 
-        //this.getServer().getPluginManager().registerEvents(new UUIDSpoofChecker(),this);
+        //getServer().getPluginManager().registerEvents(new UUIDSpoofChecker(),this);
     }
 
 
@@ -333,7 +332,7 @@ public class FernCommands extends FernSpigotAPI {
 
 
     public static boolean hasVaultPermission(Player p,String Permissione) {
-        if(hookManager.isVaultEnabled() && getPermissions().isEnabled()) {
+        if(HookManager.isVault() && getPermissions().isEnabled()) {
             return p.hasPermission(Permissione) || getPermissions().has(p, Permissione);
         }else return p.hasPermission(Permissione);
     }
@@ -346,10 +345,5 @@ public class FernCommands extends FernSpigotAPI {
 
     public void addMessageListener(PluginMessageListener pluginMessageListener) {
         messageListener.addListener(pluginMessageListener);
-    }
-
-    @Override
-    public void cancelTask(int id) {
-        getServer().getScheduler().cancelTask(id);
     }
 }

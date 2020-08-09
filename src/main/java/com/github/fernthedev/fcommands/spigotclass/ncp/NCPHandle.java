@@ -7,7 +7,7 @@ import fr.neatmonster.nocheatplus.hooks.NCPHookManager;
 public class NCPHandle {
 
     public static void register() {
-        NCPHookManager.addHook(CheckType.values(), new bungeencp());
+        NCPHookManager.addHook(CheckType.values(), new BungeeNCP());
     }
 
     public static void onDisable() {

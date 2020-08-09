@@ -1,11 +1,12 @@
 package com.github.fernthedev.fcommands.spigotclass.hooks;
 
-import com.earth2me.essentials.Essentials;
 import com.github.fernthedev.fcommands.spigotclass.FernCommands;
-import com.github.fernthedev.fcommands.spigotclass.nick.NickJoin;
-import com.github.fernthedev.fcommands.spigotclass.nick.NickReload;
+import com.github.fernthedev.fcommands.spigotclass.nick.NickManager;
 import com.github.fernthedev.fcommands.spigotclass.placeholderapi.VanishPlaceholder;
+import com.github.fernthedev.fcommands.universal.NickNetworkManager;
+import com.github.fernthedev.fernapi.universal.Universal;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
@@ -15,49 +16,29 @@ import java.util.logging.Logger;
 public class HookManager {
 
 
-    private static boolean isVault;
-    private static boolean isNTE;
-    private static boolean isPlaceHolderAPI;
-    private static boolean isWorldGuard;
-    private static boolean isEssentials;
+    @Getter
+    private static boolean vault;
 
+    @Getter
+    private static boolean nte;
+
+
+    @Getter
+    private static boolean placeHolderAPI;
+
+    @Getter
+    private static boolean worldGuard;
+
+    @Getter
+    private static boolean essentials;
+
+    @Getter
     private WorldGuardPlugin worldGuardPlugin;
-    private Essentials essentials;
-
-    private boolean useMcMMO;
 
     //CHECK IF COMPATIBLE PLUGINS ARE ENABLED
 
-    public boolean isVaultEnabled() {
-        return isVault;
-    }
-    public boolean isNTEEnabled() {
-        return isNTE;
-    }
-
     public boolean isNCPEnabled() {
         return Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus");
-    }
-
-    public boolean isIsWorldGuard() {
-        return isWorldGuard;
-    }
-
-
-    public boolean isEssentials() {
-        return isEssentials;
-    }
-
-    public WorldGuardPlugin getWorldGuardPlugin() {
-        return worldGuardPlugin;
-    }
-
-    public Essentials getEssentials() {
-        return essentials;
-    }
-
-    public boolean mcmmoEnabled() {
-        return useMcMMO;
     }
 
     /**
@@ -67,9 +48,9 @@ public class HookManager {
         /*
           Checks for vault
          */
-        isVault = false;
+        vault = false;
         if(this.getServer().getPluginManager().isPluginEnabled("Vault")) {
-            isVault = true;
+            vault = true;
             FernCommands.getInstance().setupVault();
             getLogger().info("HOOKED VAULT ECONOMY PERMISSIONS AND CHAT");
         }
@@ -77,12 +58,12 @@ public class HookManager {
         /*
          Checks for NametagEdit
          */
-        isNTE = this.getServer().getPluginManager().isPluginEnabled("NametagEdit");
-        if(isNTE)
+        nte = this.getServer().getPluginManager().isPluginEnabled("NametagEdit");
+        if(nte)
             getLogger().info("HOOKED NAMETAGEDIT API");
 
-        isPlaceHolderAPI = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
-        if(isPlaceHolderAPI) {
+        placeHolderAPI = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
+        if(placeHolderAPI) {
             //Registering placeholder will be use here
             new VanishPlaceholder().register();
 
@@ -91,29 +72,29 @@ public class HookManager {
             getLogger().info("HOOKED PLACEHOLDERAPI BUNGEE MESSAGING");
         }
 
-        isEssentials = Bukkit.getPluginManager().isPluginEnabled("Essentials");
-        if(isEssentials) {
-            FernCommands.getInstance().addMessageListener(new NickReload());
-            FernCommands.getInstance().getServer().getPluginManager().registerEvents(new NickJoin(),FernCommands.getInstance());
+        essentials = Bukkit.getPluginManager().isPluginEnabled("Essentials");
+        if(essentials) {
+            Universal.getMessageHandler().registerMessageHandler(new NickNetworkManager());
+//            FernCommands.getInstance().addMessageListener(new NickManager());
+            FernCommands.getInstance().getServer().getPluginManager().registerEvents(new NickManager(), FernCommands.getInstance());
         }
     }
 
     public void hook() {
-        useMcMMO = Bukkit.getServer().getPluginManager().isPluginEnabled("McMMO");
-        worldGuardPlugin = getWorldGuard();
+        worldGuardPlugin = getWorldGuardInstance();
     }
 
 
-    private WorldGuardPlugin getWorldGuard() {
+    private WorldGuardPlugin getWorldGuardInstance() {
         Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
 
         // WorldGuard may not be loaded
         if (!(plugin instanceof WorldGuardPlugin)) {
-            isWorldGuard = false;
+            worldGuard = false;
             return null; // Maybe you want throw an exception instead
         }
 
-        isWorldGuard = true;
+        worldGuard = true;
         return (WorldGuardPlugin) plugin;
     }
 
@@ -124,7 +105,5 @@ public class HookManager {
     private Server getServer() {
         return FernCommands.getInstance().getServer();
     }
-
-
 
 }

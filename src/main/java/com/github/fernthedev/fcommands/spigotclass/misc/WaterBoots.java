@@ -33,8 +33,7 @@ public class WaterBoots implements Listener, CommandExecutor {
                                     pl.setY(pl.getY() - 1);
                                     Material plbelow = pl.getBlock().getType();
                                     p.sendMessage("EXPERIMENTAL WATER");
-                                        while (plbelow == Material.STATIONARY_WATER || plbelow == Material.WATER) {
-                                            p.sendMessage("Test");
+                                        while (plbelow == Material.WATER) {
                                             p.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 1, 255, true, false));
 
                                     //}
