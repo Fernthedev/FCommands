@@ -1,7 +1,5 @@
 package com.github.fernthedev.fcommands.spigotclass;
 
-import com.github.fernthedev.fcommands.universal.DBManager;
-import com.github.fernthedev.fcommands.universal.UniversalMysql;
 import com.github.fernthedev.fcommands.spigotclass.commands.FernMain;
 import com.github.fernthedev.fcommands.spigotclass.gui.NameColor;
 import com.github.fernthedev.fcommands.spigotclass.hooks.HookManager;
@@ -10,6 +8,8 @@ import com.github.fernthedev.fcommands.spigotclass.ncp.BungeeNCP;
 import com.github.fernthedev.fcommands.spigotclass.ncp.Cooldown;
 import com.github.fernthedev.fcommands.spigotclass.ncp.NCPHandle;
 import com.github.fernthedev.fcommands.spigotclass.shop.ChestImport;
+import com.github.fernthedev.fcommands.universal.DBManager;
+import com.github.fernthedev.fcommands.universal.UniversalMysql;
 import com.github.fernthedev.fernapi.server.spigot.FernSpigotAPI;
 import com.google.gson.Gson;
 import lombok.Getter;
@@ -215,7 +215,7 @@ public class FernCommands extends FernSpigotAPI {
         if (config.getBoolean("NoIgDoorFarm"))
             getServer().getPluginManager().registerEvents(new igdoorfarm(), this);
         /*
-        This registers a namecolor and listener for tpbow
+        This registers a NameColor and listener for tpbow
          */
         if (config.getBoolean("tpbow")) {
             getServer().getPluginManager().registerEvents(new RideBow(this), this);
@@ -231,14 +231,14 @@ public class FernCommands extends FernSpigotAPI {
 
 
         /*
-        This allows you to recieve NCP notifications on other servers using bungeecord messaging
+        This allows you to recieve NCP notifications on other servers using bungeecord Messaging
          */
         if (config.getBoolean("BungeeNCP"))
             //if (getServer().getPluginManager().getPlugin("NoCheatPlus") != null) {
             if(hookManager.isNCPEnabled()) {
                 NCPHandle.register();
                 messageListener.addListener(new BungeeNCP());
-               // getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new bungeencp());
+               // getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BungeeNCP());
                 getServer().getPluginManager().registerEvents(new BungeeNCP(), this);
                 getLogger().info("FOUND NOCHEATPLUS, ENABLING BUNGEECORD MODE");
             }
@@ -280,7 +280,7 @@ public class FernCommands extends FernSpigotAPI {
         if(config.getBoolean("NameColor")) {
             if((HookManager.isVault() && getChat().isEnabled()) || HookManager.isNte()) {
              getServer().getPluginManager().registerEvents(new NameColor(),this);
-             getCommand("namecolor").setExecutor(new NameColor());
+             getCommand("NameColor").setExecutor(new NameColor());
             }else{
                 getLogger().warning("Tried to start NameColor, but no compatible chat formatter (Vault) or nametag changer (NametagEdit) has been found. To work it needs one of these");
             }

@@ -19,7 +19,7 @@ commands:
       usage: /fern
    namecolor:
       description: Used for changing nametag and chat name color
-      usage: /namecolor
+      usage: /NameColor
    fshop:
       description: A random shop thing
       usage: /fshop

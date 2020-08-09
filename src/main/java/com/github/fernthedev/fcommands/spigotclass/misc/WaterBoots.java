@@ -77,7 +77,7 @@ public class WaterBoots implements Listener, CommandExecutor {
                 player.sendMessage("You need ice to be able to enchant this");
             }
         }
-        // If the player (or console) uses our namecolor correct, we can return true
+        // If the player (or console) uses our NameColor correct, we can return true
         return true;
     }
 

@@ -43,11 +43,11 @@ public class NameHistory extends BaseCommand {
 
 
         if (!sender.hasPermission("fernc.namehistory.bypass")) {
-            Universal.debug("Player does not have cooldown bypass");
+            Universal.debug("Player does not have Cooldown bypass");
             setCooldown(sender, System.currentTimeMillis());
 
         }
-//                else FernCommands.getInstance().getLogger().info("Player has cooldown bypass, skipping.");
+//                else FernCommands.getInstance().getLogger().info("Player has Cooldown bypass, skipping.");
 
         if (uuid == null) {
 

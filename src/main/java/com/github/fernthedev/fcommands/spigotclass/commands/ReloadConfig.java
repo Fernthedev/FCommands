@@ -45,7 +45,7 @@ public class ReloadConfig implements CommandExecutor {
                         sender.sendMessage(message("&cNo arguments recieved"));
                     }
                 }else{
-                    sender.sendMessage(message("&cYou do not have permission to use that namecolor since a &3fern &csaid so"));
+                    sender.sendMessage(message("&cYou do not have permission to use that NameColor since a &3fern &csaid so"));
                 }
             }
         }
