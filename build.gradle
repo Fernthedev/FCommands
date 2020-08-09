@@ -218,6 +218,7 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         include 'plugin.yml'
         include 'bungee.yml'
+        include 'velocity-plugin.json'
 
         expand 'version':project.version
     }
