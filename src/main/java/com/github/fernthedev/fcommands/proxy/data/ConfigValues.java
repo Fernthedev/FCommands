@@ -1,6 +1,5 @@
 package com.github.fernthedev.fcommands.proxy.data;
 
-import com.github.fernthedev.fcommands.bungeeclass.ServerData;
 import com.github.fernthedev.fernapi.universal.data.database.DatabaseAuthInfo;
 import lombok.Getter;
 import lombok.Setter;

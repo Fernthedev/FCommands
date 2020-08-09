@@ -1,4 +1,4 @@
 name: FernCommands
-main: com.github.fernthedev.fcommands.bungeeclass.FernCommands
+main: com.github.fernthedev.fcommands.bungee.FernCommands
 version: ${version}
 author: fernthedev

@@ -25,9 +25,6 @@ public class FernNick extends BaseCommand {
 
     private static NickDatabaseInfo databaseInfo;
 
-    @Dependency
-    private CommandManager manager;
-
     private void setupTable() {
         DatabaseListener databaseManager = UniversalMysql.getDatabaseManager();
         try {

@@ -1,7 +1,7 @@
 package com.github.fernthedev.fcommands.universal;
 
+import com.github.fernthedev.fcommands.spigot.nick.NickManager;
 import com.github.fernthedev.fcommands.universal.mysql.nick.NickDatabaseInfo;
-import com.github.fernthedev.fcommands.spigotclass.nick.NickManager;
 import com.github.fernthedev.fernapi.universal.Universal;
 import com.github.fernthedev.fernapi.universal.data.database.RowData;
 import com.github.fernthedev.fernapi.universal.data.network.Channel;
@@ -9,7 +9,6 @@ import com.github.fernthedev.fernapi.universal.data.network.PluginMessageData;
 import com.github.fernthedev.fernapi.universal.handlers.PluginMessageHandler;
 import com.github.fernthedev.fernapi.universal.handlers.ServerType;
 import com.github.fernthedev.fernapi.universal.mysql.DatabaseListener;
-
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -65,38 +64,38 @@ public class NickNetworkManager extends PluginMessageHandler {
     @Override
     public void onMessageReceived(PluginMessageData pluginMessageData, Channel channel) {
         if (Universal.getMethods().getServerType() == ServerType.BUKKIT) {
-            try {
-                String type = pluginMessageData.getProxyChannelType(); //TYPE
-                String server = pluginMessageData.getServer(); // Server
-                String subChannel = pluginMessageData.getSubChannel(); // Subchannel
 
-                Queue<String> dataList = new LinkedList<>(pluginMessageData.getExtraData());
+            Universal.getScheduler().runAsync(() -> {
+                try {
+                    String type = pluginMessageData.getProxyChannelType(); //TYPE
+                    String server = pluginMessageData.getServer(); // Server
+                    String subChannel = pluginMessageData.getSubChannel(); // Subchannel
 
-                if (subChannel.equalsIgnoreCase(Channels.NICK_RELOADNICKSQL)) {
-                    String playerName = dataList.remove();
-                    String uuid = dataList.remove();
+                    Queue<String> dataList = new LinkedList<>(pluginMessageData.getExtraData());
 
-                    runSqlSync();
+                    if (subChannel.equalsIgnoreCase(Channels.NICK_RELOADNICKSQL)) {
+                        String playerName = dataList.remove();
+                        String uuid = dataList.remove();
 
-                    String nick = null;
+                        runSqlSync();
 
-                    for (RowData rowData : databaseInfo.getRowDataList()) {
-                        if (rowData.getColumn("PLAYERUUID").getValue() == null) continue;
+                        String nick = null;
 
-                        if (rowData.getColumn("PLAYERUUID").getValue().equals(uuid)) {
-                            nick = rowData.getColumn("NICK").getValue();
+                        for (RowData rowData : databaseInfo.getRowDataList()) {
+                            if (rowData.getColumn("PLAYERUUID").getValue() == null) continue;
+
+                            if (rowData.getColumn("PLAYERUUID").getValue().equals(uuid)) {
+                                nick = rowData.getColumn("NICK").getValue();
+                            }
                         }
+
+
+                        NickManager.handleNick(uuid, playerName, nick);
                     }
-
-
-                    NickManager.handleNick(uuid, playerName, nick);
-
-
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            });
         }
     }
 

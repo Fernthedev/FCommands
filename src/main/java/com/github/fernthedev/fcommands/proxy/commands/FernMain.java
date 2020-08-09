@@ -41,7 +41,7 @@ public class FernMain extends BaseCommand {
 //        ));
 //    }
 
-    private static final String configList = "config reload|all|ip|config";
+    private static final String configList = "all|ip|config";
 
     @Description("Reload configs")
     @CommandCompletion(configList)

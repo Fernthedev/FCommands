@@ -1,6 +1,6 @@
 name: FernCommands
 version: ${version}
-main: com.github.fernthedev.fcommands.spigotclass.FernCommands
+main: com.github.fernthedev.fcommands.spigot.FernCommands
 author: fernthedev
 description: Commands for the ferns out there :P
 api-version: 1.14
