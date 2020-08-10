@@ -31,7 +31,10 @@ public class NickManager implements Listener {
     public static void handleNick(String uuid, String playerName, String nick) {
         System.out.println(nick + " " + uuid);
         if (nick != null) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "essentials:nick " + playerName + " " + nick);
+            Bukkit.getScheduler().callSyncMethod(FernCommands.getInstance(), () -> {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "essentials:nick " + playerName + " " + nick);
+                return null;
+            });
             nicknames.put(uuid, nick);
         } else {
             Player pl = Bukkit.getPlayer(uuid);

@@ -203,12 +203,6 @@ public class FernCommands extends FernSpigotAPI {
         }
 
 
-
-        /*
-        This disables damage from enderpearls being thrown
-         */
-        if (config.getBoolean("nodmgepearl"))
-            getServer().getPluginManager().registerEvents(new godpearl(), this);
         /*
         This disables the IG Door farm
          */
