@@ -7,6 +7,7 @@ import com.github.fernthedev.fernapi.universal.Universal;
 public class PlatformAllRegistration {
 
     public static void registerCommands() {
+        Universal.getCommandHandler().enableUnstableAPI("help");
         Universal.getCommandHandler().registerCommand(new UFernPing());
         Universal.getCommandHandler().registerCommand(new DebugCommand());
     }

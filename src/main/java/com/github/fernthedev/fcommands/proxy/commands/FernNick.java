@@ -48,16 +48,16 @@ public class FernNick extends BaseCommand {
     @Description("Change nickname using MySQL")
     @CommandPermission("fernc.nick")
     @Default
-    @CommandCompletion("* *")
+    @CommandCompletion("@nothing")
     public void onNick(IFPlayer<?> sender, String newNick) {
         onNick(sender, sender, newNick);
     }
 
     @Description("Change nickname using MySQL")
     @CommandPermission("fernc.nick.others")
-    @Default
-    @CommandCompletion("* *")
-    public void onNick(CommandIssuer sender, @Optional IFPlayer<?> player, String newNick) {
+    @Subcommand("other")
+    @CommandCompletion("* @nothing")
+    public void onNick(CommandIssuer sender, @Flags("other") IFPlayer<?> player, String newNick) {
 
 //        Connection connection = DatabaseHandler.getConnection();
 

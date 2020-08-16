@@ -2,10 +2,7 @@ package com.github.fernthedev.fcommands.universal.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandIssuer;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Flags;
+import co.aikar.commands.annotation.*;
 import com.github.fernthedev.fernapi.universal.Universal;
 import com.github.fernthedev.fernapi.universal.api.FernCommandIssuer;
 import com.github.fernthedev.fernapi.universal.api.IFPlayer;
@@ -26,8 +23,9 @@ public class NameHistory extends BaseCommand {
 
     public static final int DEFAULT_COOLDOWN = 60;
 
+    @CommandCompletion("@players")
     @Default
-    public void execute(FernCommandIssuer sender, @Flags("other") IFPlayer<?> player) {
+    public void execute(FernCommandIssuer sender, @Flags("other,offline") IFPlayer<?> player) {
         String playerName = player.getName();
 
 
