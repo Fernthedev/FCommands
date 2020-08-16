@@ -6,6 +6,7 @@ import com.github.fernthedev.fcommands.universal.Channels;
 import com.github.fernthedev.fcommands.universal.UniversalMysql;
 import com.github.fernthedev.fcommands.universal.mysql.nick.NickDatabaseInfo;
 import com.github.fernthedev.fernapi.universal.Universal;
+import com.github.fernthedev.fernapi.universal.api.FernCommandIssuer;
 import com.github.fernthedev.fernapi.universal.api.IFPlayer;
 import com.github.fernthedev.fernapi.universal.data.database.ColumnData;
 import com.github.fernthedev.fernapi.universal.data.database.RowData;
@@ -16,10 +17,10 @@ import com.github.fernthedev.fernapi.universal.mysql.DatabaseListener;
 import java.io.ByteArrayOutputStream;
 import java.sql.SQLException;
 
+@CommandPermission("fernc.nick")
 @CommandAlias("fnick|gnick|nick|fnick")
 public class FernNick extends BaseCommand {
     public FernNick() {
-
         setupTable();
     }
 
@@ -45,11 +46,18 @@ public class FernNick extends BaseCommand {
     }
 
     @Description("Change nickname using MySQL")
-    @CommandPermission("fernc.bpapi")
-    @HelpCommand
+    @CommandPermission("fernc.nick")
     @Default
     @CommandCompletion("* *")
-    public void onNick(CommandIssuer sender, @CommandPermission("fernc.nick.others") @Optional IFPlayer<?> player, String newNick) {
+    public void onNick(IFPlayer<?> sender, String newNick) {
+        onNick(sender, sender, newNick);
+    }
+
+    @Description("Change nickname using MySQL")
+    @CommandPermission("fernc.nick.others")
+    @Default
+    @CommandCompletion("* *")
+    public void onNick(CommandIssuer sender, @Optional IFPlayer<?> player, String newNick) {
 
 //        Connection connection = DatabaseHandler.getConnection();
 
@@ -131,5 +139,10 @@ public class FernNick extends BaseCommand {
         data.addData(player.getUuid().toString());
 
         Universal.getMessageHandler().sendPluginData(data);
+    }
+
+    @HelpCommand
+    public void doHelp(FernCommandIssuer sender, CommandHelp help) {
+        help.showHelp();
     }
 }

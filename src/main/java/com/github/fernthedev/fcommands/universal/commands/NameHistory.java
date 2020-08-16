@@ -4,7 +4,8 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Optional;
+import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Flags;
 import com.github.fernthedev.fernapi.universal.Universal;
 import com.github.fernthedev.fernapi.universal.api.FernCommandIssuer;
 import com.github.fernthedev.fernapi.universal.api.IFPlayer;
@@ -15,7 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @CommandAlias("nh|fnh|namehistory")
@@ -26,11 +26,9 @@ public class NameHistory extends BaseCommand {
 
     public static final int DEFAULT_COOLDOWN = 60;
 
-
-    public void execute(FernCommandIssuer sender, @Optional IFPlayer<?> player) {
+    @Default
+    public void execute(FernCommandIssuer sender, @Flags("other") IFPlayer<?> player) {
         String playerName = player.getName();
-        UUID uuid = player.getUuid();
-
 
 
         long secondsLeft = System.currentTimeMillis() - getCooldown(sender);
@@ -49,10 +47,6 @@ public class NameHistory extends BaseCommand {
         }
 //                else FernCommands.getInstance().getLogger().info("Player has Cooldown bypass, skipping.");
 
-        if (uuid == null) {
-
-        }
-
 
         List<UUIDFetcher.PlayerHistory> names = UUIDFetcher.getNameHistory(player.getUuid());
         if (names != null) {
@@ -70,8 +64,6 @@ public class NameHistory extends BaseCommand {
         } else {
             sender.sendMessage(TextMessage.fromColor("&cUnable to find player history"));
         }
-
-
     }
 
     public void setCooldown(CommandIssuer player, long time){
