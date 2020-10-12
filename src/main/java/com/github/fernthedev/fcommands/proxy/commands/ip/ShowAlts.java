@@ -25,7 +25,6 @@ public class ShowAlts extends BaseCommand {
 
 
     @Description("Show alts of a player")
-    @CommandPermission("fernc.accounts.see")
     public void showAlts(FernCommandIssuer sender, @Optional IFPlayer<?> player) {
         String uuidPlayerCheck = player.isPlayerNull() ? UUIDFetcher.getUUID(player.getName()).toString() : player.getUuid().toString();
 
