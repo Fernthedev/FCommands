@@ -1,10 +1,7 @@
 package com.github.fernthedev.fcommands.proxy.commands.ip;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Description;
-import co.aikar.commands.annotation.Optional;
+import co.aikar.commands.annotation.*;
 import com.github.fernthedev.config.common.Config;
 import com.github.fernthedev.fcommands.proxy.FileManager;
 import com.github.fernthedev.fcommands.proxy.data.IPSaveValues;
@@ -25,6 +22,7 @@ public class ShowAlts extends BaseCommand {
 
 
     @Description("Show alts of a player")
+    @Default
     public void showAlts(FernCommandIssuer sender, @Optional IFPlayer<?> player) {
         String uuidPlayerCheck = player.isPlayerNull() ? UUIDFetcher.getUUID(player.getName()).toString() : player.getUuid().toString();
 
