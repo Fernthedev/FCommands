@@ -92,7 +92,7 @@ public class ShowAlts extends BaseCommand {
             if (uuidPlayersFromIP != null) {
                 for (UUID uuid : uuidPlayersFromIP) {
 
-                    if (checkedPlayers.contains(uuid.toString())) {
+                    if (!checkedPlayers.contains(uuid.toString())) {
                         String playerName = UUIDFetcher.getName(uuid.toString().replaceAll("-", ""));
                         Universal.debug("Found that " + uuid + " is player " + playerName);
                         //ProxiedPlayer playerListUUID = ProxyServer.getInstance().getPlayer(uuid);
