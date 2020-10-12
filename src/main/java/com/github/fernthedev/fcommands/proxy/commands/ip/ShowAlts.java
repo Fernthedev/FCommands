@@ -23,8 +23,9 @@ public class ShowAlts extends BaseCommand {
 
     @Description("Show alts of a player")
     @Default
-    public void showAlts(FernCommandIssuer sender, @Optional IFPlayer<?> player) {
-        String uuidPlayerCheck = player.isPlayerNull() ? UUIDFetcher.getUUID(player.getName()).toString() : player.getUuid().toString();
+    @CommandCompletion("@players")
+    public void showAlts(FernCommandIssuer sender, @Flags("other,offline") IFPlayer<?> player) {
+        String uuidPlayerCheck = player == null || player.isPlayerNull() ? UUIDFetcher.getUUID(player.getName()).toString() : player.getUuid().toString();
 
         if (uuidPlayerCheck == null) {
             sender.sendMessage(TextMessage.fromColor("&cUnable to find player."));
