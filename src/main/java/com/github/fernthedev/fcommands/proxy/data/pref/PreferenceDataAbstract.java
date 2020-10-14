@@ -2,19 +2,21 @@ package com.github.fernthedev.fcommands.proxy.data.pref;
 
 import lombok.NonNull;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-public abstract class PreferenceDataAbstract<T> {
+public abstract class PreferenceDataAbstract<T extends Serializable> implements Serializable {
 
     protected String name;
 
     protected T value;
 
-    private final Class<T> tClass;
+    private String className;
 
     public PreferenceDataAbstract(Class<T> tClass) {
-        this.tClass = tClass;
+        this.className = tClass.getName();
     }
 
     public void setValue(T value) {
@@ -29,13 +31,13 @@ public abstract class PreferenceDataAbstract<T> {
 
     public PreferenceDataAbstract(String name, T value, Class<T> tClass) {
         this.name = name;
-        this.tClass = tClass;
+        this.className = value.getClass().getName();
         setValue(value);
     }
 
     public PreferenceDataAbstract(String name, @NonNull T value) {
         this.name = name;
-        this.tClass = (Class<T>) value.getClass();
+        this.className = value.getClass().getName();
         setValue(value);
     }
 
@@ -47,7 +49,7 @@ public abstract class PreferenceDataAbstract<T> {
     }
 
     protected void invalidFormat(String s) throws IllegalArgumentException {
-        throw new IllegalArgumentException(s + " is not of type " + tClass.getSimpleName() + ". Possible values: " + possibleValuesString().toString());
+        throw new IllegalArgumentException(s + " is not of type " + className + ". Possible values: " + possibleValuesString().toString());
     }
 
     public abstract void isValid(Object value) throws Exception;
@@ -63,48 +65,37 @@ public abstract class PreferenceDataAbstract<T> {
         return this.value;
     }
 
-    public Class<T> getTClass() {
-        return this.tClass;
+    public String getClassName() {
+        return this.className;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public boolean equals(final Object o) {
-        if (o == this) return true;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
         if (!(o instanceof PreferenceDataAbstract)) return false;
-        final PreferenceDataAbstract<?> other = (PreferenceDataAbstract<?>) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$name = this.getName();
-        final Object other$name = other.getName();
-        if (this$name == null ? other$name != null : !this$name.equals(other$name)) return false;
-        final Object this$value = this.getValue();
-        final Object other$value = other.getValue();
-        if (this$value == null ? other$value != null : !this$value.equals(other$value)) return false;
-        final Object this$tClass = this.getTClass();
-        final Object other$tClass = other.getTClass();
-        if (this$tClass == null ? other$tClass != null : !this$tClass.equals(other$tClass)) return false;
-        return true;
+        PreferenceDataAbstract<?> that = (PreferenceDataAbstract<?>) o;
+        return name.equals(that.name) &&
+                value.equals(that.value) &&
+                className.equals(that.className);
     }
 
-    protected boolean canEqual(final Object other) {
-        return other instanceof PreferenceDataAbstract;
-    }
-
+    @Override
     public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $name = this.getName();
-        result = result * PRIME + ($name == null ? 43 : $name.hashCode());
-        final Object $value = this.getValue();
-        result = result * PRIME + ($value == null ? 43 : $value.hashCode());
-        final Object $tClass = this.getTClass();
-        result = result * PRIME + ($tClass == null ? 43 : $tClass.hashCode());
-        return result;
+        return Objects.hash(name, value, className);
     }
 
+    @Override
     public String toString() {
-        return "PreferenceDataAbstract(name=" + this.getName() + ", value=" + this.getValue() + ", tClass=" + this.getTClass() + ")";
+        final StringBuilder sb = new StringBuilder("PreferenceDataAbstract{");
+        sb.append("name='").append(name).append('\'');
+        sb.append(", value=").append(value);
+        sb.append(", className='").append(className).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }

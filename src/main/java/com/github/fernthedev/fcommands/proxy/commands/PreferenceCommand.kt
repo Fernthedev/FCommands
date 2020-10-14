@@ -12,6 +12,7 @@ import com.github.fernthedev.fernapi.universal.data.chat.ChatColor
 import com.github.fernthedev.fernapi.universal.data.chat.ClickData
 import com.github.fernthedev.fernapi.universal.data.chat.HoverData
 import com.github.fernthedev.fernapi.universal.data.chat.TextMessage
+import java.io.Serializable
 import java.lang.reflect.Field
 import java.util.Optional
 import java.util.stream.Collectors
@@ -106,17 +107,6 @@ class PreferenceCommand : BaseCommand() {
                 }
             })
         }
-//        manager.getCommandConditions().addCondition(PrefDataParameter::class.java, "prefDataParamCondition") { context, commandExecutionContext, value ->
-//            if (value != null) {
-//                val pref: PreferenceDataAbstract<*> = commandExecutionContext.getResolvedArg(PreferenceDataAbstract::class.java) as PreferenceDataAbstract<*>;
-//
-//                try {
-//                    pref.isValid(commandExecutionContext)
-//                } catch (e: java.lang.Exception) {
-//                    throw InvalidCommandArgument(e.localizedMessage, true)
-//                }
-//            }
-//        }
     }
 
 
@@ -158,7 +148,7 @@ class PreferenceCommand : BaseCommand() {
     @Subcommand("set")
     @CommandPermission("fernc.preferences.modify")
     @CommandCompletion("@prefList @prefValueTypes")
-    fun <T> onSet(sender: FernCommandIssuer, /*@Values("@prefList")*/ prefName: PreferenceDataAbstract<T>, prefWrappedValue: PrefDataParameter<T>) {
+    fun <T : Serializable?> onSet(sender: FernCommandIssuer, /*@Values("@prefList")*/ prefName: PreferenceDataAbstract<T>, prefWrappedValue: PrefDataParameter<T>) {
 
         val value = prefWrappedValue.data;
 
@@ -171,37 +161,6 @@ class PreferenceCommand : BaseCommand() {
         } catch (e: java.lang.Exception) {
             sender.sendError(MessageKeys.ERROR_PREFIX, "{message}", e.localizedMessage)
         }
-
-//
-//        val pref = FileManager.getPlayerPref(sender.uniqueId)
-//        if (pref.hour12Format.name.equals(prefName.name, ignoreCase = true)) {
-//            if (!value!!.equals("false", ignoreCase = true) && !value.equals("true", ignoreCase = true)) {
-//                sender.sendMessage(TextMessage.fromColor("Only true/false values allowed"))
-//                return
-//            }
-//            pref.hour12Format.value = java.lang.Boolean.parseBoolean(value)
-//            FileManager.configSave(FileManager.getPlayerPreferencesGsonConfig())
-//            sender.sendMessage(TextMessage.fromColor("&aUpdated value"))
-//        } else if (pref.preferredTimezone.name.equals(data, ignoreCase = true)) {
-//            var failed = false
-//            var zone: TimeZone? = null
-//            try {
-//                zone = TimeZone.getTimeZone(value)
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//                failed = true
-//            }
-//            if (zone == null || pref.preferredTimezone.isValid(zone)) failed = true
-//            if (failed) {
-//                sender.sendMessage(TextMessage.fromColor("&cUnable to parse time zone. Use example such as PST, \"America/Los_Angeles\" or GMT-8:00"))
-//                return
-//            }
-//            pref.preferredTimezone.value = value
-//            FileManager.configSave(FileManager.getPlayerPreferencesGsonConfig())
-//            sender.sendMessage(TextMessage.fromColor("&aUpdated value"))
-//        } else {
-//            sender.sendMessage(TextMessage.fromColor("&cUnable to find data {$data}"))
-//        }
     }
 
     private fun prefMessage(preferenceData: PreferenceDataAbstract<*>): TextMessage {

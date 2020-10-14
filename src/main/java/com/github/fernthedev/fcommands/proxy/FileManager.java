@@ -175,11 +175,10 @@ public class FileManager {
 
         FileManager.configLoad(preferencesListGsonConfig);
 
-        for (UUID uuid1 : preferencesListGsonConfig.getConfigData().getPlayerMap().keySet()) {
-            if (uuid.equals(uuid1)) {
-                return preferencesListGsonConfig.getConfigData().getPlayerMap().get(uuid1);
-            }
+        if (preferencesListGsonConfig.getConfigData().getPlayerMap().get(uuid) != null) {
+            return preferencesListGsonConfig.getConfigData().getPlayerMap().get(uuid);
         }
+
 
         PlayerPreferencesSingleton pref = new PlayerPreferencesSingleton();
 
