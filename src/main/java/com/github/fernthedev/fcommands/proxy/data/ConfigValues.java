@@ -36,6 +36,7 @@ public class ConfigValues {
     private boolean showAltsCommand = false;
 
     private boolean allowNameHistory = true;
+    private boolean altsBan = false;
 
     private boolean globalNicks = false;
     private boolean showPing = false;
