@@ -92,6 +92,7 @@ dependencies {
 //    compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
 //    compile 'com.google.api-client:google-api-client:1.23.0'
 
+    compileOnly 'com.github.Fernthedev.preferences_api:api:0.1.0'
     compile 'com.github.Fernthedev:FernUtils:1.3.3'
     compile 'org.mariadb.jdbc:mariadb-java-client:2.1.2'
     compileOnly 'net.md-5:bungeecord-api:1.14-SNAPSHOT'

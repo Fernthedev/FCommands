@@ -7,8 +7,6 @@ import com.github.fernthedev.fcommands.proxy.data.ConfigValues;
 import com.github.fernthedev.fcommands.proxy.data.IPDeleteValues;
 import com.github.fernthedev.fcommands.proxy.data.IPSaveValues;
 import com.github.fernthedev.fcommands.proxy.data.SeenValues;
-import com.github.fernthedev.fcommands.proxy.data.pref.PlayerPreferencesList;
-import com.github.fernthedev.fcommands.proxy.data.pref.PlayerPreferencesSingleton;
 import com.github.fernthedev.fernapi.universal.Universal;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -16,7 +14,6 @@ import lombok.Synchronized;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class FileManager {
@@ -36,8 +33,6 @@ public class FileManager {
 
     @Getter
     private static Config<IPDeleteValues> deleteIPConfig;
-
-    private static Config<PlayerPreferencesList> playerPreferencesGsonConfig;
 
 
     /**
@@ -63,8 +58,6 @@ public class FileManager {
             seenConfig = new GsonConfig<>(new SeenValues(), new File(Universal.getMethods().getDataFolder(), "seen.json"));
             seenConfig.load();
 
-            playerPreferencesGsonConfig = new GsonConfig<>(new PlayerPreferencesList(), new File(Universal.getMethods().getDataFolder(), "preferences.json"));
-            playerPreferencesGsonConfig.load();
         } catch (ConfigLoadException e) {
             throw new IllegalStateException(e);
         }
@@ -162,49 +155,6 @@ public class FileManager {
         public String toString() {
             return value;
         }
-    }
-
-    public static Config<PlayerPreferencesList> getPlayerPreferencesGsonConfig() {
-        return playerPreferencesGsonConfig;
-    }
-
-    @SneakyThrows
-    @Synchronized
-    public static PlayerPreferencesSingleton getPlayerPref(UUID uuid) {
-        Config<PlayerPreferencesList> preferencesListGsonConfig = FileManager.getPlayerPreferencesGsonConfig();
-
-        FileManager.configLoad(preferencesListGsonConfig);
-
-        if (preferencesListGsonConfig.getConfigData().getPlayerMap().get(uuid) != null) {
-            return preferencesListGsonConfig.getConfigData().getPlayerMap().get(uuid);
-        }
-
-
-        PlayerPreferencesSingleton pref = new PlayerPreferencesSingleton();
-
-        preferencesListGsonConfig.getConfigData().getPlayerMap().put(uuid, pref);
-
-        preferencesListGsonConfig.syncSave();
-
-        return pref;
-    }
-
-    @Synchronized
-    public static PlayerPreferencesSingleton getPlayerPref(String uuid) {
-        Config<PlayerPreferencesList> preferencesListGsonConfig = FileManager.getPlayerPreferencesGsonConfig();
-
-        configLoad(preferencesListGsonConfig);
-
-        for (UUID uuid1 : preferencesListGsonConfig.getConfigData().getPlayerMap().keySet()) {
-            boolean equals = uuid.replace("-", "").equals(uuid1.toString().replace("-", ""));
-            System.out.println(uuid.replace("-", "") + " " + uuid1.toString().replace("-", "") + " " + equals);
-
-            if (equals) {
-                return preferencesListGsonConfig.getConfigData().getPlayerMap().get(uuid1);
-            }
-        }
-
-        return new PlayerPreferencesSingleton();
     }
 
     /**

@@ -17,8 +17,9 @@ public class UFernPing extends BaseCommand {
     @Default
     @CommandCompletion("* @nothing")
     @Syntax("[player]")
-    public void execute(FernCommandIssuer sender, @Optional @Flags("other,defaultself") IFPlayer<?> p) {
+    public void execute(FernCommandIssuer sender, @Flags("other,defaultself") IFPlayer<?> p) {
         Universal.debug("Thing1 Start");
+
         if (sender.isPlayer() && (p == null || p.isPlayerNull() || p.getUniqueId() == sender.getUniqueId())) {
             Universal.debug("Thing send fern ping");
             sender.sendMessage(TextMessage.fromColor("&aYour FernPing is &9" + ((IFPlayer<?>) sender).getPing()));

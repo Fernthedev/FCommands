@@ -1,7 +1,10 @@
 package com.github.fernthedev.fcommands.velocity;
 
 import com.github.fernthedev.fcommands.proxy.FileManager;
-import com.github.fernthedev.fcommands.proxy.commands.*;
+import com.github.fernthedev.fcommands.proxy.commands.FernMain;
+import com.github.fernthedev.fcommands.proxy.commands.FernNick;
+import com.github.fernthedev.fcommands.proxy.commands.GetPlaceholderCommand;
+import com.github.fernthedev.fcommands.proxy.commands.Seen;
 import com.github.fernthedev.fcommands.proxy.commands.ip.MainIP;
 import com.github.fernthedev.fcommands.proxy.commands.ip.ShowAlts;
 import com.github.fernthedev.fcommands.proxy.data.ConfigValues;
@@ -19,25 +22,24 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import org.slf4j.Logger;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 @Plugin(id = "fern_commands", name = "FernCommands", version = "${version}",
-        description = "A suite of stuff for Fern server", authors = {"Fernthedev"})
+        description = "A suite of stuff for Fern server", authors = {"Fernthedev"},
+        dependencies = @Dependency(id = "preference_manager")
+)
 public class FernCommands extends FernVelocityAPI {
 
     private static FernCommands instance;
 
     @Getter
     private static DBManager databaseManager;
-
-    private static List<Runnable> runnableList = new ArrayList<>();
 
     @Inject
     public FernCommands(ProxyServer server, Logger logger) {
@@ -101,8 +103,6 @@ public class FernCommands extends FernVelocityAPI {
             Universal.getCommandHandler().registerCommand(new Seen());
         }
 
-        Universal.getCommandHandler().registerCommand(new PreferenceCommand());
-
 
 
         //////////////////////////////////////////////////getProxy().wegetPluginManager().registerListener(this,new AskPlaceHolder());
@@ -130,7 +130,7 @@ public class FernCommands extends FernVelocityAPI {
             MainIP.loadTasks();
         }
 
-        PlatformAllRegistration.registerCommands();
+        PlatformAllRegistration.commonInit();
 
         if(FileManager.getConfigValues().isAllowNameHistory()) {
 //            getProxy().getPluginManager().registerCommand(this, new NameHistory());

@@ -8,12 +8,15 @@ import com.github.fernthedev.config.common.exceptions.ConfigLoadException;
 import com.github.fernthedev.fcommands.proxy.FileManager;
 import com.github.fernthedev.fcommands.proxy.data.SeenPlayerValue;
 import com.github.fernthedev.fcommands.proxy.data.SeenValues;
-import com.github.fernthedev.fcommands.proxy.data.pref.PlayerPreferencesSingleton;
+import com.github.fernthedev.fcommands.universal.PluginPreferenceManager;
 import com.github.fernthedev.fernapi.universal.Universal;
 import com.github.fernthedev.fernapi.universal.api.FernCommandIssuer;
 import com.github.fernthedev.fernapi.universal.api.IFPlayer;
 import com.github.fernthedev.fernapi.universal.data.chat.*;
 import com.github.fernthedev.fernapi.universal.util.network.vanish.VanishProxyCheck;
+import com.github.fernthedev.preferences.core.PreferenceManager;
+import com.github.fernthedev.preferences.core.command.PreferenceCommand;
+import com.github.fernthedev.preferences.core.config.PlayerPreferencesSingleton;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -116,8 +119,8 @@ public class Seen extends BaseCommand {
 
                 if (sender instanceof IFPlayer) {
                     IFPlayer<?> player = (IFPlayer<?>) sender;
-                    pref = FileManager.getPlayerPref(player.getUuid());
-                } else pref = new PlayerPreferencesSingleton();
+                    pref = PreferenceManager.getPlayerPref(player.getUuid());
+                } else pref = new PlayerPreferencesSingleton(UUID.randomUUID());
 
                 if (seenplist != null) {
                     String server = seenplist.getServer();
@@ -129,7 +132,7 @@ public class Seen extends BaseCommand {
 
                     String hour;
 
-                    if (pref.getHour12Format().getValue()) {
+                    if (pref.getPreferenceInfer(PluginPreferenceManager.NAMESPACE, PluginPreferenceManager.hour12Format.getName(), false).getValue()) {
                         format = (SimpleDateFormat) hour12Format.clone();
                         hour = "12";
                     } else {
@@ -137,7 +140,7 @@ public class Seen extends BaseCommand {
                         hour = "24";
                     }
 
-                    TimeZone zone = TimeZone.getTimeZone(pref.getPreferredTimezone().getValue());
+                    TimeZone zone = TimeZone.getTimeZone(pref.getPreferenceInfer(PluginPreferenceManager.NAMESPACE, PluginPreferenceManager.preferredTimezone.getName(), "").getValue());
 //                        try {
                     SimpleDateFormat hour24 = (SimpleDateFormat) hour24Format.clone();
 
@@ -181,8 +184,8 @@ public class Seen extends BaseCommand {
                             .replace("%zone%", zone.getID())
                             .replace("%hour%", hour));
 
-                    hourFormat.setClickData(new ClickData(ClickData.Action.SUGGEST_COMMAND, "/" + PreferenceCommand.COMMAND_NAME + " set zone EST"));
-                    hourFormat.setHoverData(new HoverData(HoverData.Action.SHOW_TEXT, new TextMessage("&6Change default timezone " + PreferenceCommand.COMMAND_NAME + " set zone ")));
+                    hourFormat.setClickData(new ClickData(ClickData.Action.SUGGEST_COMMAND, "/" + PreferenceCommand.prefSetCommand(PluginPreferenceManager.NAMESPACE, PluginPreferenceManager.preferredTimezone) + " "));
+                    hourFormat.setHoverData(new HoverData(HoverData.Action.SHOW_TEXT, new TextMessage("&6Change default timezone")));
 
                     sender.sendMessage(new TextMessage("&9Last time on: &b" + time + " ").addExtra(hourFormat));
                 } else {

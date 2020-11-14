@@ -118,8 +118,6 @@ public class FernCommands extends FernBungeeAPI {
 
 //        getProxy().getPluginManager().registerCommand(this, new PreferenceCommand("fernc.preference", "preference"));
 
-        Universal.getCommandHandler().registerCommand(new PreferenceCommand());
-
 //        try {
 //        LegacyFileManager.getIpConfig().load();
 //            LegacyFileManager.getInstance().createipFile();
@@ -163,7 +161,7 @@ public class FernCommands extends FernBungeeAPI {
             MainIP.loadTasks();
         }
 
-        PlatformAllRegistration.registerCommands();
+        PlatformAllRegistration.commonInit();
 
         if(FileManager.getConfigValues().isAllowNameHistory()) {
 //            getProxy().getPluginManager().registerCommand(this, new NameHistory());
