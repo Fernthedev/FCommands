@@ -7,6 +7,7 @@ import co.aikar.commands.annotation.*;
 import com.github.fernthedev.fcommands.proxy.FileManager;
 import com.github.fernthedev.fernapi.universal.Universal;
 import com.github.fernthedev.fernapi.universal.data.chat.ChatColor;
+import com.github.fernthedev.fernapi.universal.util.VersionUtil;
 
 import java.io.IOException;
 
@@ -68,7 +69,7 @@ public class FernMain extends BaseCommand {
     @HelpCommand
     @Default
     public void onHelp(CommandIssuer sender, CommandHelp help) {
-        sender.sendMessage(ChatColor.BLUE + "Hello there. FernCommands are running. " + Universal.getPlugin().getPluginData().getVersion() + " (FernAPI: " + Universal.getPluginData().getVersion() + ")");
+        sender.sendMessage(ChatColor.BLUE + "Hello there. FernCommands are running. " + Universal.getPlugin().getPluginData().getVersion() + " (FernAPI: " + VersionUtil.getVersionData().getFernapi_version() + ")");
         help.showHelp();
     }
 
