@@ -68,7 +68,7 @@ public class FernMain extends BaseCommand {
     @HelpCommand
     @Default
     public void onHelp(CommandIssuer sender, CommandHelp help) {
-        sender.sendMessage(ChatColor.BLUE + "Hello there. FernCommands are running. " + Universal.getPlugin().getPluginData().getVersion());
+        sender.sendMessage(ChatColor.BLUE + "Hello there. FernCommands are running. " + Universal.getPlugin().getPluginData().getVersion() + " (FernAPI: " + Universal.getPluginData().getVersion() + ")");
         help.showHelp();
     }
 

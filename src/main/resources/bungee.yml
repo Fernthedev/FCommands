@@ -1,6 +1,6 @@
 name: FernCommands
 main: com.github.fernthedev.fcommands.bungee.FernCommands
 version: ${version}
-author: fernthedev
+author: Fernthedev
 depends:
   - PreferenceManager

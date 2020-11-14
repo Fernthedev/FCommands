@@ -9,7 +9,7 @@ import com.github.fernthedev.fernapi.universal.api.IFPlayer;
 import com.github.fernthedev.fernapi.universal.api.OfflineFPlayer;
 import com.github.fernthedev.fernapi.universal.data.chat.TextMessage;
 
-@CommandAlias("fernb|fping|fernbungee")
+@CommandAlias("fernb|fping|fernbungee|ping")
 @CommandPermission("fern.ping")
 public class UFernPing extends BaseCommand {
 
