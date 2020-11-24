@@ -74,6 +74,9 @@ public class ServerData implements Serializable {
             addressPingStatus.add(addressPortPair);
             s.connect(new InetSocketAddress(addressPortPair.getAddress(), addressPortPair.getPort()), (int) getTimeoutMS());
             clearPing(true);
+
+            if (!s.isClosed())
+                s.close();
         } catch (SocketTimeoutException e) {
             clearPing(false);
             Universal.debug(e.getMessage() + " Timed out Name: " + name + " Port: " + addressPortPair.port + " Time: " + getTimeoutMS());
