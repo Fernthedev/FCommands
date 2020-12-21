@@ -52,13 +52,13 @@ public class FernMain extends BaseCommand {
         try {
             FileManager.getInstance().loadFiles(config, false);
         }catch (IOException e) {
-            Universal.getMethods().getLogger().warning("&cUnable to reload files");
+            Universal.getMethods().getAbstractLogger().warn("&cUnable to reload files");
             throw e;
 //            sender.sendMessage(MessageType.ERROR, MessageKeys.);
 //            sender.sendMessage(message("&cUnable to reload files"));
         }
 
-        Universal.getMethods().getLogger().info("Successfully reloaded files");
+        Universal.getMethods().getAbstractLogger().info("Successfully reloaded files");
 
 
         sender.sendMessage(ChatColor.GREEN + "Successfully reloaded files");

@@ -103,7 +103,7 @@ public class FileManager {
             FileManager.configLoad(seenConfig);
 
             if (!silent)
-                Universal.getMethods().getLogger().info("Seen Config was reloaded  " + which);
+                Universal.getMethods().getAbstractLogger().info("Seen Config was reloaded  " + which);
         }
 
         //IP
@@ -113,7 +113,7 @@ public class FileManager {
             FileManager.configLoad(ipConfig);
 
             if (!silent)
-                Universal.getMethods().getLogger().info("Ips was reloaded  " + which);
+                Universal.getMethods().getAbstractLogger().info("Ips was reloaded  " + which);
         }
 
 
@@ -124,7 +124,7 @@ public class FileManager {
             FileManager.configLoad(deleteIPConfig);
 
             if (!silent)
-                Universal.getMethods().getLogger().info("deleteIps was reloaded  " + which);
+                Universal.getMethods().getAbstractLogger().info("deleteIps was reloaded  " + which);
         }
     }
 

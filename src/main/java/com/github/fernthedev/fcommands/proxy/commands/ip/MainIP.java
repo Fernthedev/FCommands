@@ -155,9 +155,9 @@ public class MainIP extends BaseCommand {
             Timer timer = new Timer();
 
             String setTimee = dateFormat.format(hideDeleteDate);
-            Universal.getMethods().getLogger().info("The time to hide delete is " + setTimee);
+            Universal.getMethods().getAbstractLogger().info("The time to hide delete is " + setTimee);
             setTimee = dateFormat.format(deleteDate);
-            Universal.getMethods().getLogger().info("The time to delete is " + setTimee);
+            Universal.getMethods().getAbstractLogger().info("The time to delete is " + setTimee);
 
             timer.schedule(new TimerTask() {
                 @Override

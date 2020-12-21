@@ -27,6 +27,6 @@ public class DebugCommand extends BaseCommand {
         sender.sendMessage(message);
 
         if (sender.isPlayer())
-            Universal.getMethods().getLogger().info(message.toPlainText());
+            Universal.getMethods().getAbstractLogger().info(message.toPlainText());
     }
 }

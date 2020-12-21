@@ -85,7 +85,7 @@ configurations {
 }
 
 dependencies {
-    compile 'com.github.Fernthedev.FernAPI:all:faf512f' //1.9.0-rc4'
+    compile 'com.github.Fernthedev.FernAPI:all:263a7a7' //1.9.0-rc4'
 //    compileOnly 'com.google.apis:google-api-services-youtube:v3-rev193-1.23.0'
 //    compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
 //    compile 'com.google.api-client:google-api-client:1.23.0'
@@ -102,7 +102,6 @@ dependencies {
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.4-SNAPSHOT'
     compileOnly 'com.velocitypowered:velocity-api:1.1.0-SNAPSHOT'
     annotationProcessor 'com.velocitypowered:velocity-api:1.1.0-SNAPSHOT'
-//    compileOnly 'com.velocitypowered:velocity-api:1.0.0-SNAPSHOT'
 //    compileOnly name: 'EssentialsX', group: 'net.ess3', version: '2.17.2'
     system name: 'AdvancedBan-2.2.1-RELEASE'
 //    compile 'me.leoko.advancedban:AdvancedBan:2.1.6'
@@ -137,6 +136,7 @@ shadowJar {
     relocate 'com.zaxxer', 'ferncommands.com.zaxxer'
     relocate 'co.aikar.commands', "${project.group}.acf"
     relocate 'co.aikar.locales', "${project.group}.locales"
+    relocate 'org.slf4j', "${project.group}.slf4j"
 
     relocate 'com.github.fernthedev.fernapi', 'fcommands.com.github.fernthedev.fernapi'
 }
