@@ -4,6 +4,7 @@ main: com.github.fernthedev.fcommands.spigot.FernCommands
 author: Fernthedev
 description: Commands for the ferns out there :P
 api-version: 1.14
+softdepend: [NoCheatPlus,McMMO,SB-Skylands,Multiverse-Core,NametagEdit,Vault,WorldGuard, Essentials]
 commands:
    fboot:
       description: Crafts water walking boots
@@ -23,4 +24,3 @@ commands:
    fshop:
       description: A random shop thing
       usage: /fshop
-softdepend: [NoCheatPlus,McMMO,SB-Skylands,Multiverse-Core,NametagEdit,Vault,WorldGuard]

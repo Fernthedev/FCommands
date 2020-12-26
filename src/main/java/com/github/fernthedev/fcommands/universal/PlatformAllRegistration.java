@@ -16,6 +16,7 @@ public class PlatformAllRegistration {
             PreferenceManager.registerPreference(new PluginPreferenceManager());
         }
 
+
     }
 
 }

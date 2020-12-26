@@ -8,14 +8,13 @@ import com.github.fernthedev.fcommands.universal.mysql.nick.NickDatabaseInfo;
 import com.github.fernthedev.fernapi.universal.Universal;
 import com.github.fernthedev.fernapi.universal.api.FernCommandIssuer;
 import com.github.fernthedev.fernapi.universal.api.IFPlayer;
-import com.github.fernthedev.fernapi.universal.data.database.ColumnData;
-import com.github.fernthedev.fernapi.universal.data.database.RowData;
 import com.github.fernthedev.fernapi.universal.data.network.PluginMessageData;
 import com.github.fernthedev.fernapi.universal.exceptions.database.DatabaseException;
 import com.github.fernthedev.fernapi.universal.mysql.DatabaseListener;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
 
 @CommandPermission("fernc.nick")
 @CommandAlias("fnick|gnick|nick|fnick")
@@ -24,14 +23,14 @@ public class FernNick extends BaseCommand {
         setupTable();
     }
 
-    private static NickDatabaseInfo databaseInfo;
+    private static final NickDatabaseInfo databaseInfo = new NickDatabaseInfo();
 
     private void setupTable() {
         DatabaseListener databaseManager = UniversalMysql.getDatabaseManager();
         try {
-            databaseInfo = (NickDatabaseInfo) new NickDatabaseInfo().getFromDatabase(databaseManager);
             databaseManager.createTable(databaseInfo);
-        } catch (DatabaseException e) {
+            databaseInfo.loadFromDB(databaseManager).get();
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 //            Statement statement = DatabaseHandler.statement();
@@ -83,7 +82,7 @@ public class FernNick extends BaseCommand {
 //                if(connection != null) {
 
             if (databaseManager.isConnected()) {
-                databaseInfo = (NickDatabaseInfo) new NickDatabaseInfo().getFromDatabase(databaseManager);
+                databaseInfo.loadFromDB(databaseManager).get();
                 applyNick(player, newNick, databaseManager);
 
 //                    ProxyServer.getInstance().getServers().values().forEach(serverInfo -> serverInfo.sendData("BungeeCord", outputStream.toByteArray()));
@@ -98,6 +97,8 @@ public class FernNick extends BaseCommand {
         } catch (SQLException e) {
             sender.sendMessage(MessageType.ERROR, MessageKeys.ERROR_GENERIC_LOGGED);
             e.printStackTrace();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
         }
     }
 
@@ -110,9 +111,8 @@ public class FernNick extends BaseCommand {
 
 ////                    sql = "SELECT CASE WHEN PLAYERUUID="+player.getUniqueId().toString()+ "THEN NICK "+args[0];
 //                    sql = "UPDATE fern_nicks SET PLAYERUUID='" + player.getUniqueId().toString().replaceAll("-", "") + "NICK='" + args[0] + "' WHERE PLAYERUUID='" + player.getUniqueId().toString().replaceAll("-", "") + "';";
-        ColumnData playerColumn = new ColumnData("PLAYERUUID", player.getUuid().toString());
-        ColumnData nickColumn = new ColumnData("NICK", newNick);
-        RowData rowData = new RowData(playerColumn, nickColumn);
+        NickDatabaseInfo.NickDatabaseRowInfo rowData = new NickDatabaseInfo.NickDatabaseRowInfo(player.getUuid(), newNick);
+
         databaseManager.insertIntoTable(databaseInfo, rowData);
 
 //                    stmt = connection.prepareStatement(sql);

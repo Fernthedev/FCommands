@@ -1,14 +1,39 @@
 package com.github.fernthedev.fcommands.universal.mysql.nick;
 
-import com.github.fernthedev.fernapi.universal.data.database.ColumnData;
-import com.github.fernthedev.fernapi.universal.data.database.RowDataTemplate;
+import com.github.fernthedev.fernapi.universal.data.database.RowData;
 import com.github.fernthedev.fernapi.universal.data.database.TableInfo;
+import lombok.Getter;
+import org.panteleyev.mysqlapi.annotations.Column;
+import org.panteleyev.mysqlapi.annotations.PrimaryKey;
 
-public class NickDatabaseInfo extends TableInfo {
+import java.util.UUID;
 
-    private static RowDataTemplate rowDataTemplate = new RowDataTemplate(new ColumnData("PLAYERUUID", ""), new ColumnData("NICK", ""));
+public class NickDatabaseInfo extends TableInfo<NickDatabaseInfo.NickDatabaseRowInfo> {
 
     public NickDatabaseInfo() {
-        super("fern_nicks", rowDataTemplate);
+        super("fern_nicks", NickDatabaseRowInfo.class, NickDatabaseRowInfo::new);
+    }
+
+    @Getter
+    public static class NickDatabaseRowInfo extends RowData {
+        @PrimaryKey
+        @Column("PLAYERUUID")
+        private UUID uuid;
+
+        @Column("NICK")
+        private String nick;
+
+
+
+        public NickDatabaseRowInfo(UUID uuid, String nick) {
+            super();
+            this.uuid = uuid;
+            this.nick = nick;
+            initiateRowData();
+        }
+
+        public NickDatabaseRowInfo() {
+            super();
+        }
     }
 }

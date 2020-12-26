@@ -3,20 +3,40 @@ package com.github.fernthedev.fcommands.universal;
 import com.github.fernthedev.fcommands.spigot.nick.NickManager;
 import com.github.fernthedev.fcommands.universal.mysql.nick.NickDatabaseInfo;
 import com.github.fernthedev.fernapi.universal.Universal;
-import com.github.fernthedev.fernapi.universal.data.database.RowData;
+import com.github.fernthedev.fernapi.universal.data.database.TableInfo;
 import com.github.fernthedev.fernapi.universal.data.network.Channel;
 import com.github.fernthedev.fernapi.universal.data.network.PluginMessageData;
 import com.github.fernthedev.fernapi.universal.handlers.PluginMessageHandler;
 import com.github.fernthedev.fernapi.universal.handlers.ServerType;
 import com.github.fernthedev.fernapi.universal.mysql.DatabaseListener;
+import com.google.gson.Gson;
+import org.bukkit.ChatColor;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class NickNetworkManager extends PluginMessageHandler {
+
+    public NickNetworkManager() {
+        super();
+        DatabaseListener databaseManager = UniversalMysql.getDatabaseManager();
+
+        databaseManager.runOnConnect(() -> {
+            try {
+                databaseManager.createTable(databaseInfo).get();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
+        databaseManager.connect();
+    }
 
     /**
      * This is the channel name that will be registered incoming and outgoing
@@ -30,35 +50,12 @@ public class NickNetworkManager extends PluginMessageHandler {
         return channels;
     }
 
-    private static NickDatabaseInfo databaseInfo;
+    private static final NickDatabaseInfo databaseInfo = new NickDatabaseInfo();
 
-    private void runSqlSync() {
+    private CompletableFuture<TableInfo<NickDatabaseInfo.NickDatabaseRowInfo>> runSqlSync() {
         DatabaseListener databaseManager = UniversalMysql.getDatabaseManager();
-        databaseManager.runOnConnect(() -> {
-            try {
-                databaseInfo = (NickDatabaseInfo) new NickDatabaseInfo().getFromDatabase(databaseManager);
 
-                Queue<RowData> rowDataStack = new LinkedList<>(databaseInfo.getRowDataList());
-
-                while(!rowDataStack.isEmpty()) {
-                    RowData rowData = rowDataStack.remove();
-                    String uuid = rowData.getColumn("PLAYERUUID").getValue();
-                    String nick = rowData.getColumn("NICK").getValue();
-                }
-
-//                String sql = "SELECT * FROM fern_nicks;";
-//                PreparedStatement stmt = DatabaseHandler.getConnection().prepareStatement(sql);
-//                ResultSet result = stmt.executeQuery();
-//
-//                while (result.next()) {
-//                    String uUID = result.getString("PLAYERUUID");
-//                    String nick = result.getString("NICK");
-//                    nicknames.put(uUID,nick);
-//                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
+        return databaseInfo.loadFromDB(databaseManager);
     }
 
     @Override
@@ -66,34 +63,43 @@ public class NickNetworkManager extends PluginMessageHandler {
         if (Universal.getMethods().getServerType() == ServerType.BUKKIT) {
 
             Universal.getScheduler().runAsync(() -> {
-                try {
-                    String type = pluginMessageData.getProxyChannelType(); //TYPE
-                    String server = pluginMessageData.getServer(); // Server
-                    String subChannel = pluginMessageData.getSubChannel(); // Subchannel
+                String type = pluginMessageData.getProxyChannelType(); //TYPE
+                String server = pluginMessageData.getServer(); // Server
+                String subChannel = pluginMessageData.getSubChannel(); // Subchannel
 
-                    Queue<String> dataList = new LinkedList<>(pluginMessageData.getExtraData());
+                Queue<String> dataList = new LinkedList<>(pluginMessageData.getExtraData());
 
-                    if (subChannel.equalsIgnoreCase(Channels.NICK_RELOADNICKSQL)) {
-                        String playerName = dataList.remove();
-                        String uuid = dataList.remove();
+                if (subChannel.equalsIgnoreCase(Channels.NICK_RELOADNICKSQL)) {
+                    String playerName = dataList.remove();
+                    String uuid = dataList.remove();
 
-                        runSqlSync();
+                    try {
+                        runSqlSync().get();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
 
-                        String nick = null;
+                    String nick = null;
+                    NickDatabaseInfo.NickDatabaseRowInfo nickRow = databaseInfo.getRow(uuid);
+                    if (nickRow != null) {
+                        nick = nickRow.getNick();
 
-                        for (RowData rowData : databaseInfo.getRowDataList()) {
-                            if (rowData.getColumn("PLAYERUUID").getValue() == null) continue;
+                        if (Universal.isDebug())
+                            Universal.debug("Found nick {} from uuid {} info: {}", nick, uuid, ChatColor.GOLD + new Gson().toJson(nickRow));
+                    }
 
-                            if (rowData.getColumn("PLAYERUUID").getValue().equals(uuid)) {
-                                nick = rowData.getColumn("NICK").getValue();
+                    if (nick == null)
+                        for (NickDatabaseInfo.NickDatabaseRowInfo rowData : databaseInfo.getRowDataListCopy().values()) {
+                            if (rowData.getUuid() != null && rowData.getUuid().toString().equals(uuid)) {
+                                nick = rowData.getNick();
                             }
                         }
 
 
-                        NickManager.handleNick(uuid, playerName, nick);
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                    NickManager.handleNick(uuid, playerName, nick);
                 }
             });
         }

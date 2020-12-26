@@ -9,6 +9,7 @@ import com.github.fernthedev.fcommands.spigot.ncp.Cooldown;
 import com.github.fernthedev.fcommands.spigot.ncp.NCPHandle;
 import com.github.fernthedev.fcommands.spigot.shop.ChestImport;
 import com.github.fernthedev.fcommands.universal.DBManager;
+import com.github.fernthedev.fcommands.universal.PlatformAllRegistration;
 import com.github.fernthedev.fcommands.universal.UniversalMysql;
 import com.github.fernthedev.fernapi.server.spigot.FernSpigotAPI;
 import com.google.gson.Gson;
@@ -103,6 +104,8 @@ public class FernCommands extends FernSpigotAPI {
         getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", messageListener);
 
         Messaging.sendRequest("GetServer");
+
+        PlatformAllRegistration.commonInit();
 
         hookManager.registerPlugins();
 

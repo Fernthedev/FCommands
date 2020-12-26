@@ -73,6 +73,7 @@ public class HookManager {
         }
 
         essentials = Bukkit.getPluginManager().isPluginEnabled("Essentials");
+        Universal.getLogger().info("Essentials status: {}", essentials);
         if(essentials) {
             Universal.getMessageHandler().registerMessageHandler(new NickNetworkManager());
 //            FernCommands.getInstance().addMessageListener(new NickManager());
