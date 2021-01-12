@@ -48,14 +48,16 @@ public class UFernPing extends BaseCommand {
                 sender.sendMessage(TextMessage.fromColor("&c" + p.getName() + "'s &aFernPing is " + p.getPing()));
             } else {
                 Universal.debug("Thing5");
-                if (p.isVanished()) {
-                    Universal.debug("Thing6");
-                    sender.sendError(MessageKeys.COULD_NOT_FIND_PLAYER, "{search}", p.getName());
+                p.isVanished().thenAccept(vanished -> {
+                    if (vanished) {
+                        Universal.debug("Thing6");
+                        sender.sendError(MessageKeys.COULD_NOT_FIND_PLAYER, "{search}", p.getName());
 //                    sender.sendMessage(TextMessage.fromColor("&cUnable to find &9" + p.getName()));
-                } else {
-                    Universal.debug("Thing7");
-                    sender.sendMessage(TextMessage.fromColor("&c" + p + "'s &aFernPing is " + p.getPing()));
-                }
+                    } else {
+                        Universal.debug("Thing7");
+                        sender.sendMessage(TextMessage.fromColor("&c" + p.getName() + "'s &aFernPing is " + p.getPing()));
+                    }
+                });
             }
         }
     }

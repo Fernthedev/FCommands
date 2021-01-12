@@ -9,7 +9,6 @@ import com.github.fernthedev.fernapi.universal.Universal;
 import com.github.fernthedev.fernapi.universal.api.FernCommandIssuer;
 import com.github.fernthedev.fernapi.universal.api.IFPlayer;
 import com.github.fernthedev.fernapi.universal.data.network.PluginMessageData;
-import com.github.fernthedev.fernapi.universal.exceptions.database.DatabaseException;
 import com.github.fernthedev.fernapi.universal.mysql.DatabaseListener;
 
 import java.io.ByteArrayOutputStream;
@@ -102,7 +101,7 @@ public class FernNick extends BaseCommand {
         }
     }
 
-    private void applyNick(IFPlayer<?> player, String newNick, DatabaseListener databaseManager) throws DatabaseException {
+    private void applyNick(IFPlayer<?> player, String newNick, DatabaseListener databaseManager) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         String formattedUUID = player.getUuid().toString();
 
