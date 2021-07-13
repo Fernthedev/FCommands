@@ -11,7 +11,7 @@ public class Events implements Listener {
 
     @EventHandler
     public void onLeave(PlayerDisconnectEvent e) {
-        if(FileManager.getConfigManager().getConfigData().isAllowSeenCommand()) Seen.
+        if(FileManager.getConfigManager().getConfigData().getAllowSeenCommand()) Seen.
                 onLeave(Universal.getMethods().convertPlayerObjectToFPlayer(e.getPlayer()));
     }
 

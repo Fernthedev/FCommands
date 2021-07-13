@@ -1,189 +1,144 @@
-package com.github.fernthedev.fcommands.proxy;
+package com.github.fernthedev.fcommands.proxy
 
-import com.github.fernthedev.config.common.Config;
-import com.github.fernthedev.config.common.exceptions.ConfigLoadException;
-import com.github.fernthedev.config.gson.GsonConfig;
-import com.github.fernthedev.fcommands.proxy.data.ConfigValues;
-import com.github.fernthedev.fcommands.proxy.data.IPDeleteValues;
-import com.github.fernthedev.fcommands.proxy.data.IPSaveValues;
-import com.github.fernthedev.fcommands.proxy.data.SeenValues;
-import com.github.fernthedev.fernapi.universal.Universal;
-import lombok.Getter;
-import lombok.SneakyThrows;
-import lombok.Synchronized;
+import com.github.fernthedev.config.common.Config
+import com.github.fernthedev.config.common.exceptions.ConfigLoadException
+import com.github.fernthedev.config.gson.GsonConfig
+import com.github.fernthedev.fcommands.proxy.data.ConfigValues
+import com.github.fernthedev.fcommands.proxy.data.IPDeleteValues
+import com.github.fernthedev.fcommands.proxy.data.IPSaveValues
+import com.github.fernthedev.fcommands.proxy.data.SeenValues
+import com.github.fernthedev.fernapi.universal.Universal
+import java.io.File
+import java.io.IOException
+import java.util.*
 
-import java.io.File;
-import java.io.IOException;
+// TODO: Make file manager instance and not object
 
-@SuppressWarnings("ResultOfMethodCallIgnored")
-public class FileManager {
+class FileManager private constructor() {
 
-    private static FileManager thisinstance;
+    enum class WhichFile(private val value: String) {
+        IP("ip"), CONFIG("config"), SEEN("Seen"), DELETEIP("ipdelete"), ALL("all");
 
-//    private static ConfigManager configManager;
-
-    @Getter
-    private static Config<ConfigValues> configManager;
-
-    @Getter
-    private static Config<SeenValues> seenConfig;
-
-    @Getter
-    private static Config<IPSaveValues> ipConfig;
-
-    @Getter
-    private static Config<IPDeleteValues> deleteIPConfig;
-
-
-    /**
-     * The constructor for setting the instance;
-     */
-    public FileManager() {
-        registerVars();
-    }
-
-    private void registerVars() {
-        thisinstance = this;
-
-        try {
-            configManager = new GsonConfig<>(new ConfigValues(), new File(Universal.getMethods().getDataFolder(), "config.json"));
-            configManager.load();
-
-            deleteIPConfig = new GsonConfig<>(new IPDeleteValues(), new File(Universal.getMethods().getDataFolder(), "ipdelete.json"));
-            deleteIPConfig.load();
-
-            ipConfig = new GsonConfig<>(new IPSaveValues(), new File(Universal.getMethods().getDataFolder(), "ipdata.json"));
-            ipConfig.load();
-
-            seenConfig = new GsonConfig<>(new SeenValues(), new File(Universal.getMethods().getDataFolder(), "seen.json"));
-            seenConfig.load();
-
-        } catch (ConfigLoadException e) {
-            throw new IllegalStateException(e);
-        }
-//        configManager = new ConfigManager();
-    }
-
-
-    /**
-     * Method for loading config files
-     *
-     * @param which Which file to load (Seen,config,ip,all)
-     */
-    @SuppressWarnings("RedundantThrows")
-    @Deprecated
-    @Synchronized
-    public void loadFiles(String which, boolean silent) throws IOException {
-        new IllegalAccessError("This is deprecated. Just an error message").printStackTrace();
-        //CHECK IF PLUGIN FOLDER EXISTS
-        if (!Universal.getMethods().getDataFolder().exists()) {
-            Universal.getMethods().getDataFolder().mkdir();
-        }
-
-
-        boolean goConfig = which.equalsIgnoreCase("config") || which.equalsIgnoreCase("all");
-        //CONFIG
-        if (goConfig) {
-            FileManager.configLoad(configManager);
-            /*
-            try {
-                config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configfile);
-            } catch (IOException e) {
-                FernCommands.getInstance().getProxy().getLogger().warning(ChatColor.RED + "failed to load config");
-                e.printStackTrace();
+        companion object {
+            @JvmStatic
+            fun fromString(value: String): WhichFile {
+                return when (value.lowercase(Locale.getDefault())) {
+                    "ip" -> IP
+                    "config" -> CONFIG
+                    "seen" -> SEEN
+                    "ipdelete" -> DELETEIP
+                    "deleteip" -> DELETEIP
+                    "all" -> ALL
+                    else -> ALL
+                }
             }
-            if(!silent)
-            Universal.getMethods().getLogger().info("Config was reloaded  " + which);*/
         }
 
-
-        //SEEN
-        boolean goSeen = which.equalsIgnoreCase("Seen") || which.equalsIgnoreCase("all");
-        if (goSeen) {
-            FileManager.configLoad(seenConfig);
-
-            if (!silent)
-                Universal.getMethods().getAbstractLogger().info("Seen Config was reloaded  " + which);
-        }
-
-        //IP
-        boolean goIP = which.equalsIgnoreCase("ip") || which.equalsIgnoreCase("all");
-
-        if (goIP) {
-            FileManager.configLoad(ipConfig);
-
-            if (!silent)
-                Universal.getMethods().getAbstractLogger().info("Ips was reloaded  " + which);
-        }
-
-
-        //DeleteIP
-        //IP
-        boolean goIPDelete = which.equalsIgnoreCase("ipdelete") || which.equalsIgnoreCase("all");
-        if (goIPDelete) {
-            FileManager.configLoad(deleteIPConfig);
-
-            if (!silent)
-                Universal.getMethods().getAbstractLogger().info("deleteIps was reloaded  " + which);
+        override fun toString(): String {
+            return value
         }
     }
 
-    @Deprecated
-    @Synchronized
-    public void loadFiles(WhichFile file, boolean silent) throws IOException {
-        loadFiles(file.toString(), silent);
-    }
+    companion object {
+        @JvmStatic
+        lateinit var configManager: Config<ConfigValues>
+            private set
 
-    public static FileManager getInstance() {
-        return thisinstance;
-    }
+        @JvmStatic
+        lateinit var seenConfig: Config<SeenValues>
+            private set
 
-    public enum WhichFile {
-        IP("ip"),
-        CONFIG("config"),
-        SEEN("Seen"),
-        DELETEIP("ipdelete"),
-        ALL("all");
+        @JvmStatic
+        lateinit var ipConfig: Config<IPSaveValues>
+            private set
 
-        private String value;
+        @JvmStatic
+        lateinit var deleteIPConfig: Config<IPDeleteValues>
+            private set
 
-        WhichFile(String value) {
-            this.value = value;
+        /**
+         * Just used to synchronise
+         */
+        @JvmStatic
+        fun configLoad(config: Config<*>?) {
+            config!!.syncLoad()
         }
 
-        @Override
-        public String toString() {
-            return value;
+        /**
+         * Just used to synchronise
+         */
+        @JvmStatic
+        fun configSave(config: Config<*>) {
+            config.syncSave()
         }
-    }
 
-    /**
-     * Just used to synchronise
-     */
-    @SneakyThrows
-    public static void configLoad(Config<?> config) {
-        config.syncLoad();
-    }
+        /**
+         * Synchronise config instances
+         * @param config
+         * @return
+         */
+        @Synchronized
+        fun <T> getConfig(config: Config<T>): Config<T> {
+            return config
+        }
 
-    /**
-     * Just used to synchronise
-     */
-    @SneakyThrows
-    public static void configSave(Config<?> config) {
-        config.syncSave();
-    }
+        @JvmStatic
+        val configValues: ConfigValues
+            get() = configManager.configData
 
-    /**
-     * Synchronise config instances
-     * @param config
-     * @return
-     */
-    @Synchronized
-    public static Config getConfig(Config<?> config) {
-        return config;
-    }
+        @Synchronized
+        @Throws(IOException::class)
+        @JvmStatic
+        fun loadFiles(file: WhichFile, silent: Boolean) {
+            IllegalAccessError("This is deprecated. Just an error message").printStackTrace()
+            //CHECK IF PLUGIN FOLDER EXISTS
+            if (!Universal.getMethods().dataFolder.exists()) {
+                Universal.getMethods().dataFolder.mkdir()
+            }
+            val goConfig = file == WhichFile.CONFIG || file == WhichFile.ALL
+            //CONFIG
+            if (goConfig) {
+                configLoad(configManager)
+            }
 
-    public static ConfigValues getConfigValues() {
-        return configManager.getConfigData();
+
+            //SEEN
+            val goSeen = file == WhichFile.SEEN || file == WhichFile.ALL
+            if (goSeen) {
+                configLoad(seenConfig)
+                if (!silent) Universal.getMethods().abstractLogger.info("Seen Config was reloaded  $file")
+            }
+
+            //IP
+            val goIP = file == WhichFile.IP || file == WhichFile.ALL
+            if (goIP) {
+                configLoad(ipConfig)
+                if (!silent) Universal.getMethods().abstractLogger.info("Ips was reloaded  $file")
+            }
+
+
+            //DeleteIP
+            //IP
+            val goIPDelete = file == WhichFile.DELETEIP || file == WhichFile.ALL
+            if (goIPDelete) {
+                configLoad(deleteIPConfig)
+                if (!silent) Universal.getMethods().abstractLogger.info("deleteIps was reloaded  $file")
+            }
+        }
+
+        init {
+            try {
+                configManager = GsonConfig(ConfigValues(), File(Universal.getMethods().dataFolder, "config.json"))
+                configManager.load()
+                deleteIPConfig = GsonConfig(IPDeleteValues(), File(Universal.getMethods().dataFolder, "ipdelete.json"))
+                deleteIPConfig.load()
+                ipConfig = GsonConfig(IPSaveValues(), File(Universal.getMethods().dataFolder, "ipdata.json"))
+                ipConfig.load()
+                seenConfig = GsonConfig(SeenValues(), File(Universal.getMethods().dataFolder, "seen.json"))
+                seenConfig.load()
+            } catch (e: ConfigLoadException) {
+                throw IllegalStateException(e)
+            }
+        }
     }
 }

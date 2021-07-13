@@ -10,7 +10,7 @@ public class Events {
 
     @Subscribe
     public void onLeave(DisconnectEvent e) {
-        if(FileManager.getConfigManager().getConfigData().isAllowSeenCommand()) Seen.
+        if(FileManager.getConfigManager().getConfigData().getAllowSeenCommand()) Seen.
                 onLeave(Universal.getMethods().convertPlayerObjectToFPlayer(e.getPlayer()));
     }
 

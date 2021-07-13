@@ -1,98 +1,80 @@
-package com.github.fernthedev.fcommands.proxy.data;
+package com.github.fernthedev.fcommands.proxy.data
 
-import com.github.fernthedev.fernapi.universal.Universal;
-import lombok.*;
-
-import java.io.Serializable;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.github.fernthedev.fernapi.universal.Universal
+import java.io.Serializable
+import java.net.InetSocketAddress
+import java.net.Socket
+import java.net.SocketException
+import java.net.SocketTimeoutException
+import java.util.*
 
 /**
- *     {
- *     "name": "test2",
- *     "address": "localhost",
- *     "port": 25566,
- *      timeout": 2
- *     }
+ * {
+ * "name": "test2",
+ * "address": "localhost",
+ * "port": 25566,
+ * timeout": 2
+ * }
  */
-@Data
-@ToString
-@RequiredArgsConstructor
-public class ServerData implements Serializable {
+data class ServerData constructor(
+    val name: String,
+    val addressPortPair: AddressPortPair,
+    private var timeoutMS: Long = 0
+) : Serializable {
 
-    @NonNull
-    private String name;
-
-//    @NonNull
-//    private String address;
-//
-//    @NonNull
-//    private int port;
-
-    @NonNull
-    private AddressPortPair addressPortPair;
-
-    @NonNull
-    @Getter(AccessLevel.NONE)
-    private long timeoutMS;
-
-    @Getter
-    private boolean hidden = false;
-
-    private ServerData() {
-        if (timeoutMS <= 0) timeoutMS = 1;
+    fun getTimeoutMS(): Long {
+        if (timeoutMS <= 0) timeoutMS = 1
+        return timeoutMS
     }
 
-    public long getTimeoutMS() {
-        if (timeoutMS <= 0) timeoutMS = 1;
-        return timeoutMS;
+
+    @Volatile
+    @Transient
+    var online = false
+        private set
+
+    private fun clearPing(status: Boolean) {
+        addressPingStatus.remove(addressPortPair)
+        online = status
     }
 
-    @Getter
-    private transient volatile boolean online = false;
-
-    private static final List<AddressPortPair> addressPingStatus = Collections.synchronizedList(new ArrayList<>());
-
-
-    private void clearPing(boolean status) {
-        addressPingStatus.remove(addressPortPair);
-        online = status;
-    }
-
-    public synchronized void ping() {
-        if(addressPingStatus.contains(addressPortPair)) {
-            Universal.debug("Already pinging");
-            return; // Already pinging
+    @Synchronized
+    fun ping() {
+        if (addressPingStatus.contains(addressPortPair)) {
+            Universal.debug("Already pinging")
+            return  // Already pinging
         }
-
-        try (Socket s = new Socket()) {
-            addressPingStatus.add(addressPortPair);
-            s.connect(new InetSocketAddress(addressPortPair.getAddress(), addressPortPair.getPort()), (int) getTimeoutMS());
-            clearPing(true);
-
-            if (!s.isClosed())
-                s.close();
-        } catch (SocketTimeoutException e) {
-            clearPing(false);
-            Universal.debug(e.getMessage() + " Timed out Name: " + name + " Port: " + addressPortPair.port + " Time: " + getTimeoutMS());
-        } catch (SocketException e) {
-            clearPing(false);
-            Universal.debug(e.getMessage() + " Name: " + name + " Port: " + addressPortPair.port + " Time: " + getTimeoutMS());
-        } catch (Exception e) {
-            e.printStackTrace();
+        try {
+            Socket().use { s ->
+                addressPingStatus.add(addressPortPair)
+                s.connect(
+                    InetSocketAddress(addressPortPair.address, addressPortPair.port),
+                    getTimeoutMS().toInt()
+                )
+                clearPing(true)
+                if (!s.isClosed) s.close()
+            }
+        } catch (e: SocketTimeoutException) {
+            clearPing(false)
+            Universal.debug(e.message + " Timed out Name: " + name + " Port: " + addressPortPair.port + " Time: " + getTimeoutMS())
+        } catch (e: SocketException) {
+            clearPing(false)
+            Universal.debug(e.message + " Name: " + name + " Port: " + addressPortPair.port + " Time: " + getTimeoutMS())
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
-    @AllArgsConstructor
-    @Data
-    public static class AddressPortPair {
-        private String address;
+    data class AddressPortPair(
+        val address: String,
+        val port: Int = 0,
+    )
 
-        private int port;
+    companion object {
+        private val addressPingStatus = Collections.synchronizedList(ArrayList<AddressPortPair>())
+    }
+
+    init {
+        if (timeoutMS <= 0) timeoutMS = 1
     }
 }

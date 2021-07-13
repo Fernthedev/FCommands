@@ -33,7 +33,7 @@ public class PunishMOTD implements Listener {
     public void MOTDCheck(ProxyPingEvent eping) {
         TaskScheduler taskScheduler = ProxyServer.getInstance().getScheduler();
 
-        if (!FernCommands.getHookManager().hasAdvancedBan() || !FileManager.getConfigValues().isPunishMotd()) return;
+        if (!FernCommands.getHookManager().hasAdvancedBan() || !FileManager.getConfigValues().getPunishMotd()) return;
 
 
         String hostAddress = eping.getConnection().getAddress().getHostString().replaceAll("\\.", " ");
@@ -128,7 +128,7 @@ public class PunishMOTD implements Listener {
 
     @EventHandler
     public void onLoginIp(PostLoginEvent event) {
-        if (FileManager.getConfigValues().isCacheIps()) {
+        if (FileManager.getConfigValues().getCacheIps()) {
             Universal.getScheduler().runAsync(() -> {
 //            log.info("Player " + event.getPlayer() + " has joined.");
 //            log.info(event.getPlayer().getAddress().getHostString().replaceAll("\\.", " ") + " is the ip of player");

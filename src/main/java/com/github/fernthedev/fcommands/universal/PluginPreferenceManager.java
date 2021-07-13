@@ -10,7 +10,7 @@ public class PluginPreferenceManager extends PluginPreference {
 
     public static final String NAMESPACE = "ferncommands";
 
-    protected PluginPreferenceManager() {
+    public PluginPreferenceManager() {
         super(NAMESPACE);
         register(preferredTimezone);
         register(hour12Format);

@@ -1,63 +1,37 @@
-package com.github.fernthedev.fcommands.proxy.data;
+package com.github.fernthedev.fcommands.proxy.data
 
-import com.github.fernthedev.fernapi.universal.data.database.DatabaseAuthInfo;
-import lombok.Getter;
-import lombok.Setter;
+import com.github.fernthedev.fcommands.proxy.data.ServerData.AddressPortPair
+import com.github.fernthedev.fernapi.universal.data.database.DatabaseAuthInfo
 
-import java.util.ArrayList;
-import java.util.List;
 
-@Setter
-@Getter
-public class ConfigValues {
+data class ConfigValues(
+    var useMotd: Boolean = false,
+    var serverChecks: MutableList<ServerData> = ArrayList(),
+    var cacheIps: Boolean = false,
+    var allowIPDelete: Boolean = false,
+    var allowIPShow: Boolean = false,
+    var showAltsCommand: Boolean = false,
+    var allowNameHistory: Boolean = true,
+    var altsBan: Boolean = false,
+    var globalNicks: Boolean = false,
+    var showPing: Boolean = false,
+    var allowSeenCommand: Boolean = false,
+    var punishMotd: Boolean = false,
+    var offlineServerMotd: String = "&cSERVER UNDER MAINTENANCE!",
+    var punishValues: PunishValues = PunishValues(),
+    var databaseConnect: Boolean = false,
+    var databaseAuthInfo: DatabaseAuthInfo = DatabaseAuthInfo(
+        "root",
+        "pass",
+        "3306",
+        "localhost",
+        "database"
+    )
+) {
 
-    public ConfigValues() {
-        if(serverChecks.isEmpty()) {
-            serverChecks.add(new ServerData("localhost", new ServerData.AddressPortPair("localhost", 25566), 5000));
+    init {
+        if (serverChecks.isEmpty()) {
+            serverChecks.add(ServerData("localhost", AddressPortPair("localhost", 25566), 5000))
         }
-//        if(databaseAuthInfo == null) {
-//            databaseAuthInfo = new DatabaseAuthInfo(
-//                    "root",
-//                    "pass",
-//                    "3306",
-//                    "localhost",
-//                    "database");
-//        }
     }
-
-//    private String motd = "&bThis is the default ferncommand motd \\n which supports linebreaks.";
-    private boolean useMotd = false;
-
-    private List<ServerData> serverChecks = new ArrayList<>();
-
-    private boolean cacheIps = false;
-    private boolean allowIPDelete = false;
-    private boolean allowIPShow = false;
-    private boolean showAltsCommand = false;
-
-    private boolean allowNameHistory = true;
-    private boolean altsBan = false;
-
-    private boolean globalNicks = false;
-    private boolean showPing = false;
-    private boolean allowSeenCommand = false;
-    private boolean punishMotd = false;
-    private String offlineServerMotd = "&cSERVER UNDER MAINTENANCE!";
-    private PunishValues punishValues = new PunishValues();
-
-    private boolean databaseConnect = false;
-    private DatabaseAuthInfo databaseAuthInfo = new DatabaseAuthInfo(
-            "root",
-            "pass",
-            "3306",
-            "localhost",
-            "database");
-
-//    //DataBase vars.
-//    private String username = "root"; //Enter in your db username
-//    private String password = "pass"; //Enter your password for the db
-//    private String port = "3306";
-//    private String urlHost = "localhost";
-//    private String database = "database";
-
 }

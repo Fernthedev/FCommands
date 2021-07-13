@@ -21,7 +21,7 @@ import java.util.UUID;
 public class AltsBan implements Listener {
     @EventHandler
     public void onJoin(PostLoginEvent e) {
-        if (FernCommands.getHookManager().hasAdvancedBan() && FileManager.getConfigValues().isAltsBan()) {
+        if (FernCommands.getHookManager().hasAdvancedBan() && FileManager.getConfigValues().getAltsBan()) {
             Universal.getScheduler().runAsync(() -> {
 
                 String formattedUUIDJoin = e.getPlayer().getUniqueId().toString().replaceAll("-","");
@@ -97,7 +97,7 @@ public class AltsBan implements Listener {
 
     @EventHandler
     public void onPunish(PunishmentEvent e) {
-        if (!FileManager.getConfigValues().isAltsBan()) return;
+        if (!FileManager.getConfigValues().getAltsBan()) return;
         Universal.getScheduler().runAsync(() -> {
 
             if (e.getPunishment().getType() == PunishmentType.KICK || e.getPunishment().getType() == PunishmentType.WARNING)
