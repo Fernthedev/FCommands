@@ -14,12 +14,12 @@ public class ServerMaintenance {
     public static void setupTask() {
         Universal.getScheduler().runSchedule(() -> {
             try {
-                Universal.debug("Pinging the servers");
+                Universal.debug(() ->"Pinging the servers");
 
                 for (ServerData serverData : FileManager.getConfigValues().getServerChecks()) {
                     Universal.getScheduler().runAsync(() -> {
                         serverData.ping();
-                        Universal.debug("Pinging the server info Name:" + serverData.getName() + " status: " + serverData.getOnline() + " " + serverData);
+                        Universal.debug(() ->"Pinging the server info Name:" + serverData.getName() + " status: " + serverData.getOnline() + " " + serverData);
                         serverMap.put(serverData.getName(), serverData.getOnline());
                     });
                 }

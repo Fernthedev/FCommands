@@ -18,6 +18,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.scheduler.TaskScheduler;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
@@ -53,7 +54,7 @@ public class PunishMOTD implements Listener {
         List<UUID> players = ipConfig.getConfigData().getPlayers(hostAddress);
 
         if (players != null && !players.isEmpty()) {
-            taskScheduler.runAsync(FernCommands.getInstance(), () -> {
+            taskScheduler.runAsync((Plugin) Universal.getPlugin(), () -> {
 
 
                 // for (String key : players) {

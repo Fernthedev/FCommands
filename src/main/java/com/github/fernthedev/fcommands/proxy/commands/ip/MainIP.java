@@ -40,7 +40,7 @@ public class MainIP extends BaseCommand {
 
             Date deleteDate;
 
-            Universal.debug("The date string is " + dateString);
+            Universal.debug(() -> "The date string is " + dateString);
             deleteDate = value.getDeleteDate();
 
             ////////////////////////////////////////////////////////////

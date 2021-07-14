@@ -85,10 +85,10 @@ configurations {
 }
 
 dependencies {
-    compile 'com.github.Fernthedev.FernAPI:all:e58e03572d' //1.9.0-rc4'
+    compile 'com.github.Fernthedev.FernAPI:all:4c8f754d66' //1.9.0-rc4'
     compile ('com.github.Fernthedev.FernAPI:core') { //1.9.0-rc4'
         version {
-            strictly 'e58e03572d'
+            strictly '4c8f754d66'
         }
     }
 //

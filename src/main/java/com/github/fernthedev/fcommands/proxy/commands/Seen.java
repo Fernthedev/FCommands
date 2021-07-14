@@ -40,7 +40,7 @@ public class Seen extends BaseCommand {
     public void execute(FernCommandIssuer sender, @Flags("other,offline") IFPlayer<?> p) {
 
         if (!p.isPlayerNull()) {
-            Universal.debug("Requesting if " + p.getName() + " is vanished");
+            Universal.debug(() -> "Requesting if " + p.getName() + " is vanished");
 
             if (!sender.hasVanishPermission()) {
                 new VanishProxyCheck(p, (player, isVanished, timedOut) -> {
@@ -235,7 +235,7 @@ public class Seen extends BaseCommand {
 //            seenPlayerValue.set("time", time.replace(":", ".")); //time.replace(":","."));
 //            seenPlayerValue.set("server",server);
 
-            Universal.debug("ferntime1 " + time);
+            Universal.debug(() -> "ferntime1 " + time);
 
 //            for(String s : seenPlayerValue.getKeys()) {
 //                getLogger.info(s + " fern");

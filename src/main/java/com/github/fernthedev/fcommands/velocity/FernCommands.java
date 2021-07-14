@@ -22,8 +22,6 @@ import java.io.File;
 )
 public class FernCommands extends FernVelocityAPI {
 
-    private static FernCommands instance;
-
     @Inject
     public FernCommands(ProxyServer server, Logger logger) {
         super(server, logger);
@@ -34,7 +32,6 @@ public class FernCommands extends FernVelocityAPI {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         super.onProxyInitialization(event);
 
-        instance = this;
         getLogger().info(ChatColor.BLUE + "ENABLED FERNCOMMANDS FOR VELOCITY");
 
         File dataFolder = dataDirectory.toFile();
@@ -67,14 +64,6 @@ public class FernCommands extends FernVelocityAPI {
         FileManager.configSave(FileManager.getDeleteIPConfig());
         getLogger().info(ChatColor.GREEN + "FILED SUCCESSFULLY SAVED");
 
-        instance = this;
         getLogger().info(ChatColor.GREEN + "DISABLED FERNCOMMANDS FOR BUNGEECORD");
-
-        instance = null;
-    }
-
-
-    public static FernCommands getInstance() {
-        return instance;
     }
 }

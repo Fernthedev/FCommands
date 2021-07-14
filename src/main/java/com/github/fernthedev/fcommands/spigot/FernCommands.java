@@ -30,7 +30,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class FernCommands extends FernSpigotAPI {
     private FileConfiguration config;
@@ -40,7 +39,6 @@ public class FernCommands extends FernSpigotAPI {
     private static Gson gson;
     private boolean isStaffMemberOnline = false;
     private static Cooldown cooldown;
-    private static final Logger log = Logger.getLogger("Minecraft");
     private static Economy econ = null;
     private static Permission perms = null;
     private static Chat chat = null;
@@ -77,16 +75,12 @@ public class FernCommands extends FernSpigotAPI {
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 
-        //getServer().getMessenger().registerOutgoingPluginChannel(this, Channels.PlaceHolderBungeeChannel);
-///////////////////////////////        //getServer().getMessenger().registerIncomingPluginChannel(this, Channels.PlaceHolderBungeeChannel, new HookPlaceHolderAPI() );
-
-//        DatabaseHandler.setup();
         FilesManager fileManager = FilesManager.getInstance();
-        String username = fileManager.getValue("DBUsername","root");
-        String password = fileManager.getValue("DBPass","pass");
-        String port = fileManager.getValue("DBPort","3306");
-        String urlHost = fileManager.getValue("DBHost","localhost");
-        String database = fileManager.getValue("DB","database");
+        String username = fileManager.getValue("DBUsername", "root");
+        String password = fileManager.getValue("DBPass", "pass");
+        String port = fileManager.getValue("DBPort", "3306");
+        String urlHost = fileManager.getValue("DBHost", "localhost");
+        String database = fileManager.getValue("DB", "database");
 
         databaseManager = new DBManager(username, password, port, urlHost, database);
         UniversalMysql.setDatabaseManager(databaseManager);
@@ -112,20 +106,6 @@ public class FernCommands extends FernSpigotAPI {
         registerListener();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @NonNull
     public static FernCommands getInstance() {
         return instance;
@@ -139,25 +119,14 @@ public class FernCommands extends FernSpigotAPI {
     @Override
     public void onDisable() {
         super.onDisable();
-        if(hookManager.isNCPEnabled())
-        NCPHandle.onDisable();
+        if (hookManager.isNCPEnabled())
+            NCPHandle.onDisable();
         // Unregister outgoing plugin channel if it's registered
         if (getServer().getMessenger().isOutgoingChannelRegistered(this, "BungeeCord"))
             getServer().getMessenger().unregisterOutgoingPluginChannel(this, "BungeeCord");
         // Unregister incoming plugin channel if it's registered
         if (getServer().getMessenger().isIncomingChannelRegistered(this, "BungeeCord"))
             getServer().getMessenger().unregisterIncomingPluginChannel(this, "BungeeCord");
-
-//        DatabaseHandler.getScheduler().cancelTasks(this);
-//        // invoke on disable.
-//        try { //using a try catch to catch connection errors (like wrong sql password...)
-//            if (connection!=null && !connection.isClosed()){ //checking if connection isn't null to
-//                //avoid receiving a nullpointer
-//                connection.close(); //closing the connection field variable.
-//            }
-//        } catch(Exception e) {
-//            e.printStackTrace();
-//        }
 
         // Kill any async tasks that may be left over
         getServer().getScheduler().cancelTasks(instance);
@@ -168,7 +137,7 @@ public class FernCommands extends FernSpigotAPI {
         instance = null;
         this.saveDefaultConfig();
         config = null;
-        log.info(String.format("[%s] Disabled Version %s", getDescription().getName(), getDescription().getVersion()));
+        getLogger().info(String.format("[%s] Disabled Version %s", getDescription().getName(), getDescription().getVersion()));
         getLogger().info(ChatColor.BLUE + "DISABLED FERNCOMMANDS");
     }
 
@@ -222,8 +191,6 @@ public class FernCommands extends FernSpigotAPI {
         /*
         REGISTERING DEFAULT COMMANDS
          */
-        //this.getCommand("fern").setExecutor(new ReloadConfig());
-        //this.getCommand("fern").setExecutor(new HookManager());
         this.getCommand("fern").setExecutor(new FernMain());
 
 
@@ -231,11 +198,9 @@ public class FernCommands extends FernSpigotAPI {
         This allows you to recieve NCP notifications on other servers using bungeecord Messaging
          */
         if (config.getBoolean("BungeeNCP"))
-            //if (getServer().getPluginManager().getPlugin("NoCheatPlus") != null) {
-            if(hookManager.isNCPEnabled()) {
+            if (hookManager.isNCPEnabled()) {
                 NCPHandle.register();
                 messageListener.addListener(new BungeeNCP());
-               // getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BungeeNCP());
                 getServer().getPluginManager().registerEvents(new BungeeNCP(), this);
                 getLogger().info("FOUND NOCHEATPLUS, ENABLING BUNGEECORD MODE");
             }
@@ -251,7 +216,7 @@ public class FernCommands extends FernSpigotAPI {
         if (config.getBoolean("ItemBurn"))
             getServer().getPluginManager().registerEvents(new LavaBurn(), this);
 
-        if(FilesManager.getInstance().getValue("AddShop",false)) {
+        if (FilesManager.getInstance().getValue("AddShop", false)) {
             ChestImport chestImport = new ChestImport();
             this.getCommand("fshop").setExecutor(chestImport);
         }
@@ -259,7 +224,7 @@ public class FernCommands extends FernSpigotAPI {
         /*
         This adds the skylands using SB-Skyland or any world you want and MultiVerse
         */
-        if(config.getBoolean("Skylands")) {
+        if (config.getBoolean("Skylands")) {
             if (getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
                 getLogger().info("Found Multiverse, checking to see skylands are enabled");
                 if (getServer().getPluginManager().isPluginEnabled("SB-Skylands")) {
@@ -270,22 +235,15 @@ public class FernCommands extends FernSpigotAPI {
             }
         }
 
-//        if(config.getBoolean("NoAIonSpawn")) {
-//            getServer().getPluginManager().registerEvents(new NoAI(),this);
-//        }
-
-        if(config.getBoolean("NameColor")) {
-            if((HookManager.isVault() && getChat().isEnabled()) || HookManager.isNte()) {
-             getServer().getPluginManager().registerEvents(new NameColor(),this);
-             getCommand("NameColor").setExecutor(new NameColor());
-            }else{
+        if (config.getBoolean("NameColor")) {
+            if ((HookManager.isVault() && getChat().isEnabled()) || HookManager.isNte()) {
+                getServer().getPluginManager().registerEvents(new NameColor(), this);
+                getCommand("NameColor").setExecutor(new NameColor());
+            } else {
                 getLogger().warning("Tried to start NameColor, but no compatible chat formatter (Vault) or nametag changer (NametagEdit) has been found. To work it needs one of these");
             }
         }
-
-        //getServer().getPluginManager().registerEvents(new UUIDSpoofChecker(),this);
     }
-
 
 
     public boolean setupEconomy() {
@@ -323,15 +281,16 @@ public class FernCommands extends FernSpigotAPI {
     public static Chat getChat() {
         return chat;
     }
-        public static String message(String message) {
-        return ChatColor.translateAlternateColorCodes('&',message);
+
+    public static String message(String message) {
+        return ChatColor.translateAlternateColorCodes('&', message);
     }
 
 
-    public static boolean hasVaultPermission(Player p,String Permissione) {
-        if(HookManager.isVault() && getPermissions().isEnabled()) {
+    public static boolean hasVaultPermission(Player p, String Permissione) {
+        if (HookManager.isVault() && getPermissions().isEnabled()) {
             return p.hasPermission(Permissione) || getPermissions().has(p, Permissione);
-        }else return p.hasPermission(Permissione);
+        } else return p.hasPermission(Permissione);
     }
 
     public void setupVault() {

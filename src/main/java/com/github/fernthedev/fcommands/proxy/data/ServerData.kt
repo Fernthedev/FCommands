@@ -1,6 +1,6 @@
 package com.github.fernthedev.fcommands.proxy.data
 
-import com.github.fernthedev.fernapi.universal.Universal
+import com.github.fernthedev.fernapi.universal.debugLog
 import java.io.Serializable
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -41,7 +41,7 @@ data class ServerData constructor(
     @Synchronized
     fun ping() {
         if (addressPingStatus.contains(addressPortPair)) {
-            Universal.debug("Already pinging")
+            debugLog { "Already pinging" }
             return  // Already pinging
         }
         try {
@@ -56,10 +56,10 @@ data class ServerData constructor(
             }
         } catch (e: SocketTimeoutException) {
             clearPing(false)
-            Universal.debug(e.message + " Timed out Name: " + name + " Port: " + addressPortPair.port + " Time: " + getTimeoutMS())
+            debugLog { "${e.message} Timed out Name: $name Port: ${addressPortPair.port} Time: ${getTimeoutMS()}" }
         } catch (e: SocketException) {
             clearPing(false)
-            Universal.debug(e.message + " Name: " + name + " Port: " + addressPortPair.port + " Time: " + getTimeoutMS())
+            debugLog { "${e.message} Name: $name Port: ${addressPortPair.port} Time: ${getTimeoutMS()}" }
         } catch (e: Exception) {
             e.printStackTrace()
         }

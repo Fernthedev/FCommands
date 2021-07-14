@@ -98,14 +98,15 @@ public class AltsBan implements Listener {
     @EventHandler
     public void onPunish(PunishmentEvent e) {
         if (!FileManager.getConfigValues().getAltsBan()) return;
+
+
+        if (e.getPunishment().getType() == PunishmentType.KICK || e.getPunishment().getType() == PunishmentType.WARNING)
+            return;
+
+
+        String uuidPlayer = e.getPunishment().getUuid();
+
         Universal.getScheduler().runAsync(() -> {
-
-            if (e.getPunishment().getType() == PunishmentType.KICK || e.getPunishment().getType() == PunishmentType.WARNING)
-                return;
-
-
-            String uuidPlayer = e.getPunishment().getUuid();
-
             if (uuidPlayer != null) {
 
 
@@ -132,7 +133,7 @@ public class AltsBan implements Listener {
                     }
                 }
             } else {
-                FernCommands.getInstance().printInLog(this, "Failed to load ips. UUID Player is " + uuidPlayer);
+                Universal.getLogger().error("Failed to load ips. UUID Player is " + null);
             }
         });
 
@@ -141,7 +142,7 @@ public class AltsBan implements Listener {
     private boolean hasPunishmentAlready(String formattedUUID, Punishment checkPunishment) {
         for (Punishment punishment1 : PunishmentManager.get().getPunishments(formattedUUID, checkPunishment.getType(), true)) {
 
-            Universal.debug("Checking punishments: \ncheck" + punishment1.toString() + "\nparam: " + checkPunishment.toString());
+            Universal.debug("Checking punishments: \ncheck" + punishment1.toString() + "\nparam: " + checkPunishment);
             if (
                     punishment1.getUuid().equals(checkPunishment.getUuid()) &&
 //                            punishment1.getCalculation().equals(checkPunishment.getCalculation()) &&

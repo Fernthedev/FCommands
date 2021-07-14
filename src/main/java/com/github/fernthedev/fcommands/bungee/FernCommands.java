@@ -8,32 +8,16 @@ import com.github.fernthedev.fcommands.universal.PlatformAllRegistration;
 import com.github.fernthedev.fernapi.server.bungee.FernBungeeAPI;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
-
-//@SuppressWarnings("unused")
 public class FernCommands extends FernBungeeAPI {
-
-    private static FernCommands instance;
-
-    private static List<Runnable> runnableList = new ArrayList<>();
-
-    public static List<Runnable> getRunnables() {
-        return runnableList;
-    }
 
     @Getter
     private static HookManager hookManager;
-
 
     @Override
    public void onEnable() {
         super.onEnable();
 
-        instance = this;
         getLogger().info(ChatColor.BLUE + "ENABLED FERNCOMMANDS FOR BUNGEECORD");
 
         if (!getDataFolder().exists()) {
@@ -74,29 +58,9 @@ public class FernCommands extends FernBungeeAPI {
         getLogger().info(ChatColor.GREEN + "FILED SUCCESSFULLY SAVED");
 
         super.onDisable();
-        instance = this;
         getLogger().info(ChatColor.GREEN + "DISABLED FERNCOMMANDS FOR BUNGEECORD");
 
         HookManager.onDisable();
-        instance = null;
     }
 
-
-
-
-    public BaseComponent message(String text) {
-        return new ComponentBuilder(ChatColor.translateAlternateColorCodes('&',text)).create()[0];
-    }
-
-
-    public void printInLog(Object classe, Object log) {
-        getLogger().info("{" + classe.getClass().getName() + "} " + log);
-    }
-
-
-
-
-    public static FernCommands getInstance() {
-        return instance;
-    }
 }

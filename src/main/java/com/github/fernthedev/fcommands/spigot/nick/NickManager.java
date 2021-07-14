@@ -55,7 +55,7 @@ public class NickManager implements Listener {
     }
 
     public static void handleNick(String uuid, String playerName, String nick) {
-        Universal.debug(nick + " " + uuid);
+        Universal.debug(() -> nick + " " + uuid);
         if (nick != null) {
             Bukkit.getScheduler().callSyncMethod(FernCommands.getInstance(), () -> {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "essentials:nick " + playerName + " " + nick);

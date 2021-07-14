@@ -18,43 +18,43 @@ public class UFernPing extends BaseCommand {
     @CommandCompletion("* @nothing")
     @Syntax("[player]")
     public void execute(FernCommandIssuer sender, @Flags("other,defaultself") IFPlayer<?> p) {
-        Universal.debug("Thing1 Start");
+        Universal.debug(() -> "Thing1 Start");
 
         if (sender.isPlayer() && (p == null || p.isPlayerNull() || p.getUniqueId() == sender.getUniqueId())) {
-            Universal.debug("Thing send fern ping");
+            Universal.debug(() -> "Thing send fern ping");
             sender.sendMessage(TextMessage.fromColor("&aYour FernPing is &9" + ((IFPlayer<?>) sender).getPing()));
         } else {
-            Universal.debug("Thing1");
+            Universal.debug(() -> "Thing1");
 
-            Universal.debug("Player: " + p + " sender: " + sender);
+            Universal.debug(() -> "Player: " + p + " sender: " + sender);
 
             if (p == null || p.isPlayerNull() ) {
-                Universal.debug("Player is null: " + p + " sender: " + sender);
+                Universal.debug(() -> "Player is null: " + p + " sender: " + sender);
                 sender.sendError(MessageKeys.PLEASE_SPECIFY_ONE_OF, "{valid}", "Player");
-                Universal.debug("Thing2");
+                Universal.debug(() -> "Thing2");
                 return;
             }
 
             if (p instanceof OfflineFPlayer<?> && !((OfflineFPlayer<?>) p).isOnline()) {
                 sender.sendError(MessageKeys.COULD_NOT_FIND_PLAYER, "{search}", p.getName());
-                Universal.debug("Thing3");
+                Universal.debug(() -> "Thing3");
                 return;
             }
 
 
 
             if (!sender.isPlayer() || sender.hasPermission("sv.see")) {
-                Universal.debug("Thing4");
+                Universal.debug(() -> "Thing4");
                 sender.sendMessage(TextMessage.fromColor("&c" + p.getName() + "'s &aFernPing is " + p.getPing()));
             } else {
-                Universal.debug("Thing5");
+                Universal.debug(() -> "Thing5");
                 p.isVanished().thenAccept(vanished -> {
                     if (vanished) {
-                        Universal.debug("Thing6");
+                        Universal.debug(() -> "Thing6");
                         sender.sendError(MessageKeys.COULD_NOT_FIND_PLAYER, "{search}", p.getName());
 //                    sender.sendMessage(TextMessage.fromColor("&cUnable to find &9" + p.getName()));
                     } else {
-                        Universal.debug("Thing7");
+                        Universal.debug(() -> "Thing7");
                         sender.sendMessage(TextMessage.fromColor("&c" + p.getName() + "'s &aFernPing is " + p.getPing()));
                     }
                 });
