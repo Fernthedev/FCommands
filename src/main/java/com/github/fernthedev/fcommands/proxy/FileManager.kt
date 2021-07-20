@@ -41,20 +41,18 @@ class FileManager private constructor() {
 
     companion object {
         @JvmStatic
-        lateinit var configManager: Config<ConfigValues>
-            private set
+        val configManager: Config<ConfigValues>
+
 
         @JvmStatic
-        lateinit var seenConfig: Config<SeenValues>
-            private set
+        val seenConfig: Config<SeenValues>
 
         @JvmStatic
-        lateinit var ipConfig: Config<IPSaveValues>
-            private set
+        val ipConfig: Config<IPSaveValues>
 
         @JvmStatic
-        lateinit var deleteIPConfig: Config<IPDeleteValues>
-            private set
+        val deleteIPConfig: Config<IPDeleteValues>
+
 
         /**
          * Just used to synchronise
