@@ -22,8 +22,8 @@ object ProxyRegistration {
         if (Universal.getMethods().serverType.isProxy) {
             try {
                 // Use reflection to avoid classpath issues with Spigot
-                val aClass = Class.forName("com.github.fernthedev.preferences.core.PreferenceManager")
-                val preferenceClass = Class.forName("com.github.fernthedev.preferences.core.PluginPreference")
+                val aClass = Class.forName("com.github.fernthedev.preferences.api.PreferenceManager")
+                val preferenceClass = Class.forName("com.github.fernthedev.preferences.api.PluginPreference")
                 aClass.getMethod("registerPreference", preferenceClass).invoke(null, PluginPreferenceManager())
             } catch (e: Exception) {
                 e.printStackTrace()

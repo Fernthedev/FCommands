@@ -30,7 +30,10 @@ object PlatformAllRegistration {
         Universal.getCommandHandler().registerCommand(UFernPing())
         Universal.getCommandHandler().registerCommand(DebugCommand())
         ProxyRegistration.proxyInit()
-        Universal.getMessageHandler().registerMessageHandler(NickNetworkManager())
-        Universal.getLogger().info("Registered fern nicks velocity channels.")
+
+        if (UniversalMysql.getDatabaseManager() != null) {
+            Universal.getMessageHandler().registerMessageHandler(NickNetworkManager())
+            Universal.getLogger().info("Registered fern nicks velocity channels.")
+        }
     }
 }

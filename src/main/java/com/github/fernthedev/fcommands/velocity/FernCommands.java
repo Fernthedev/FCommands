@@ -11,6 +11,7 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.proxy.ProxyServer;
 import org.slf4j.Logger;
 
@@ -23,8 +24,8 @@ import java.io.File;
 public class FernCommands extends FernVelocityAPI {
 
     @Inject
-    public FernCommands(ProxyServer server, Logger logger) {
-        super(server, logger);
+    public FernCommands(ProxyServer server, Logger logger, PluginContainer pluginContainer) {
+        super(server, logger, pluginContainer);
     }
 
     @Subscribe

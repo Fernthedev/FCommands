@@ -1,8 +1,8 @@
 package com.github.fernthedev.fcommands.universal;
 
-import com.github.fernthedev.preferences.core.PluginPreference;
-import com.github.fernthedev.preferences.core.data.PreferenceDataBoolean;
-import com.github.fernthedev.preferences.core.data.PreferenceDataTimezone;
+import com.github.fernthedev.preferences.api.PluginPreference;
+import com.github.fernthedev.preferences.api.data.PreferenceDataBoolean;
+import com.github.fernthedev.preferences.api.data.PreferenceDataTimezone;
 
 public class PluginPreferenceManager extends PluginPreference {
     public static final PreferenceDataTimezone preferredTimezone = new PreferenceDataTimezone("zone","UTC");

@@ -14,9 +14,9 @@ import com.github.fernthedev.fernapi.universal.api.FernCommandIssuer;
 import com.github.fernthedev.fernapi.universal.api.IFPlayer;
 import com.github.fernthedev.fernapi.universal.data.chat.*;
 import com.github.fernthedev.fernapi.universal.util.network.vanish.VanishProxyCheck;
-import com.github.fernthedev.preferences.core.PreferenceManager;
-import com.github.fernthedev.preferences.core.command.PreferenceCommand;
-import com.github.fernthedev.preferences.core.config.PlayerPreferencesSingleton;
+import com.github.fernthedev.preferences.api.PreferenceManager;
+import com.github.fernthedev.preferences.api.command.PreferenceCommandUtil;
+import com.github.fernthedev.preferences.api.config.PlayerPreferencesSingleton;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -68,45 +68,15 @@ public class Seen extends BaseCommand {
                         sender.sendMessage(m);
                     }
                 }).setTimeout(10, TimeUnit.SECONDS);
-
-//                    ProxyAskPlaceHolder askPlaceHolder = new ProxyAskPlaceHolder(Universal.getMethods().convertPlayerObjectToFPlayer(ProxyServer.getInstance().getPlayer(ptarget)), "%fvanish_isvanished%");
-//                    askPlaceHolder.setRunnable(() -> {
-////                        getLogger.info("Player " + ProxyServer.getInstance().getPlayer(ptarget).getDisplayName() + " is " + askPlaceHolder.getPlaceHolderResult() + " and is replaced is " + askPlaceHolder.isPlaceHolderReplaced());
-////                        getLogger.info("The player was " + askPlaceHolder.getPlaceHolderResult());
-//                        if (!askPlaceHolder.isPlaceHolderReplaced() || askPlaceHolder.getPlaceHolderResult() == null) {
-//                            sender.sendMessage(new TextMessage("&cThere was an error trying to find this player. Please try again later"));
-//                        } else {
-//                            if (askPlaceHolder.getPlaceHolderResult().equalsIgnoreCase("vanished")) {
-//                                sender.sendMessage(new TextMessage("&cThere was an error trying to find this player. Please try again later"));
-//                            } else {
-//                                sender.sendMessage(new TextMessage("&aPlayer &2" + ptarget + " &awas found. Player is currently online on server: " + ProxyServer.getInstance().getPlayer(ptarget).getServer().getInfo().getName()));
-//                            }
-//                        }
-//                    });
             } else {
                 sender.sendMessage(new TextMessage("&aPlayer &2" + p.getName() + " &awas found. Player is currently online on server: " + p.getCurrentServerName()));
             }
 
 
-
-
-                /*
-                getLogger.info("Player " + ProxyServer.getInstance().getPlayer(ptarget).getDisplayName() + " is " + askPlaceHolder.getPlaceHolderResult() + " and is replaced is " + askPlaceHolder.isPlaceHolderReplaced());
-
-                if(!askPlaceHolder.isPlaceHolderReplaced() || askPlaceHolder.getPlaceHolderResult() == null) {
-                    sender.sendMessage(new TextMessage("&cThere was an error trying to find this player. Please try again later"));
-                }else{
-                    if (askPlaceHolder.getPlaceHolderResult().equalsIgnoreCase("vanished") && !sender.hasPermission("sv.see")) {
-                        sender.sendMessage(new TextMessage("&cThere was an error trying to find this player. Please try again later"));
-                    } else {
-                        sender.sendMessage(new TextMessage("&aPlayer &2" + ptarget + " &awas found. Player is currently online on server: " + ProxyServer.getInstance().getPlayer(ptarget).getServer().getInfo().getName()));
-                    }
-                }*/
-
         } else {
-            UUID uuid = p.getUniqueId(); // UUIDFetcher.getUUID(p.getName()).toString();
+            UUID uuid = p.getUniqueId();
 
-            if (uuid == null /* || uuid.isEmpty()*/) {
+            if (uuid == null) {
                 sender.sendMessage(ChatColor.RED + "Player doesn't exist. You sure you typed that right?");
             } else {
                 Config<SeenValues> seenconfig = FileManager.getSeenConfig();
@@ -155,15 +125,7 @@ public class Seen extends BaseCommand {
                     }
 
                     format.setTimeZone(zone);
-//                            Date date = hour24.parse(time); ////
                     time = format.format(date);
-
-
-//                            time = format.format(date); ////
-
-
-//                        time = time.replace(".", ":");
-
 
                     if (server.equals("")) {
                         server = "&cNo Server found";
@@ -184,7 +146,7 @@ public class Seen extends BaseCommand {
                             .replace("%zone%", zone.getID())
                             .replace("%hour%", hour));
 
-                    hourFormat.setClickData(new ClickData(ClickData.Action.SUGGEST_COMMAND, "/" + PreferenceCommand.prefSetCommand(PluginPreferenceManager.NAMESPACE, PluginPreferenceManager.preferredTimezone) + " "));
+                    hourFormat.setClickData(new ClickData(ClickData.Action.SUGGEST_COMMAND, "/" + PreferenceCommandUtil.prefSetCommand(PluginPreferenceManager.NAMESPACE, PluginPreferenceManager.preferredTimezone) + " "));
                     hourFormat.setHoverData(new HoverData(HoverData.Action.SHOW_TEXT, new TextMessage("&6Change default timezone")));
 
                     sender.sendMessage(new TextMessage("&9Last time on: &b" + time + " ").addExtra(hourFormat));
@@ -231,24 +193,7 @@ public class Seen extends BaseCommand {
             seenPlayerValue.setServer(server);
             seenPlayerValue.setTime(new Date());
 
-
-//            seenPlayerValue.set("time", time.replace(":", ".")); //time.replace(":","."));
-//            seenPlayerValue.set("server",server);
-
             Universal.debug(() -> "ferntime1 " + time);
-
-//            for(String s : seenPlayerValue.getKeys()) {
-//                getLogger.info(s + " fern");
-//            }
-//            seenConfig.set(uuid, null);
-//            seenConfig.set(uuid, seenPlayerValue);
-//            try {
-//                ConfigurationProvider.getProvider(YamlConfiguration.class).save(seenConfig, seenfile);
-//                //ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, configfile);
-//            } catch (IOException ee) {
-//                ee.printStackTrace();
-//                getLogger.info("Unable to save Seen.yml file");
-//            }
             try {
                 seenConfig.syncSave();
             } catch (ConfigLoadException e) {
@@ -256,25 +201,5 @@ public class Seen extends BaseCommand {
             }
         });
     }
-
-//
-//    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-//        if (args.length > 1) return null;
-//
-//        return returnPlayerComplete(args[args.length - 1]);
-//    }
-//
-//    protected static Iterable<String> returnPlayerComplete(String curText) {
-//        List<String> list = new ArrayList<>();
-//
-//        for (IFPlayer<?> player : Universal.getMethods().getPlayers()) {
-//            if (player.getName().toLowerCase().contains(curText.toLowerCase())) {
-//                list.add(player.getName());
-//            }
-//        }
-//        return list;
-//    }
-
-
 
 }
