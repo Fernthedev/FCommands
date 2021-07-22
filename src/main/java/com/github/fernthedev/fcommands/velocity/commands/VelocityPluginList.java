@@ -7,6 +7,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class VelocityPluginList implements SimpleCommand {
@@ -30,12 +31,12 @@ public class VelocityPluginList implements SimpleCommand {
             return;
         }
 
-        @NonNull TextComponent baseComponent = Component.text("&aPlugins:");
+        @NonNull TextComponent baseComponent = LegacyComponentSerializer.legacyAmpersand().deserialize("&aPlugins:");
 
         for (PluginContainer plugin : proxyServer.getPluginManager().getPlugins()) {
             baseComponent = baseComponent.append(Component.text(" ").color(NamedTextColor.GRAY))
             .append(Component.text(plugin.getDescription().getName().orElse("null")))
-            .append(Component.text(" &8{" + plugin.getDescription().getAuthors() + "}; "));
+            .append(LegacyComponentSerializer.legacyAmpersand().deserialize(" &8{" + plugin.getDescription().getAuthors() + "}; "));
         }
 
         source.sendMessage(baseComponent);

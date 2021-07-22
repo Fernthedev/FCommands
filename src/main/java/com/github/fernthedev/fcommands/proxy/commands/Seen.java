@@ -168,12 +168,6 @@ public class Seen extends BaseCommand {
 
             Config<SeenValues> seenConfig = FileManager.getSeenConfig();
             FileManager.configLoad(seenConfig);
-//            String playerE = player.getDisplayName();
-            //String uuid = UUIDManager.get().getUUID(playerE);
-//            String uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + playerE).getBytes(StandardCharsets.UTF_8)).toString();
-
-
-//        Configuration sconfig = LegacyFileManager.getConfig();
 
             SeenPlayerValue seenPlayerValue = seenConfig.getConfigData().getPlayers(player.getUuid());
 
@@ -181,7 +175,6 @@ public class Seen extends BaseCommand {
                 seenPlayerValue = new SeenPlayerValue(new Date(), server);
                 seenConfig.getConfigData().getPlayerValueMap().put(player.getUuid(), seenPlayerValue);
             }
-            //Calendar cal = Calendar.getInstance();
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM-yyyy dd HH:mm", Locale.US);
 

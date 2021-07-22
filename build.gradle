@@ -219,19 +219,34 @@ shadowJar.finalizedBy sourcesJar
 build.dependsOn sourcesJar
 
 processResources {
-//        from 'resources'
-
     inputs.property "version", project.version
 
-    from(sourceSets.main.resources.srcDirs) {
-        include 'plugin.yml'
-        include 'bungee.yml'
+    def velPath = compileJava.destinationDirectory.getAsFile().get()
+
+    from(velPath) {
         include 'velocity-plugin.json'
 
         expand 'version':project.version
     }
 
+    from(sourceSets.main.resources.srcDirs) {
+        include 'plugin.yml'
+        include 'bungee.yml'
+
+
+        expand 'version':project.version
+    }
+
 }
+
+task deleteVel(type: Delete) {
+    def velPath = compileJava.destinationDirectory.getAsFile().get()
+
+    delete file("${velPath.path}/velocity-plugin.json")
+}
+
+jar.dependsOn deleteVel
+
 compileJava {
     options.compilerArgs += ["-parameters"]
     options.fork = true
