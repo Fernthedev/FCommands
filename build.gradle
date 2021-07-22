@@ -85,7 +85,7 @@ configurations {
 }
 
 dependencies {
-    compile 'com.github.Fernthedev.FernAPI:all:3f99cc5c7f' //1.9.0-rc4'
+    compile 'com.github.Fernthedev.FernAPI:all:7.0' //1.9.0-rc4'
     compile ('com.github.Fernthedev.FernAPI:core') { //1.9.0-rc4'
         version {
             strictly '3f99cc5c7f'
