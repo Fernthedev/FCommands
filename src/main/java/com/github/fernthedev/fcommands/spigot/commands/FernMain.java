@@ -16,20 +16,14 @@ public class FernMain implements CommandExecutor {
         }else{
             String arg1 = args[0];
 
-            switch(arg1.toLowerCase()) {
-                case "help":
-                    Help.getInstance().onCommand(sender,command,s,args);
-                    break;
-                case "reload":
-                    ReloadConfig.getInstance().onCommand(sender, command, s, args);
-                    break;
-                case "hookmanager":
-                    Hooks.getInstance().onCommand(sender, command, s, args);
-                    break;
-                default:
+            switch (arg1.toLowerCase()) {
+                case "help" -> Help.getInstance().onCommand(sender, command, s, args);
+                case "reload" -> ReloadConfig.getInstance().onCommand(sender, command, s, args);
+                case "hookmanager" -> Hooks.getInstance().onCommand(sender, command, s, args);
+                default -> {
                     sender.sendMessage(FernCommands.message("&cInvalid argument"));
-                    Help.getInstance().onCommand(sender,command,s,args);
-                    break;
+                    Help.getInstance().onCommand(sender, command, s, args);
+                }
             }
 
             /*

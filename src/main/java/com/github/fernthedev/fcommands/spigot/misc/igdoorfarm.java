@@ -10,7 +10,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import java.util.logging.Logger;
 
 public class igdoorfarm implements Listener {
-    private Logger log = FernCommands.getInstance().getServer().getLogger();
+    private final Logger log = FernCommands.getInstance().getServer().getLogger();
 
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent e) {

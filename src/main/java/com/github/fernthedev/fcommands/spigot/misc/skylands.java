@@ -136,9 +136,8 @@ public class skylands implements Listener {
 
     @EventHandler
     public void onFallVoid(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player) {
+        if (e.getEntity() instanceof Player player) {
             //If the entity is a player
-            Player player = (Player) e.getEntity();
             //Create a new variable for the player
             if ((e.getCause() == EntityDamageEvent.DamageCause.VOID) && player.getWorld() == Bukkit.getWorld("skyland")) {
                 //If the cause of the event is the void

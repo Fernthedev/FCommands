@@ -9,7 +9,7 @@ import java.util.List;
 
 public class MessageListener implements PluginMessageListener {
 
-    private List<PluginMessageListener> listeners = new ArrayList<>();
+    private final List<PluginMessageListener> listeners = new ArrayList<>();
 
     public MessageListener() {
         FernCommands.getInstance().getLogger().info("Message Listener created");

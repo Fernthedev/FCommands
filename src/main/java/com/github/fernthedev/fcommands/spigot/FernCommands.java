@@ -51,7 +51,7 @@ public class FernCommands extends FernSpigotAPI {
 
     private MessageListener messageListener;
 
-    private static List<BukkitRunnable> runnables = new ArrayList<>();
+    private static final List<BukkitRunnable> runnables = new ArrayList<>();
 
     public static List<BukkitRunnable> getRunnables() {
         return runnables;

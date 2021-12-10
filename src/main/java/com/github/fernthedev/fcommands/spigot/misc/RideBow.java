@@ -29,9 +29,9 @@ public class RideBow implements Listener {
 
     private static ShapelessRecipe shapelessRecipe;
 
-    private static Map<UUID, Team> teamMap = new HashMap<>();
+    private static final Map<UUID, Team> teamMap = new HashMap<>();
 
-    private static Map<Arrow, Player> ignoreEntityHit = new HashMap<>();
+    private static final Map<Arrow, Player> ignoreEntityHit = new HashMap<>();
 
     public RideBow(Plugin plugin) {
 
@@ -89,21 +89,18 @@ public class RideBow implements Listener {
 
     @EventHandler
     public void onHitEntity(EntityDamageByEntityEvent e) {
-        if (e.getDamager() instanceof Arrow
-                && e.getEntity() instanceof Player // Check entity types
+        if (e.getDamager() instanceof Arrow arrow
+                && e.getEntity() instanceof Player player // Check entity types
                 && ignoreEntityHit.containsKey((Arrow) e.getDamager()) // Check if the ignore should be done
                 && ignoreEntityHit.get((Arrow) e.getDamager()) == e.getEntity()) { // Check if both entities are the rider
-             Arrow arrow = (Arrow) e.getDamager();
-             Player player = (Player) e.getEntity();
 
-             e.setCancelled(true);
+            e.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onLand(ProjectileHitEvent e) {
-        if (e.getEntity() instanceof Arrow) {
-            Arrow arrow = (Arrow) e.getEntity();
+        if (e.getEntity() instanceof Arrow arrow) {
             if (arrow.hasMetadata("teleport")) {
 
                 List<MetadataValue> tp = arrow.getMetadata("teleport");
@@ -176,8 +173,7 @@ public class RideBow implements Listener {
     @EventHandler
     public void onShoot(EntityShootBowEvent e) {
         //FernCommands.getInstance().getLogger().info(e.getEntity() + " SHOT AN ARROW");
-        if (e.getEntity() instanceof Player && e.getProjectile() instanceof Arrow) {
-            Player player = (Player) e.getEntity();
+        if (e.getEntity() instanceof Player player && e.getProjectile() instanceof Arrow) {
             if (player.getInventory().getItemInMainHand().getType() == Material.BOW) {
                 //FernCommands.getInstance().getLogger().info("is sneaking and shot bow");
                 //List<String> lore = player.getItemOnCursor().getItemMeta().getLore();
@@ -272,8 +268,7 @@ public class RideBow implements Listener {
                         ignoreEntityHit.put(arrow, player);
 
 
-                        if (player.getVehicle() instanceof Arrow) {
-                            Arrow oldArrow = (Arrow) player.getVehicle();
+                        if (player.getVehicle() instanceof Arrow oldArrow) {
                             removeArrow(oldArrow);
                         }
 

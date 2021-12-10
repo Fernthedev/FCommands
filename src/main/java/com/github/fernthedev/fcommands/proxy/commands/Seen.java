@@ -87,8 +87,7 @@ public class Seen extends BaseCommand {
 
                 PlayerPreferencesSingleton pref;
 
-                if (sender instanceof IFPlayer) {
-                    IFPlayer<?> player = (IFPlayer<?>) sender;
+                if (sender instanceof IFPlayer<?> player) {
                     pref = PreferenceManager.getPlayerPref(player.getUuid());
                 } else pref = new PlayerPreferencesSingleton(UUID.randomUUID());
 

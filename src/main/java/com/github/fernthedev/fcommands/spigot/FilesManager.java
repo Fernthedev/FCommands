@@ -20,11 +20,11 @@ public class FilesManager {
     }
 
 
-    static FileConfiguration config = FernCommands.getInstance().getConfig();
-    private File configFile = new File(FernCommands.getInstance().getDataFolder(), "config.yml");
+    static final FileConfiguration config = FernCommands.getInstance().getConfig();
+    private final File configFile = new File(FernCommands.getInstance().getDataFolder(), "config.yml");
 
-    static FileConfiguration chestConfig = FernCommands.getInstance().getConfig();
-    private static File chestConfigFile = new File(FernCommands.getInstance().getDataFolder(), "chest.yml");
+    static final FileConfiguration chestConfig = FernCommands.getInstance().getConfig();
+    private static final File chestConfigFile = new File(FernCommands.getInstance().getDataFolder(), "chest.yml");
 
 
     public static FileConfiguration getConfig() {

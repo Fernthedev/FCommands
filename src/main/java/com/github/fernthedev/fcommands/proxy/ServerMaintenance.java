@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ServerMaintenance {
 
-    private static Map<String, Boolean> serverMap = new HashMap<>();
+    private static final Map<String, Boolean> serverMap = new HashMap<>();
 
     public static void setupTask() {
         Universal.getScheduler().runSchedule(() -> {

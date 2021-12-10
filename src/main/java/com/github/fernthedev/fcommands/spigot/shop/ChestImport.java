@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
 @Deprecated
 public class ChestImport extends FCommand implements Listener, CommandExecutor {
 
-    private static File chestConfigFile = new File(FernCommands.getInstance().getDataFolder(), "thing.yml");
+    private static final File chestConfigFile = new File(FernCommands.getInstance().getDataFolder(), "thing.yml");
 
     public void readFile(File file) {
         FileConfiguration config = YamlConfiguration.loadConfiguration(file);
@@ -208,7 +208,7 @@ public class ChestImport extends FCommand implements Listener, CommandExecutor {
 
 
                    // getLogger().info("Thing " + (id != null));
-                    if (id != null && Integer.toString(idInt).equals(id)) {
+                    if (Integer.toString(idInt).equals(id)) {
 
                         // TODO: Fix
 //                        Material material = Material.getMaterial(idInt);

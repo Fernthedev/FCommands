@@ -6,7 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 public class Help implements CommandExecutor {
-    private static Help ourInstance = new Help();
+    private static final Help ourInstance = new Help();
 
     public static Help getInstance() {
         return ourInstance;

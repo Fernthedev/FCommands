@@ -1,6 +1,5 @@
 package com.github.fernthedev.fcommands.spigot.ncp;
 
-@SuppressWarnings("unused")
 public class Expiration {
 
     private long expiration = 0;

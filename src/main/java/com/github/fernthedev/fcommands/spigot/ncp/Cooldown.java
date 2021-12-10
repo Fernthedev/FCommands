@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @SuppressWarnings("unused")
 public class Cooldown {
-    private final Map<UUID, Expiration> cooldown = new HashMap<UUID, Expiration>();
+    private final Map<UUID, Expiration> cooldown = new HashMap<>();
 
     /**
      * @param uuid to check

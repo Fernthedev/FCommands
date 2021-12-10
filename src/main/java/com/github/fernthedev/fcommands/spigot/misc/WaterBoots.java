@@ -47,8 +47,7 @@ public class WaterBoots implements Listener, CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Player player) {
             ItemStack main = player.getInventory().getItemInMainHand();
             //ItemStack offhand = (ItemStack) player.getInventory().getBoots();
            // ItemStack inv = (ItemStack) player.getInventory();

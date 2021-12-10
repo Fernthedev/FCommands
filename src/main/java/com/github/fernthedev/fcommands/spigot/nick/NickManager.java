@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutionException;
 
 public class NickManager implements Listener {
 
-    static HashMap<String, String> nicknames = new HashMap<>();
+    static final HashMap<String, String> nicknames = new HashMap<>();
 
     private static final NickDatabaseInfo databaseInfo = new NickDatabaseInfo();
 

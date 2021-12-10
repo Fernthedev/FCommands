@@ -25,8 +25,7 @@ public class NameColor implements CommandExecutor, Listener {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if ((sender instanceof Player)) {
-            Player p = (Player) sender;
+        if ((sender instanceof Player p)) {
             if (cmd.getName().equalsIgnoreCase("NameColor") && sender.hasPermission("fernc.NameColor")) {
 // Here we create our named Help "inventory"
                 Inventory namecolor = Bukkit.getServer().createInventory(p, 27, "NameColor");
@@ -34,7 +33,7 @@ public class NameColor implements CommandExecutor, Listener {
                 //Here you define our item
                 ItemStack ref1 = new ItemStack(Material.BARRIER);
                 ItemMeta metaref1 = ref1.getItemMeta();
-                ArrayList<String> lore = new ArrayList<String>();
+                ArrayList<String> lore = new ArrayList<>();
 
                 //lore.add("Test");
 

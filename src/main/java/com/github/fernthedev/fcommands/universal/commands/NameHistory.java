@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 @CommandPermission("fernc.namehistory")
 public class NameHistory extends BaseCommand {
 
-    private static HashMap<CommandIssuer, Long> cooldowns = new HashMap<>();
+    private static final HashMap<CommandIssuer, Long> cooldowns = new HashMap<>();
 
     public static final int DEFAULT_COOLDOWN = 60;
 

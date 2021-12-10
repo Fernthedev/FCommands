@@ -15,22 +15,19 @@ public class RandomKick {
         long randomKickCountTimeSeconds = FilesManager.getInstance().getValue("RandomKickCountTimeSeconds", 5 * 60);
 
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(FernCommands.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                String countDown = ChatColor.translateAlternateColorCodes('&', randomKickMessageCountdown);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(FernCommands.getInstance(), () -> {
+            String countDown = ChatColor.translateAlternateColorCodes('&', randomKickMessageCountdown);
 
-                for (int i = 10; i > 0; i--) {
-                    Bukkit.broadcastMessage(countDown.replace("%count%", i + ""));
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+            for (int i = 10; i > 0; i--) {
+                Bukkit.broadcastMessage(countDown.replace("%count%", i + ""));
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-
-
             }
+
+
         }, randomKickCountTimeSeconds * 20, randomKickCountTimeSeconds * 20);
     }
 

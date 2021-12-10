@@ -7,7 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 public class Hooks implements CommandExecutor {
-    private static Hooks ourInstance = new Hooks();
+    private static final Hooks ourInstance = new Hooks();
 
     public static Hooks getInstance() {
         return ourInstance;

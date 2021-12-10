@@ -74,7 +74,7 @@ public class AltsBan implements Listener {
                                 boolean hasPunishmentAlready = hasPunishmentAlready(formattedUUID, punishment1);
 
                                 if (!hasPunishmentAlready) {
-                                    Universal.debug("Punishing because not punished already " + punishment1.toString());
+                                    Universal.debug("Punishing because not punished already " + punishment1);
                                     punishment1.create(true);
                                 }
                             }
@@ -127,7 +127,7 @@ public class AltsBan implements Listener {
 
 
                         if (!hasPunishmentAlready) {
-                            Universal.debug("Punishing because not punished already " + punishment.toString());
+                            Universal.debug("Punishing because not punished already " + punishment);
                             punishment.create(true);
                         }
                     }

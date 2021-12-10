@@ -3,8 +3,8 @@ package com.github.fernthedev.fcommands.spigot.ncp;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
-@SuppressWarnings("unused")
 public class Duration implements Comparable<Duration>, Serializable {
     private static final long serialVersionUID = -8834522925774502711L;
     public static final Duration ZERO = new Duration(0, Unit.MILLISECOND);
@@ -33,22 +33,15 @@ public class Duration implements Comparable<Duration>, Serializable {
          * 		   For example, seconds returns "s" milliseconds returns "ms" etc.
          */
         public String getShortUnit() {
-            switch (this) {
-                case DAY:
-                    return "d";
-                case HOUR:
-                    return "h";
-                case MILLISECOND:
-                    return "ms";
-                case MINUTE:
-                    return "m";
-                case SECOND:
-                    return "s";
-                case TICK:
-                    return "t";
-                default:
-                    return "";
-            }
+            return switch (this) {
+                case DAY -> "d";
+                case HOUR -> "h";
+                case MILLISECOND -> "ms";
+                case MINUTE -> "m";
+                case SECOND -> "s";
+                case TICK -> "t";
+                default -> "";
+            };
         }
     }
 
@@ -121,10 +114,9 @@ public class Duration implements Comparable<Duration>, Serializable {
         return o instanceof Duration && toMilliseconds() == ((Duration) o).toMilliseconds();
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public int hashCode() {
-        return new Long(toMilliseconds()).hashCode();
+        return Objects.hashCode(toMilliseconds());
     }
 
     @Override

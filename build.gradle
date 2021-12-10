@@ -6,10 +6,10 @@ plugins {
     id 'java'
 
     id 'maven-publish'
-    id "io.freefair.lombok" version "5.3.0"
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.0'
+    id "io.freefair.lombok" version "6.3.0"
 //    kotlin("jvm") version '1.3.61'
-    id 'org.jetbrains.kotlin.jvm' version '1.5.20'
+    id 'org.jetbrains.kotlin.jvm' version '1.6.0'
 //    id "org.jetbrains.kotlin.kapt" version "1.3.72"
 }
 apply plugin: 'idea'
@@ -35,19 +35,13 @@ repositories {
     }
 
     maven {
-        url = 'http://nexus.hc.to/content/repositories/pub_releases'
+        url = 'https://nexus.hc.to/content/repositories/pub_releases'
     }
 
     maven { url 'https://jitpack.io' }
 
     maven {
         url = 'https://repo.maven.apache.org/maven2'
-    }
-
-
-    maven {
-        name = "upstream"
-        url = "http://ci.nametagedit.com/plugin/repository/everything/"
     }
 
     maven {
@@ -85,15 +79,17 @@ configurations {
 }
 
 dependencies {
-    compile 'com.github.Fernthedev.FernAPI:all:3f99cc5c7f' //1.9.0-rc4'
-    compile ('com.github.Fernthedev.FernAPI:core') { //1.9.0-rc4'
+    implementation ('com.github.Fernthedev.FernAPI:all:8a10ea6060') { //1.9.0-rc4'
+        exclude group: "fr.minuskube.inv"
+    }
+    implementation ('com.github.Fernthedev.FernAPI:core') { //1.9.0-rc4'
         version {
-            strictly '3f99cc5c7f'
+            strictly '8a10ea6060'
         }
     }
 //
 //    constraints {
-//        compile ('com.github.Fernthedev.FernAPI:core') { //1.9.0-rc4'
+//        implementation ('com.github.Fernthedev.FernAPI:core') { //1.9.0-rc4'
 //            version {
 //                strictly 'v1.9.0rc4-mysql-annotations-e0342ba'
 //            }
@@ -101,23 +97,23 @@ dependencies {
 //        }
 //    }
 //    compileOnly 'com.google.apis:google-api-services-youtube:v3-rev193-1.23.0'
-//    compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
-//    compile 'com.google.api-client:google-api-client:1.23.0'
+//    implementation 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
+//    implementation 'com.google.api-client:google-api-client:1.23.0'
 
     // TODO: Publish this
     compileOnly 'com.github.Fernthedev.preferences_api:api:0.2.0'
-    compile 'com.github.Fernthedev:FernUtils:1.3.3'
-    compile 'org.mariadb.jdbc:mariadb-java-client:2.7.1'
-    compileOnly 'net.md-5:bungeecord-api:1.16-R0.4-SNAPSHOT'
-    compileOnly 'org.spigotmc:spigot-api:1.16.4-R0.1-SNAPSHOT'
+    implementation 'com.github.Fernthedev:FernUtils:1.3.3'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.3'
+    compileOnly 'net.md-5:bungeecord-api:1.18-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT'
     compileOnly 'me.clip:placeholderapi:2.9.2'
     compileOnly 'net.milkbowl.vault:VaultAPI:1.7'
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.4-SNAPSHOT'
-    compile 'com.velocitypowered:velocity-api:3.0.0'
+    implementation 'com.velocitypowered:velocity-api:3.0.0'
     annotationProcessor 'com.velocitypowered:velocity-api:3.0.0'
 //    compileOnly name: 'EssentialsX', group: 'net.ess3', version: '2.17.2'
     system name: 'AdvancedBan-2.2.1-RELEASE'
-//    compile 'me.leoko.advancedban:AdvancedBan:2.1.6'
+//    implementation 'me.leoko.advancedban:AdvancedBan:2.1.6'
     compileOnly 'com.github.sgtcaze:NametagEdit:8bbd20628b'
     compileOnly 'fr.neatmonster:nocheatplus:3.16.1-SNAPSHOT'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
@@ -127,9 +123,9 @@ dependencies {
 group = 'com.github.Fernthedev'
 version = '1.2'
 archivesBaseName = "FCommands"
-sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17 // Need this here so eclipse task generates correctly.
 compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
 }
 compileJava.options.encoding = 'UTF-8'
 
@@ -148,15 +144,26 @@ shadowJar {
 //    dependencies {
 //
 //    }
-    def projName = project.name.toLowerCase()
 
-    relocate 'com.zaxxer', "${projName}.com.zaxxer"
-    relocate 'co.aikar.commands', "${projName}.acf"
-    relocate 'co.aikar.locales', "${projName}.locales"
-//    relocate 'org.slf4j', "${projName}.slf4j"
-    relocate 'org.mariadb', "${projName}.mariadb"
+    var depGroupId = "${project.group}.dep"
 
-    relocate 'com.github.fernthedev.fernapi', "${projName}.com.github.fernthedev.fernapi"
+    relocate 'co.aikar.commands', "${project.group}.preferences.acf"
+    relocate 'co.aikar.locales', "${project.group}.preferences.locales"
+
+    relocate 'com.zaxxer', "${depGroupId}.com.zaxxer"
+    relocate 'co.aikar', "${depGroupId}.aikar"
+    relocate 'org.jetbrains', "${depGroupId}.org.jetbrains"
+    relocate 'org.mariadb', "${depGroupId}.org.mariadb"
+    relocate 'javax', "${depGroupId}.javax"
+//        relocate 'com.google.inject', "com.google.inject"
+    relocate 'com.google', "${depGroupId}.com.google"
+    relocate 'kotlin', "${depGroupId}.kotlin"
+    relocate 'fr', "${depGroupId}.fr"
+
+
+    relocate 'com.github.fernthedev.fernapi', "${project.group}.fernapi"
+    relocate 'com.github.fernthedev.fernutils', "${project.group}.fernutils"
+    relocate 'com.github.fernthedev.config', "${project.group}.config"
 }
 
 tasks.withType(JavaCompile) {
@@ -219,6 +226,7 @@ shadowJar.finalizedBy sourcesJar
 build.dependsOn sourcesJar
 
 processResources {
+    dependsOn(compileJava)
     inputs.property "version", project.version
 
     def velPath = compileJava.destinationDirectory.getAsFile().get()
@@ -230,6 +238,7 @@ processResources {
     }
 
     from(sourceSets.main.resources.srcDirs) {
+        duplicatesStrategy = DuplicatesStrategy.WARN
         include 'plugin.yml'
         include 'bungee.yml'
 
@@ -240,6 +249,7 @@ processResources {
 }
 
 task deleteVel(type: Delete) {
+    dependsOn(compileJava)
     def velPath = compileJava.destinationDirectory.getAsFile().get()
 
     delete file("${velPath.path}/velocity-plugin.json")
@@ -255,11 +265,11 @@ compileJava {
 compileKotlin {
     kotlinOptions.javaParameters = true
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = JavaVersion.VERSION_17
     }
 }
 compileTestKotlin {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = JavaVersion.VERSION_17
     }
 }
