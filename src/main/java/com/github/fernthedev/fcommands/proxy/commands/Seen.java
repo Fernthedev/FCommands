@@ -18,7 +18,6 @@ import com.github.fernthedev.preferences.api.PreferenceManager;
 import com.github.fernthedev.preferences.api.command.PreferenceCommandUtil;
 import com.github.fernthedev.preferences.api.config.PlayerPreferencesSingleton;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -30,133 +29,126 @@ import java.util.concurrent.TimeUnit;
 @CommandPermission("fernc.seen")
 public class Seen extends BaseCommand {
 
+    private final SimpleDateFormat hour24Format = new SimpleDateFormat("MMM-yyyy dd HH:mm", Locale.US);
+    private final SimpleDateFormat hour12Format = new SimpleDateFormat("MMM-yyyy dd hh:mm aa", Locale.US);
 
-    private static final SimpleDateFormat hour24Format = new SimpleDateFormat("MMM-yyyy dd HH:mm", Locale.US);
-    private static final SimpleDateFormat hour12Format = new SimpleDateFormat("MMM-yyyy dd hh:mm aa", Locale.US);
+    private void sendFoundUser(FernCommandIssuer sender, IFPlayer<?> p) {
+        Universal.debug(() -> "Requesting if " + p.getName() + " is vanished");
+
+        if (sender.hasVanishPermission()) {
+            sender.sendMessage(new TextMessage("&aPlayer &2" + p.getName() + " &awas found. Player is currently online on server: " + p.getCurrentServerName()));
+            return;
+        }
+
+
+        new VanishProxyCheck(p, (player, isVanished, timedOut) -> {
+            boolean doInfo = !(timedOut || isVanished);
+
+
+            if (!doInfo) {
+                sender.sendMessage(new TextMessage("&cThere was an error trying to find this player. Please try again later"));
+                return;
+            }
+
+            BaseMessage m = new TextMessage();
+
+            m.addExtra(new TextMessage("&aPlayer &2"));
+            m.addExtra(p.getName());
+            m.addExtra(new TextMessage("&awas found. Player is currently online on server: "));
+            m.addExtra(new TextMessage(p.getCurrentServerName()));
+
+            m.setClickData(new ClickData(ClickData.Action.SUGGEST_COMMAND, "/" + p.getCurrentServerName()));
+
+            sender.sendMessage(m);
+        }).setTimeout(10, TimeUnit.SECONDS);
+
+    }
+
+    private void sendLastSeen(FernCommandIssuer sender, IFPlayer<?> p) {
+        UUID uuid = p.getUniqueId();
+
+        if (uuid == null) {
+            sender.sendMessage(ChatColor.RED + "Player doesn't exist. You sure you typed that right?");
+            return;
+        }
+        Config<SeenValues> seenConfig = FileManager.getSeenConfig();
+
+        FileManager.configLoad(seenConfig);
+
+        SeenPlayerValue seenPlayerValue = seenConfig.getConfigData().getPlayers(uuid);
+
+        PlayerPreferencesSingleton pref;
+
+        if (sender instanceof IFPlayer<?> player) {
+            pref = PreferenceManager.getPlayerPref(player.getUuid());
+        } else
+            pref = new PlayerPreferencesSingleton(UUID.randomUUID());
+
+        if (seenPlayerValue == null) {
+            sender.sendMessage(new TextMessage("&cPlayer has not played on the server, or info is not found about player."));
+            return;
+        }
+
+        String server = seenPlayerValue.getServer();
+
+
+        // Parse time from config
+        Date date = seenPlayerValue.getTime();
+
+        // Get user's preference
+        TimeZone preferredTimeZone = TimeZone.getTimeZone(pref.getPreferenceInfer(PluginPreferenceManager.NAMESPACE, PluginPreferenceManager.PREFERRED_TIMEZONE.getName(), "").getValue());
+
+        SimpleDateFormat preferredDateFormat;
+        String preferredHourFormat;
+
+        if (pref.<Boolean>getPreferenceInfer(PluginPreferenceManager.NAMESPACE, PluginPreferenceManager.HOUR_12_FORMAT.getName()).getValue()) {
+            preferredDateFormat = (SimpleDateFormat) hour12Format.clone();
+            preferredHourFormat = "12";
+        } else {
+            preferredDateFormat = (SimpleDateFormat) hour24Format.clone();
+            preferredHourFormat = "24";
+        }
+
+
+        preferredDateFormat.setTimeZone(preferredTimeZone);
+        String time = preferredDateFormat.format(date);
+
+        if (server.equals("")) {
+            server = "&cNo Server found";
+        }
+
+        if (time.equals("")) {
+            time = "&cNo time shown";
+        }
+
+        TextMessage messageServer = new TextMessage("&bLast Server On: &3" + server);
+        messageServer.setClickData(new ClickData(ClickData.Action.RUN_COMMAND, "/" + server));
+        messageServer.setHoverData(new HoverData(HoverData.Action.SHOW_TEXT, new TextMessage("&aClick to head to server. &2(" + server + ")")));
+        sender.sendMessage(new TextMessage("&aPlayer &2" + p.getName() + " &awas found. Here is the info of player's last login:"));
+
+        sender.sendMessage(messageServer);
+
+        BaseMessage hourFormat = new TextMessage("&b&n(%zone% %hour% - hour Format)"
+                .replace("%zone%", preferredTimeZone.getID())
+                .replace("%hour%", preferredHourFormat));
+
+        hourFormat
+                .setClickData(new ClickData(ClickData.Action.SUGGEST_COMMAND, "/" + PreferenceCommandUtil.prefSetCommand(PluginPreferenceManager.NAMESPACE, PluginPreferenceManager.PREFERRED_TIMEZONE)))
+                .setHoverData(new HoverData(HoverData.Action.SHOW_TEXT, new TextMessage("&6Change default timezone")));
+
+        sender.sendMessage(new TextMessage("&9Last time on: &b" + time + " ").addExtra(hourFormat));
+    }
 
     @Default
     @Description("Looks up the last seen information of a player.")
     @CommandCompletion("* @nothing")
-    public void execute(FernCommandIssuer sender, @Flags("other,offline") IFPlayer<?> p) {
-
+    public void execute(FernCommandIssuer sender, @Flags("other,offline") IFPlayer<?> p)  {
         if (!p.isPlayerNull()) {
-            Universal.debug(() -> "Requesting if " + p.getName() + " is vanished");
-
-            if (!sender.hasVanishPermission()) {
-                new VanishProxyCheck(p, (player, isVanished, timedOut) -> {
-                    boolean doInfo = !isVanished;
-
-                    if (timedOut || isVanished) {
-                        doInfo = false;
-                    }
-
-
-                    if (!doInfo) {
-                        sender.sendMessage(new TextMessage("&cThere was an error trying to find this player. Please try again later"));
-                    }
-
-                    if (doInfo) {
-                        BaseMessage m = new TextMessage();
-
-                        m.addExtra(new TextMessage("&aPlayer &2"));
-                        m.addExtra(p.getName());
-                        m.addExtra(new TextMessage("&awas found. Player is currently online on server: "));
-                        m.addExtra(new TextMessage(p.getCurrentServerName()));
-
-                        m.setClickData(new ClickData(ClickData.Action.SUGGEST_COMMAND, "/" + p.getCurrentServerName()));
-
-                        sender.sendMessage(m);
-                    }
-                }).setTimeout(10, TimeUnit.SECONDS);
-            } else {
-                sender.sendMessage(new TextMessage("&aPlayer &2" + p.getName() + " &awas found. Player is currently online on server: " + p.getCurrentServerName()));
-            }
-
-
+            sendFoundUser(sender, p);
         } else {
-            UUID uuid = p.getUniqueId();
-
-            if (uuid == null) {
-                sender.sendMessage(ChatColor.RED + "Player doesn't exist. You sure you typed that right?");
-            } else {
-                Config<SeenValues> seenconfig = FileManager.getSeenConfig();
-
-                FileManager.configLoad(seenconfig);
-
-                SeenPlayerValue seenplist = seenconfig.getConfigData().getPlayers(uuid);
-
-                PlayerPreferencesSingleton pref;
-
-                if (sender instanceof IFPlayer<?> player) {
-                    pref = PreferenceManager.getPlayerPref(player.getUuid());
-                } else pref = new PlayerPreferencesSingleton(UUID.randomUUID());
-
-                if (seenplist != null) {
-                    String server = seenplist.getServer();
-//                        String time = seenplist.getString("time").replace("'", "").replace(".",":");
-
-                    String time;
-
-                    SimpleDateFormat format;
-
-                    String hour;
-
-                    if (pref.getPreferenceInfer(PluginPreferenceManager.NAMESPACE, PluginPreferenceManager.hour12Format.getName(), false).getValue()) {
-                        format = (SimpleDateFormat) hour12Format.clone();
-                        hour = "12";
-                    } else {
-                        format = (SimpleDateFormat) hour24Format.clone();
-                        hour = "24";
-                    }
-
-                    TimeZone zone = TimeZone.getTimeZone(pref.getPreferenceInfer(PluginPreferenceManager.NAMESPACE, PluginPreferenceManager.preferredTimezone.getName(), "").getValue());
-//                        try {
-                    SimpleDateFormat hour24 = (SimpleDateFormat) hour24Format.clone();
-
-                    hour24.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-                    Date date = null;
-
-                    try {
-                        date = hour24.parse(hour24.format(seenplist.getTime()));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-
-                    format.setTimeZone(zone);
-                    time = format.format(date);
-
-                    if (server.equals("")) {
-                        server = "&cNo Server found";
-                    }
-
-                    if (time.equals("")) {
-                        time = "&cNo time shown";
-                    }
-
-                    TextMessage messageServer = new TextMessage("&bLast Server On: &3" + server);
-                    messageServer.setClickData(new ClickData(ClickData.Action.RUN_COMMAND, "/" + server));
-                    messageServer.setHoverData(new HoverData(HoverData.Action.SHOW_TEXT, new TextMessage("&aClick to head to server. &2(" + server + ")")));
-                    sender.sendMessage(new TextMessage("&aPlayer &2" + p.getName() + " &awas found. Here is the info of player's last login:"));
-
-                    sender.sendMessage(messageServer);
-
-                    BaseMessage hourFormat = new TextMessage("&b&n(%zone% %hour% - hour Format)"
-                            .replace("%zone%", zone.getID())
-                            .replace("%hour%", hour));
-
-                    hourFormat.setClickData(new ClickData(ClickData.Action.SUGGEST_COMMAND, "/" + PreferenceCommandUtil.prefSetCommand(PluginPreferenceManager.NAMESPACE, PluginPreferenceManager.preferredTimezone) + " "));
-                    hourFormat.setHoverData(new HoverData(HoverData.Action.SHOW_TEXT, new TextMessage("&6Change default timezone")));
-
-                    sender.sendMessage(new TextMessage("&9Last time on: &b" + time + " ").addExtra(hourFormat));
-                } else {
-                    sender.sendMessage(new TextMessage("&cPlayer has not played on the server, or info is not found about player."));
-                }
-            }
+            sendLastSeen(sender, p);
         }
     }
-
-
 
     public static void onLeave(IFPlayer<?> player) {
         if (player == null || player.isPlayerNull() || player.getServerInfo() == null) return;
@@ -173,19 +165,11 @@ public class Seen extends BaseCommand {
             if (seenPlayerValue == null) {
                 seenPlayerValue = new SeenPlayerValue(new Date(), server);
                 seenConfig.getConfigData().getPlayerValueMap().put(player.getUuid(), seenPlayerValue);
+            } else {
+                seenPlayerValue.setServer(server);
+                seenPlayerValue.setTime(new Date());
             }
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM-yyyy dd HH:mm", Locale.US);
-
-            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-            String time = simpleDateFormat.format(new Date());
-
-
-            seenPlayerValue.setServer(server);
-            seenPlayerValue.setTime(new Date());
-
-            Universal.debug(() -> "ferntime1 " + time);
             try {
                 seenConfig.syncSave();
             } catch (ConfigLoadException e) {

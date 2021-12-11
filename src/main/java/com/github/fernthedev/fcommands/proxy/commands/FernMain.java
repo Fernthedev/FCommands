@@ -13,10 +13,10 @@ import java.io.IOException;
 
 @CommandAlias("fernc")
 public class FernMain extends BaseCommand {
-    private static final String configList = "all|ip|config";
+    private static final String CONFIG_LIST = "all|ip|config";
 
     @Description("Reload configs")
-    @CommandCompletion(configList)
+    @CommandCompletion(CONFIG_LIST)
     @Subcommand("config")
     @CommandPermission("fernc.config.reload")
     public void reloadConfig(CommandIssuer sender, String config) throws IOException {
