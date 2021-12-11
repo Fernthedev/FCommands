@@ -3,11 +3,9 @@ package com.github.fernthedev.fcommands.bungee;
 import com.github.fernthedev.config.common.Config;
 import com.github.fernthedev.config.common.exceptions.ConfigLoadException;
 import com.github.fernthedev.fcommands.proxy.ProxyFileManager;
-import com.github.fernthedev.fcommands.proxy.WhichFile;
 import com.github.fernthedev.fcommands.proxy.data.ConfigValues;
 import com.github.fernthedev.fcommands.proxy.data.IPSaveValues;
 import com.github.fernthedev.fcommands.proxy.data.PunishValues;
-import com.github.fernthedev.fcommands.proxy.modules.ProxyFile;
 import com.github.fernthedev.fernapi.universal.Universal;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.utils.Punishment;
@@ -33,12 +31,10 @@ import java.util.List;
 import java.util.UUID;
 
 public class PunishMOTD implements Listener {
-    
-    @ProxyFile(WhichFile.IP)
+
     @Inject
     private Config<IPSaveValues> ipConfig;
 
-    @ProxyFile(WhichFile.IP)
     @Inject
     private Config<ConfigValues> config;
     

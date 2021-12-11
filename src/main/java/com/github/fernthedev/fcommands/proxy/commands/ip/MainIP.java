@@ -7,11 +7,9 @@ import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Subcommand;
 import com.github.fernthedev.config.common.Config;
 import com.github.fernthedev.fcommands.proxy.ProxyFileManager;
-import com.github.fernthedev.fcommands.proxy.WhichFile;
 import com.github.fernthedev.fcommands.proxy.data.IPDeleteValues;
 import com.github.fernthedev.fcommands.proxy.data.IPSaveValues;
 import com.github.fernthedev.fcommands.proxy.data.ip.IPDeletePlayerValue;
-import com.github.fernthedev.fcommands.proxy.modules.ProxyFile;
 import com.github.fernthedev.fernapi.universal.Universal;
 import com.github.fernthedev.fernapi.universal.api.IFPlayer;
 import com.github.fernthedev.fernapi.universal.data.chat.TextMessage;
@@ -33,11 +31,9 @@ public class MainIP extends BaseCommand {
     private ProxyFileManager proxyFileManager;
 
     @Inject
-    @ProxyFile(WhichFile.IP)
     private Config<IPSaveValues> ipConfig;
 
     @Inject
-    @ProxyFile(WhichFile.DELETEIP)
     private Config<IPDeleteValues> deleteIPConfig;
 
     public void loadTasks() {

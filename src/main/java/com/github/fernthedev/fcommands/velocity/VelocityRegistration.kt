@@ -2,7 +2,8 @@ package com.github.fernthedev.fcommands.velocity
 
 import com.github.fernthedev.fcommands.proxy.ProxyRegistration
 import com.github.fernthedev.fcommands.universal.PlatformAllRegistration
-import com.github.fernthedev.fcommands.velocity.modules.VelocityEventsModule
+import com.github.fernthedev.fcommands.velocity.modules.VelocityModules
+import com.google.inject.Guice
 
 object VelocityRegistration {
 
@@ -18,9 +19,8 @@ object VelocityRegistration {
      * @see PlatformAllRegistration.injector
      */
     private fun buildInjector() {
-        ProxyRegistration.buildInjector()
-        PlatformAllRegistration.injector = PlatformAllRegistration.injector.createChildInjector(
-            VelocityEventsModule()
+        PlatformAllRegistration.injector = Guice.createInjector(
+            VelocityModules()
         )
     }
 

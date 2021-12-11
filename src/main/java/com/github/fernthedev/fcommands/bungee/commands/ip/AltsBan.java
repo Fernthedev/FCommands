@@ -3,10 +3,8 @@ package com.github.fernthedev.fcommands.bungee.commands.ip;
 import com.github.fernthedev.config.common.Config;
 import com.github.fernthedev.fcommands.bungee.FernCommands;
 import com.github.fernthedev.fcommands.proxy.ProxyFileManager;
-import com.github.fernthedev.fcommands.proxy.WhichFile;
 import com.github.fernthedev.fcommands.proxy.commands.ip.IPAlgorithms;
 import com.github.fernthedev.fcommands.proxy.data.ConfigValues;
-import com.github.fernthedev.fcommands.proxy.modules.ProxyFile;
 import com.github.fernthedev.fernapi.universal.Universal;
 import com.github.fernthedev.fernapi.universal.util.UUIDFetcher;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
@@ -25,7 +23,6 @@ import java.util.UUID;
 
 public class AltsBan implements Listener {
 
-    @ProxyFile(WhichFile.CONFIG)
     @Inject
     private Config<ConfigValues> config;
 

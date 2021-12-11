@@ -154,16 +154,11 @@ shadowJar {
     relocate 'co.aikar', "${depGroupId}.aikar"
     relocate 'org.jetbrains', "${depGroupId}.org.jetbrains"
     relocate 'org.mariadb', "${depGroupId}.org.mariadb"
-    relocate 'javax', "${depGroupId}.javax"
+//    relocate 'javax', "${depGroupId}.javax"
 //        relocate 'com.google.inject', "com.google.inject"
     relocate 'com.google', "${depGroupId}.com.google"
     relocate 'kotlin', "${depGroupId}.kotlin"
     relocate 'fr', "${depGroupId}.fr"
-
-
-    relocate 'com.github.fernthedev.fernapi', "${project.group}.fernapi"
-    relocate 'com.github.fernthedev.fernutils', "${project.group}.fernutils"
-    relocate 'com.github.fernthedev.config', "${project.group}.config"
 }
 
 tasks.withType(JavaCompile) {

@@ -3,7 +3,6 @@ package com.github.fernthedev.fcommands.proxy;
 import com.github.fernthedev.config.common.Config;
 import com.github.fernthedev.fcommands.proxy.data.ConfigValues;
 import com.github.fernthedev.fcommands.proxy.data.ServerData;
-import com.github.fernthedev.fcommands.proxy.modules.ProxyFile;
 import com.github.fernthedev.fernapi.universal.Universal;
 
 import javax.inject.Inject;
@@ -18,7 +17,6 @@ public class ServerMaintenance {
     private final Map<String, Boolean> serverMap = new HashMap<>();
 
     @Inject
-    @ProxyFile(WhichFile.CONFIG)
     private Config<ConfigValues> config;
 
     public void setupTask() {

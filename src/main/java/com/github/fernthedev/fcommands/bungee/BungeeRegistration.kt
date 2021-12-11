@@ -1,8 +1,9 @@
 package com.github.fernthedev.fcommands.bungee
 
-import com.github.fernthedev.fcommands.bungee.modules.BungeeEventsModule
+import com.github.fernthedev.fcommands.bungee.modules.BungeeModules
 import com.github.fernthedev.fcommands.proxy.ProxyRegistration
 import com.github.fernthedev.fcommands.universal.PlatformAllRegistration
+import com.google.inject.Guice
 
 object BungeeRegistration {
 
@@ -18,9 +19,8 @@ object BungeeRegistration {
      * @see PlatformAllRegistration.injector
      */
     private fun buildInjector() {
-        ProxyRegistration.buildInjector()
-        PlatformAllRegistration.injector = PlatformAllRegistration.injector.createChildInjector(
-            BungeeEventsModule()
+        PlatformAllRegistration.injector = Guice.createInjector(
+            BungeeModules()
         )
     }
 

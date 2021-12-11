@@ -7,10 +7,8 @@ import com.github.fernthedev.config.common.Config;
 import com.github.fernthedev.config.common.exceptions.ConfigLoadException;
 import com.github.fernthedev.fcommands.proxy.ProxyEvents;
 import com.github.fernthedev.fcommands.proxy.ProxyFileManager;
-import com.github.fernthedev.fcommands.proxy.WhichFile;
 import com.github.fernthedev.fcommands.proxy.data.SeenPlayerValue;
 import com.github.fernthedev.fcommands.proxy.data.SeenValues;
-import com.github.fernthedev.fcommands.proxy.modules.ProxyFile;
 import com.github.fernthedev.fcommands.universal.PluginPreferenceManager;
 import com.github.fernthedev.fernapi.universal.Universal;
 import com.github.fernthedev.fernapi.universal.api.FernCommandIssuer;
@@ -40,7 +38,6 @@ public class Seen extends BaseCommand {
     private final SimpleDateFormat hour12Format = new SimpleDateFormat("MMM-yyyy dd hh:mm aa", Locale.US);
 
     @Inject
-    @ProxyFile(WhichFile.SEEN)
     private Config<SeenValues> seenConfig;
 
     @Inject

@@ -2,6 +2,7 @@ package com.github.fernthedev.fcommands.bungee.modules
 
 import com.github.fernthedev.fcommands.bungee.BungeeEvents
 import com.github.fernthedev.fcommands.universal.BaseEvents
+import com.github.fernthedev.fernapi.universal.Universal
 import com.google.inject.AbstractModule
 
 class BungeeEventsModule : AbstractModule() {
@@ -17,6 +18,7 @@ class BungeeEventsModule : AbstractModule() {
         }
 
         classes.forEach { clazz ->
+            Universal.getLogger().info("Registering ${clazz.toGenericString()}")
             bind(clazz) to BungeeEvents::class.java
         }
     }

@@ -7,22 +7,11 @@ import com.github.fernthedev.fcommands.proxy.commands.Seen
 import com.github.fernthedev.fcommands.proxy.commands.ip.MainIP
 import com.github.fernthedev.fcommands.proxy.commands.ip.ShowAlts
 import com.github.fernthedev.fcommands.proxy.data.ConfigValues
-import com.github.fernthedev.fcommands.proxy.modules.ProxyFileManagerModule
 import com.github.fernthedev.fcommands.universal.*
 import com.github.fernthedev.fcommands.universal.commands.NameHistory
 import com.github.fernthedev.fernapi.universal.Universal
 
 object ProxyRegistration {
-    /**
-     * Order:
-     * @see PlatformAllRegistration.injector
-     */
-    fun buildInjector() {
-        PlatformAllRegistration.injector = PlatformAllRegistration.injector.createChildInjector(
-            ProxyFileManagerModule()
-        )
-    }
-
     fun proxyInit() {
         PlatformAllRegistration.commonInit()
         val injector = PlatformAllRegistration.injector
