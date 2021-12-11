@@ -5,9 +5,12 @@ import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.annotation.*;
 import com.github.fernthedev.config.common.Config;
 import com.github.fernthedev.config.common.exceptions.ConfigLoadException;
-import com.github.fernthedev.fcommands.proxy.FileManager;
+import com.github.fernthedev.fcommands.proxy.ProxyEvents;
+import com.github.fernthedev.fcommands.proxy.ProxyFileManager;
+import com.github.fernthedev.fcommands.proxy.WhichFile;
 import com.github.fernthedev.fcommands.proxy.data.SeenPlayerValue;
 import com.github.fernthedev.fcommands.proxy.data.SeenValues;
+import com.github.fernthedev.fcommands.proxy.modules.ProxyFile;
 import com.github.fernthedev.fcommands.universal.PluginPreferenceManager;
 import com.github.fernthedev.fernapi.universal.Universal;
 import com.github.fernthedev.fernapi.universal.api.FernCommandIssuer;
@@ -17,7 +20,10 @@ import com.github.fernthedev.fernapi.universal.util.network.vanish.VanishProxyCh
 import com.github.fernthedev.preferences.api.PreferenceManager;
 import com.github.fernthedev.preferences.api.command.PreferenceCommandUtil;
 import com.github.fernthedev.preferences.api.config.PlayerPreferencesSingleton;
+import kotlin.Unit;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -27,10 +33,26 @@ import java.util.concurrent.TimeUnit;
 
 @CommandAlias("seen|saw|swho")
 @CommandPermission("fernc.seen")
+@Singleton
 public class Seen extends BaseCommand {
 
     private final SimpleDateFormat hour24Format = new SimpleDateFormat("MMM-yyyy dd HH:mm", Locale.US);
     private final SimpleDateFormat hour12Format = new SimpleDateFormat("MMM-yyyy dd hh:mm aa", Locale.US);
+
+    @Inject
+    @ProxyFile(WhichFile.SEEN)
+    private Config<SeenValues> seenConfig;
+
+    @Inject
+    private ProxyFileManager proxyFileManager;
+
+    @Inject
+    public Seen(ProxyEvents proxyEvents) {
+        proxyEvents.getOnLeave().register(this, ifPlayer -> {
+            onLeave(ifPlayer);
+            return Unit.INSTANCE;
+        });
+    }
 
     private void sendFoundUser(FernCommandIssuer sender, IFPlayer<?> p) {
         Universal.debug(() -> "Requesting if " + p.getName() + " is vanished");
@@ -71,9 +93,8 @@ public class Seen extends BaseCommand {
             sender.sendMessage(ChatColor.RED + "Player doesn't exist. You sure you typed that right?");
             return;
         }
-        Config<SeenValues> seenConfig = FileManager.getSeenConfig();
 
-        FileManager.configLoad(seenConfig);
+        proxyFileManager.configLoad(seenConfig);
 
         SeenPlayerValue seenPlayerValue = seenConfig.getConfigData().getPlayers(uuid);
 
@@ -150,15 +171,13 @@ public class Seen extends BaseCommand {
         }
     }
 
-    public static void onLeave(IFPlayer<?> player) {
+    public void onLeave(IFPlayer<?> player) {
         if (player == null || player.isPlayerNull() || player.getServerInfo() == null) return;
 
         String server = player.getCurrentServerName();
 
         Universal.getScheduler().runAsync(() -> {
-
-            Config<SeenValues> seenConfig = FileManager.getSeenConfig();
-            FileManager.configLoad(seenConfig);
+            proxyFileManager.configLoad(seenConfig);
 
             SeenPlayerValue seenPlayerValue = seenConfig.getConfigData().getPlayers(player.getUuid());
 

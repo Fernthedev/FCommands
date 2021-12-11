@@ -1,8 +1,12 @@
 package com.github.fernthedev.fcommands.bungee.commands.ip;
 
+import com.github.fernthedev.config.common.Config;
 import com.github.fernthedev.fcommands.bungee.FernCommands;
-import com.github.fernthedev.fcommands.proxy.FileManager;
+import com.github.fernthedev.fcommands.proxy.ProxyFileManager;
+import com.github.fernthedev.fcommands.proxy.WhichFile;
 import com.github.fernthedev.fcommands.proxy.commands.ip.IPAlgorithms;
+import com.github.fernthedev.fcommands.proxy.data.ConfigValues;
+import com.github.fernthedev.fcommands.proxy.modules.ProxyFile;
 import com.github.fernthedev.fernapi.universal.Universal;
 import com.github.fernthedev.fernapi.universal.util.UUIDFetcher;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
@@ -13,25 +17,34 @@ import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 
 public class AltsBan implements Listener {
+
+    @ProxyFile(WhichFile.CONFIG)
+    @Inject
+    private Config<ConfigValues> config;
+
+    @Inject
+    private ProxyFileManager proxyFileManager;
+
     @EventHandler
     public void onJoin(PostLoginEvent e) {
-        if (FernCommands.getHookManager().hasAdvancedBan() && FileManager.getConfigValues().getAltsBan()) {
+        if (FernCommands.getHookManager().hasAdvancedBan() && config.getConfigData().getAltsBan()) {
             Universal.getScheduler().runAsync(() -> {
 
-                String formattedUUIDJoin = e.getPlayer().getUniqueId().toString().replaceAll("-","");
+                String formattedUUIDJoin = e.getPlayer().getUniqueId().toString().replace("-","");
 
                 if (PunishmentManager.get().isBanned(formattedUUIDJoin))
                     return;
 
                 List<Runnable> tasksTodo = new ArrayList<>();
 
-                IPAlgorithms.IPUUIDLists ipData = IPAlgorithms.scan(e.getPlayer().getUniqueId());
+                IPAlgorithms.IPUUIDLists ipData = IPAlgorithms.scan(e.getPlayer().getUniqueId(), proxyFileManager);
 
 
                 int tasksPerThread = ipData.getIps().size() / 4;
@@ -40,7 +53,7 @@ public class AltsBan implements Listener {
 
                 for (UUID uuid : ipData.getUuids()) {
 
-                    String formattedUUID = uuid.toString().replaceAll("-","");
+                    String formattedUUID = uuid.toString().replace("-","");
 
                     tasksQueued++;
 
@@ -97,7 +110,7 @@ public class AltsBan implements Listener {
 
     @EventHandler
     public void onPunish(PunishmentEvent e) {
-        if (!FileManager.getConfigValues().getAltsBan()) return;
+        if (!config.getConfigData().getAltsBan()) return;
 
 
         if (e.getPunishment().getType() == PunishmentType.KICK || e.getPunishment().getType() == PunishmentType.WARNING)
@@ -110,7 +123,7 @@ public class AltsBan implements Listener {
             if (uuidPlayer != null) {
 
 
-                IPAlgorithms.IPUUIDLists ipData = IPAlgorithms.scan(UUIDFetcher.uuidFromString(e.getPunishment().getUuid()));
+                IPAlgorithms.IPUUIDLists ipData = IPAlgorithms.scan(UUIDFetcher.uuidFromString(e.getPunishment().getUuid()), proxyFileManager);
 
 
                 for (UUID plUuid : ipData.getUuids()) {
@@ -145,7 +158,6 @@ public class AltsBan implements Listener {
             Universal.debug("Checking punishments: \ncheck" + punishment1.toString() + "\nparam: " + checkPunishment);
             if (
                     punishment1.getUuid().equals(checkPunishment.getUuid()) &&
-//                            punishment1.getCalculation().equals(checkPunishment.getCalculation()) &&
                             punishment1.getEnd() == checkPunishment.getEnd() &&
                             punishment1.getStart() == checkPunishment.getStart() &&
                             punishment1.getOperator().equals(checkPunishment.getOperator()) &&

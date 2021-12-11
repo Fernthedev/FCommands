@@ -32,15 +32,6 @@ public class FernNick extends BaseCommand {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-//            Statement statement = DatabaseHandler.statement();
-//            if(statement != null) {
-//                //statement.executeUpdate("CREATE TABLE IF NOT EXISTS fern_nicks (PlayerUUID varchar(200), nick varchar(40))");
-//                String sql = "CREATE TABLE IF NOT EXISTS fern_nicks(PLAYERUUID varchar(200), NICK varchar(40));";
-//
-//                PreparedStatement stmt = DatabaseHandler.getConnection().prepareStatement(sql);
-//
-//                stmt.executeUpdate();
-//            }
     }
 
     @Description("Change nickname using MySQL")
@@ -56,10 +47,6 @@ public class FernNick extends BaseCommand {
     @Subcommand("other")
     @CommandCompletion("* @nothing")
     public void onNick(CommandIssuer sender, @Flags("other") IFPlayer<?> player, String newNick) {
-
-//        Connection connection = DatabaseHandler.getConnection();
-
-
         DatabaseListener databaseManager = UniversalMysql.getDatabaseManager();
 
 
@@ -71,24 +58,14 @@ public class FernNick extends BaseCommand {
         if (player == null) player = (IFPlayer<?>) sender;
 
         if (newNick.contains("&") && !sender.hasPermission("fernc.nick.color")) {
-
             sender.sendError(MessageKeys.PERMISSION_DENIED_PARAMETER);
-//            sendMessage(sender, "&cYou do not have permissions to use color nicknames.");
             return;
         }
 
         try {
-//                if(connection != null) {
-
             if (databaseManager.isConnected()) {
                 databaseInfo.loadFromDB(databaseManager).get();
                 applyNick(player, newNick, databaseManager);
-
-//                    ProxyServer.getInstance().getServers().values().forEach(serverInfo -> serverInfo.sendData("BungeeCord", outputStream.toByteArray()));
-
-
-                //sendMessage(sender,"&aSuccessfully set your nick to " + args[0]);
-                //sendMessage(sender,"&aPlease relog for this to take effect.");
             } else {
                 sender.sendMessage(MessageType.ERROR, MessageKeys.ERROR_GENERIC_LOGGED);
                 throw new SQLException("Connection is null");
@@ -98,6 +75,7 @@ public class FernNick extends BaseCommand {
             e.printStackTrace();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -107,30 +85,8 @@ public class FernNick extends BaseCommand {
 
         databaseManager.removeRowIfColumnContainsValue(databaseInfo, "PLAYERUUID", formattedUUID);
 
-
-////                    sql = "SELECT CASE WHEN PLAYERUUID="+player.getUniqueId().toString()+ "THEN NICK "+args[0];
-//                    sql = "UPDATE fern_nicks SET PLAYERUUID='" + player.getUniqueId().toString().replaceAll("-", "") + "NICK='" + args[0] + "' WHERE PLAYERUUID='" + player.getUniqueId().toString().replaceAll("-", "") + "';";
         NickDatabaseInfo.NickDatabaseRowInfo rowData = new NickDatabaseInfo.NickDatabaseRowInfo(player.getUuid(), newNick);
-
         databaseManager.insertIntoTable(databaseInfo, rowData);
-
-//                    stmt = connection.prepareStatement(sql);
-//
-//                    connection.prepareStatement
-//                            ("INSERT INTO fern_nicks (PLAYERUUID, NICK) VALUES ('" +
-//                                    ProxyServer.getInstance().getPlayer(sender.getName()).getUniqueId().toString().replaceAll("-", "") + "','" + args[0] + "');").executeUpdate();
-
-
-//
-//                    out.writeUTF("Forward"); //TYPE wwwwwwwwwwww
-//                    out.writeUTF("ALL"); //SERVER
-//                    out.writeUTF("ReloadNickSQL"); //SUBCHANNEL
-//
-//                    out.writeUTF(player.getName()); //NAME
-//                    out.writeUTF(player.getUniqueId().toString().replaceAll("-", "")); //UUID wwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-
-        //                    Universal.getMethods().getLogger().info(outputStream.toString() + " is the info sent.");
-
 
         PluginMessageData data = new PluginMessageData(stream, player.getCurrentServerName(), Channels.NICK_RELOADNICKSQL, Channels.NICK_CHANNEL);
 

@@ -2,6 +2,7 @@ package com.github.fernthedev.fcommands.proxy.commands.ip;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import com.github.fernthedev.fcommands.proxy.ProxyFileManager;
 import com.github.fernthedev.fernapi.universal.Universal;
 import com.github.fernthedev.fernapi.universal.api.FernCommandIssuer;
 import com.github.fernthedev.fernapi.universal.api.IFPlayer;
@@ -10,6 +11,7 @@ import com.github.fernthedev.fernapi.universal.util.ListUtil;
 import com.github.fernthedev.fernapi.universal.util.UUIDFetcher;
 import org.apache.commons.lang3.time.StopWatch;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 @CommandPermission("fernc.accounts")
 public class ShowAlts extends BaseCommand {
 
+    @Inject
+    private ProxyFileManager proxyFileManager;
 
     @Description("Show alts of a player")
     @Default
@@ -34,7 +38,7 @@ public class ShowAlts extends BaseCommand {
 
         Universal.getScheduler().runAsync(() -> {
             StopWatch stopWatch = StopWatch.createStarted();
-            IPAlgorithms.IPUUIDLists scannedList = IPAlgorithms.scan(uuidPlayerCheck);
+            IPAlgorithms.IPUUIDLists scannedList = IPAlgorithms.scan(uuidPlayerCheck, proxyFileManager);
             stopWatch.stop();
 
             sender.sendMessage(TextMessage.fromColor("&aSuccessfully found the player's alts. (Took &3" + stopWatch.getTime(TimeUnit.MILLISECONDS) + "ms&a) &bThe list is: "));
@@ -46,7 +50,6 @@ public class ShowAlts extends BaseCommand {
             for (UUID uuid : scannedList.getUuids()) {
                 String playerName = UUIDFetcher.getName(uuid);
                 Universal.debug("Found that " + uuid + " is player " + playerName);
-                //ProxiedPlayer playerListUUID = ProxyServer.getInstance().getPlayer(uuid);
                 if (playerName == null) continue;
 
 

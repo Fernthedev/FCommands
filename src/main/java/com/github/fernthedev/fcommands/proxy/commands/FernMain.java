@@ -4,24 +4,29 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
-import com.github.fernthedev.fcommands.proxy.FileManager;
+import com.github.fernthedev.fcommands.proxy.ProxyFileManager;
+import com.github.fernthedev.fcommands.proxy.WhichFile;
 import com.github.fernthedev.fernapi.universal.Universal;
 import com.github.fernthedev.fernapi.universal.data.chat.ChatColor;
 import com.github.fernthedev.fernapi.universal.util.VersionUtil;
 
+import javax.inject.Inject;
 import java.io.IOException;
 
 @CommandAlias("fernc")
 public class FernMain extends BaseCommand {
     private static final String CONFIG_LIST = "all|ip|config";
 
+    @Inject
+    private ProxyFileManager proxyFileManager;
+
     @Description("Reload configs")
     @CommandCompletion(CONFIG_LIST)
     @Subcommand("config")
     @CommandPermission("fernc.config.reload")
-    public void reloadConfig(CommandIssuer sender, String config) throws IOException {
+    public void reloadConfig(CommandIssuer sender, WhichFile config) throws IOException {
         try {
-            FileManager.loadFiles(FileManager.WhichFile.fromString(config), false);
+            proxyFileManager.loadFiles(config, false);
         }catch (IOException e) {
             Universal.getMethods().getAbstractLogger().warn("&cUnable to reload files");
             throw e;

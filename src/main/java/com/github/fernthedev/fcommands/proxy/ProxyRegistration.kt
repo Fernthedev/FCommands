@@ -6,19 +6,30 @@ import com.github.fernthedev.fcommands.proxy.commands.GetPlaceholderCommand
 import com.github.fernthedev.fcommands.proxy.commands.Seen
 import com.github.fernthedev.fcommands.proxy.commands.ip.MainIP
 import com.github.fernthedev.fcommands.proxy.commands.ip.ShowAlts
-import com.github.fernthedev.fcommands.universal.DBManager
-import com.github.fernthedev.fcommands.universal.PlatformAllRegistration
-import com.github.fernthedev.fcommands.universal.PluginPreferenceManager
-import com.github.fernthedev.fcommands.universal.UniversalMysql
+import com.github.fernthedev.fcommands.proxy.data.ConfigValues
+import com.github.fernthedev.fcommands.proxy.modules.ProxyFileManagerModule
+import com.github.fernthedev.fcommands.universal.*
 import com.github.fernthedev.fcommands.universal.commands.NameHistory
 import com.github.fernthedev.fernapi.universal.Universal
 
 object ProxyRegistration {
+    /**
+     * Order:
+     * @see PlatformAllRegistration.injector
+     */
+    fun buildInjector() {
+        PlatformAllRegistration.injector = PlatformAllRegistration.injector.createChildInjector(
+            ProxyFileManagerModule()
+        )
+    }
+
     fun proxyInit() {
+        PlatformAllRegistration.commonInit()
         val injector = PlatformAllRegistration.injector
 
-        ServerMaintenance.setupTask()
-        Universal.getCommandHandler().registerCommand(injector.getInstance(FernMain::class.java))
+        injector.getInstance(ServerMaintenance::class.java).setupTask()
+
+        Universal.getCommandHandler().registerCommandInjected<FernMain>(injector)
         if (Universal.getMethods().serverType.isProxy) {
             try {
                 // Use reflection to avoid classpath issues with Spigot
@@ -29,25 +40,32 @@ object ProxyRegistration {
                 e.printStackTrace()
             }
         }
-        if (FileManager.configValues.allowIPShow) {
-            Universal.getCommandHandler().registerCommand(MainIP())
+        val proxyFileManager = injector.getInstance(ProxyFileManager::class.java)
+        val configValues: ConfigValues = proxyFileManager.configManager.configData
+
+        val mainIp = injector.getInstance(MainIP::class.java)
+
+        if (configValues.allowIPShow) {
+            Universal.getCommandHandler().registerCommand(mainIp)
         }
-        if (FileManager.configValues.showAltsCommand) {
-            Universal.getCommandHandler().registerCommand(ShowAlts())
+        if (configValues.showAltsCommand) {
+            Universal.getCommandHandler().registerCommandInjected<ShowAlts>(injector)
         }
-        if (FileManager.configValues.allowIPDelete) {
-            MainIP.loadTasks()
+        if (configValues.allowIPDelete) {
+            mainIp.loadTasks()
         }
-        if (FileManager.configValues.allowNameHistory) {
+        if (configValues.allowNameHistory) {
 //            getProxy().getPluginManager().registerCommand(this, new NameHistory());
             Universal.getCommandHandler().registerCommand(NameHistory())
         }
 
+
+
         //SEEN COMMAND
-        if (FileManager.configValues.allowSeenCommand) {
-            Universal.getCommandHandler().registerCommand(Seen())
+        if (configValues.allowSeenCommand) {
+            Universal.getCommandHandler().registerCommandInjected<Seen>(injector)
         }
-        val configValues = FileManager.configManager.configData
+
         val databaseAuthInfo = configValues.databaseAuthInfo
         if (configValues.databaseConnect) {
             Universal.getLogger()
@@ -61,8 +79,8 @@ object ProxyRegistration {
             )
             UniversalMysql.setDatabaseManager(databaseManager)
         }
-        if (FileManager.configValues.globalNicks && configValues.databaseConnect) {
-            Universal.getCommandHandler().registerCommand(FernNick())
+        if (configValues.globalNicks && configValues.databaseConnect) {
+            Universal.getCommandHandler().registerCommandInjected<FernNick>(injector)
         }
         Universal.getCommandHandler().registerCommand(GetPlaceholderCommand())
     }

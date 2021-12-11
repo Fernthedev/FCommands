@@ -1,18 +1,17 @@
-package com.github.fernthedev.fcommands.bungee;
+package com.github.fernthedev.fcommands.bungee
 
-import com.github.fernthedev.fcommands.proxy.FileManager;
-import com.github.fernthedev.fcommands.proxy.commands.Seen;
-import com.github.fernthedev.fernapi.universal.Universal;
-import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.event.EventHandler;
+import com.github.fernthedev.fcommands.proxy.ProxyEvents
+import com.github.fernthedev.fernapi.universal.Universal
+import net.md_5.bungee.api.event.PlayerDisconnectEvent
+import net.md_5.bungee.api.plugin.Listener
+import net.md_5.bungee.event.EventHandler
+import javax.inject.Singleton
 
-public class Events implements Listener {
+@Singleton
+class BungeeEvents : ProxyEvents(), Listener {
 
     @EventHandler
-    public void onLeave(PlayerDisconnectEvent e) {
-        if(FileManager.getConfigManager().getConfigData().getAllowSeenCommand()) Seen.
-                onLeave(Universal.getMethods().convertPlayerObjectToFPlayer(e.getPlayer()));
+    fun onLeave(e: PlayerDisconnectEvent) {
+        onLeave(Universal.getMethods().convertPlayerObjectToFPlayer(e.player))
     }
-
 }

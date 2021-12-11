@@ -23,8 +23,6 @@ public class NickDatabaseInfo extends TableInfo<NickDatabaseInfo.NickDatabaseRow
         @Column("NICK")
         private String nick;
 
-
-
         public NickDatabaseRowInfo(UUID uuid, String nick) {
             super();
             this.uuid = uuid;

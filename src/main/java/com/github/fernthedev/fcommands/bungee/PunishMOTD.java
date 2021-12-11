@@ -2,9 +2,12 @@ package com.github.fernthedev.fcommands.bungee;
 
 import com.github.fernthedev.config.common.Config;
 import com.github.fernthedev.config.common.exceptions.ConfigLoadException;
-import com.github.fernthedev.fcommands.proxy.FileManager;
+import com.github.fernthedev.fcommands.proxy.ProxyFileManager;
+import com.github.fernthedev.fcommands.proxy.WhichFile;
+import com.github.fernthedev.fcommands.proxy.data.ConfigValues;
 import com.github.fernthedev.fcommands.proxy.data.IPSaveValues;
 import com.github.fernthedev.fcommands.proxy.data.PunishValues;
+import com.github.fernthedev.fcommands.proxy.modules.ProxyFile;
 import com.github.fernthedev.fernapi.universal.Universal;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.utils.Punishment;
@@ -23,18 +26,30 @@ import net.md_5.bungee.api.scheduler.TaskScheduler;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
+import javax.inject.Inject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class PunishMOTD implements Listener {
+    
+    @ProxyFile(WhichFile.IP)
+    @Inject
+    private Config<IPSaveValues> ipConfig;
+
+    @ProxyFile(WhichFile.IP)
+    @Inject
+    private Config<ConfigValues> config;
+    
+    @Inject
+    private ProxyFileManager proxyFileManager;
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void MOTDCheck(ProxyPingEvent eping) {
+    public void pingEvent(ProxyPingEvent eping) {
         TaskScheduler taskScheduler = ProxyServer.getInstance().getScheduler();
 
-        if (!FernCommands.getHookManager().hasAdvancedBan() || !FileManager.getConfigValues().getPunishMotd()) return;
+        if (!FernCommands.getHookManager().hasAdvancedBan() || !config.getConfigData().getPunishMotd()) return;
 
 
         String hostAddress = eping.getConnection().getAddress().getHostString().replaceAll("\\.", " ");
@@ -44,38 +59,22 @@ public class PunishMOTD implements Listener {
         final boolean[] doneCheck = {false};
 
 
-        Config<IPSaveValues> ipConfig = FileManager.getIpConfig();
-
-        //ConfigurationProvider.getProvider(YamlConfiguration.class).load(ipfile);
-        //        FileManager.configLoad(ipConfig);
-        //ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, configfile);
-
-
         List<UUID> players = ipConfig.getConfigData().getPlayers(hostAddress);
 
         if (players != null && !players.isEmpty()) {
             taskScheduler.runAsync((Plugin) Universal.getPlugin(), () -> {
 
-
-                // for (String key : players) {
-                //getProxy.getLogger().info("just the key below fern");
-                // getProxy.getLogger().info(key);
-                //  }
-//                FernCommands.getInstance().getLogger().info("Pinged by " + hostAddress + " and uuid is " + players.toString() + " the player names are " + playerNames.toString());
-
-                PunishValues punishValues = FileManager.getConfigValues().getPunishValues();
+                PunishValues punishValues = config.getConfigData().getPunishValues();
 
 
                 for (UUID checkedPlayer : players) {
-                    if (PunishmentManager.get().isBanned(checkedPlayer.toString().replaceAll("-",""))) {
-                        //getProxy.getLogger().info("Pinged by " + hostAddress + " and uuid is " + checkedPlayer);
+                    if (PunishmentManager.get().isBanned(checkedPlayer.toString().replace("-",""))) {
                         SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm:ss");
-                        Punishment punishment = PunishmentManager.get().getBan(checkedPlayer.toString().replaceAll("-",""));
+                        Punishment punishment = PunishmentManager.get().getBan(checkedPlayer.toString().replace("-",""));
                         //PERM BAN
                         BaseComponent message;
 
                         if (punishment.getType() == PunishmentType.BAN || punishment.getType() == PunishmentType.IP_BAN) {
-//                                FernCommands.getInstance().getLogger().info("Player pinged, and is permanently banned" + checkedPlayer);
                             message = message(punishValues.getPermBan());
                             pingResponse.setDescriptionComponent(message);
                             eping.setResponse(pingResponse);
@@ -119,47 +118,30 @@ public class PunishMOTD implements Listener {
         }
 
         eping.setResponse(pingResponse);
-        //eping.getConnection().
-        //ProxiedPlayer Playername = ProxyServer.getInstance().getPlayer(uuid);
-        // ProxyServer.getInstance().getLogger().info("This is who pinged ur server: " + uuid + " and the name is: " + Playername + " and also the adress: " + hostAddress);
-
-
     }
 
 
     @EventHandler
     public void onLoginIp(PostLoginEvent event) {
-        if (FileManager.getConfigValues().getCacheIps()) {
+        if (config.getConfigData().getCacheIps()) {
             Universal.getScheduler().runAsync(() -> {
-//            log.info("Player " + event.getPlayer() + " has joined.");
-//            log.info(event.getPlayer().getAddress().getHostString().replaceAll("\\.", " ") + " is the ip of player");
-
                 String ip = event.getPlayer().getAddress().getHostString().replaceAll("\\.", " ");
-//            log.info("proxy list fern" + ip + " " + player);
+   
+                proxyFileManager.configLoad(ipConfig);
 
-
-                Config<IPSaveValues> ipconfig = FileManager.getIpConfig();
-                FileManager.configLoad(ipconfig);
-
-                List<UUID> ipplist = ipconfig.getConfigData().getPlayers(ip);
+                List<UUID> ipplist = ipConfig.getConfigData().getPlayers(ip);
 
                 if (ipplist == null) ipplist = new ArrayList<>();
 
                 if (!ipplist.contains(event.getPlayer().getUniqueId()))
                     ipplist.add(event.getPlayer().getUniqueId());
 
-                ipconfig.getConfigData().getPlayerMap().put(ip, ipplist);
+                ipConfig.getConfigData().getPlayerMap().put(ip, ipplist);
                 try {
-                    ipconfig.syncSave();
+                    ipConfig.syncSave();
                 } catch (ConfigLoadException e) {
                     e.printStackTrace();
                 }
-//                log.info("Saving new ip for: " + ip + " " + player);
-            /*
-            if(!ipconfig.getSection(ip).getKeys().contains(player)) {
-                log.warning("Unable to save ip");
-            }*/
-
             });
         }
     }

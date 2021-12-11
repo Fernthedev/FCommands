@@ -1,18 +1,17 @@
-package com.github.fernthedev.fcommands.velocity;
+package com.github.fernthedev.fcommands.velocity
 
-import com.github.fernthedev.fcommands.proxy.FileManager;
-import com.github.fernthedev.fcommands.proxy.commands.Seen;
-import com.github.fernthedev.fernapi.universal.Universal;
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.connection.DisconnectEvent;
+import com.github.fernthedev.fcommands.proxy.ProxyEvents
+import com.github.fernthedev.fernapi.universal.Universal
+import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.connection.DisconnectEvent
+import javax.inject.Singleton
 
-public class Events {
+@Singleton
+class VelocityEvents : ProxyEvents() {
 
     @Subscribe
-    public void onLeave(DisconnectEvent e) {
-        if(FileManager.getConfigManager().getConfigData().getAllowSeenCommand())
-            Seen.onLeave(Universal.getMethods().convertPlayerObjectToFPlayer(e.getPlayer()));
-
+    fun onLeave(e: DisconnectEvent) {
+        onLeave(Universal.getMethods().convertPlayerObjectToFPlayer(e.player))
     }
 
 }

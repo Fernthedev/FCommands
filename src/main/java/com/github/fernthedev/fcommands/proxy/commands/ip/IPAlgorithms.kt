@@ -1,7 +1,8 @@
 package com.github.fernthedev.fcommands.proxy.commands.ip
 
-import com.github.fernthedev.fcommands.proxy.FileManager.Companion.configLoad
-import com.github.fernthedev.fcommands.proxy.FileManager.Companion.ipConfig
+import com.github.fernthedev.config.common.Config
+import com.github.fernthedev.fcommands.proxy.ProxyFileManager
+import com.github.fernthedev.fcommands.proxy.data.IPSaveValues
 import com.github.fernthedev.fernapi.universal.debugLog
 import com.github.fernthedev.fernutils.thread.ThreadUtils
 import lombok.AllArgsConstructor
@@ -12,20 +13,21 @@ import java.util.function.Consumer
 
 object IPAlgorithms {
 
-    @JvmStatic
-    fun scan(uuid: UUID): IPUUIDLists {
-        val ipConfig = ipConfig
-        configLoad(ipConfig)
 
-        val ips = getIPsThatMatch(uuid, HashSet())
-        val uuids = getPlayers(ips, HashSet())
+    @JvmStatic
+    fun scan(uuid: UUID, proxyFileManager: ProxyFileManager): IPUUIDLists {
+        val ipConfig = proxyFileManager.ipConfig
+        proxyFileManager.configLoad(ipConfig)
+
+        val ips = getIPsThatMatch(uuid, HashSet(), ipConfig)
+        val uuids = getPlayers(ips, HashSet(), ipConfig)
 
         var oldIPSize = -1 // Set to -1 to force to do at least 1 recursive scan
         var oldUUIDSize = -1
 
         val scanUUID = Consumer { uuid1: UUID ->
             debugLog { "Scanning for IPs of $uuid1" }
-            ips.addAll(getIPsThatMatch(uuid1, ips))
+            ips.addAll(getIPsThatMatch(uuid1, ips, ipConfig))
         }
 
         while (oldIPSize != ips.size || oldUUIDSize != uuids.size) {
@@ -35,7 +37,7 @@ object IPAlgorithms {
             oldIPSize = ips.size
             oldUUIDSize = uuids.size
             try {
-                if (uuids.size > 2) {
+                if (uuids.size > 10) {
                     val uuidThreads = ThreadUtils.runForLoopAsync(uuids, scanUUID)
                     uuidThreads.runThreads(ThreadUtils.ThreadExecutors.CACHED_THREADS.executorService)
                     uuidThreads.awaitFinish(5)
@@ -47,7 +49,7 @@ object IPAlgorithms {
                 e.printStackTrace()
             }
             debugLog { "Scanning for UUIDs of ip $ips" }
-            uuids.addAll(getPlayers(ips, uuids))
+            uuids.addAll(getPlayers(ips, uuids, ipConfig))
             debugLog { "Scanning old size $oldIPSize:$oldUUIDSize now it is ${ips.size}:${uuids.size}" }
             debugLog { "Result is: $ips:$uuids" }
         }
@@ -57,8 +59,7 @@ object IPAlgorithms {
     /**
      * Get IPs of the UUID specified
      */
-    fun getIPsThatMatch(uuid: UUID, ignoredIPs: Set<String>): MutableSet<String> {
-        val ipConfig = ipConfig
+    fun getIPsThatMatch(uuid: UUID, ignoredIPs: Set<String>, ipConfig: Config<IPSaveValues>): MutableSet<String> {
         val ips: MutableSet<String> = HashSet()
         iterateIps@ for (ipKey in ipConfig.configData.playerMap.keys) {
             if (ignoredIPs.contains(ipKey)) continue@iterateIps
@@ -83,8 +84,7 @@ object IPAlgorithms {
      *
      * @param ignoredUUIDs UUIDs that we already know are part of the list
      */
-    fun getPlayers(ips: Set<String>, ignoredUUIDs: Set<UUID>): MutableSet<UUID> {
-        val ipConfig = ipConfig
+    fun getPlayers(ips: Set<String>, ignoredUUIDs: Set<UUID>, ipConfig: Config<IPSaveValues>): MutableSet<UUID> {
         val playersFound: MutableSet<UUID> = HashSet()
         for (ipFromList in ips) {
             val uuidPlayersFromIP = ipConfig.configData.getPlayers(ipFromList)
