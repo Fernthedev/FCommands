@@ -3,7 +3,6 @@ package com.github.fernthedev.fcommands.spigot.hooks;
 import com.github.fernthedev.fcommands.spigot.FernCommands;
 import com.github.fernthedev.fcommands.spigot.nick.NickManager;
 import com.github.fernthedev.fcommands.spigot.placeholderapi.VanishPlaceholder;
-import com.github.fernthedev.fcommands.universal.NickNetworkManager;
 import com.github.fernthedev.fernapi.universal.Universal;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import lombok.Getter;
@@ -75,8 +74,6 @@ public class HookManager {
         essentials = Bukkit.getPluginManager().isPluginEnabled("Essentials");
         Universal.getLogger().info("Essentials status: {}", essentials);
         if(essentials) {
-            Universal.getMessageHandler().registerMessageHandler(new NickNetworkManager());
-//            FernCommands.getInstance().addMessageListener(new NickManager());
             FernCommands.getInstance().getServer().getPluginManager().registerEvents(new NickManager(), FernCommands.getInstance());
         }
     }
