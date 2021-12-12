@@ -1,16 +1,12 @@
 package com.github.fernthedev.fcommands.spigot.misc;
 
-import com.github.fernthedev.fcommands.spigot.FernCommands;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-import java.util.logging.Logger;
-
-public class igdoorfarm implements Listener {
-    private final Logger log = FernCommands.getInstance().getServer().getLogger();
+public class IronGolemDoorFarm implements Listener {
 
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent e) {
@@ -20,16 +16,6 @@ public class igdoorfarm implements Listener {
             }
 
         }
-        //if(e.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER) {
-            /*e.getEntity().setAI(false);
-            if(e.getEntity().hasAI()) {
-                log.warning("Unable to disable ai");
-                e.getEntity().setAI(true);
-            }*/
-            //LivingEntity entity = (LivingEntity) e.getEntity();
-            //overrideBehavior(e.getEntity());
-            //EntityCreature c = (EntityCreature) ((EntityInsentient)((CraftEntity)entity).getHandle());
-       // }
     }
 
     @EventHandler

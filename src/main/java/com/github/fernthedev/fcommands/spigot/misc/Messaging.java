@@ -1,17 +1,21 @@
 package com.github.fernthedev.fcommands.spigot.misc;
 
-import com.github.fernthedev.fcommands.spigot.FernCommands;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
+import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class Messaging {
 
-    private Messaging() {
+    private static Plugin plugin;
 
+    @Inject
+    private Messaging(Plugin plugin) {
+        Messaging.plugin = plugin;
     }
 
     /**
@@ -39,7 +43,7 @@ public class Messaging {
         }
 
         if (player != null)
-            player.sendPluginMessage(FernCommands.getInstance(), "BungeeCord", stream.toByteArray());
+            player.sendPluginMessage(plugin, "BungeeCord", stream.toByteArray());
     }
     /**
      * {@link #sendRequest(String, String...)}
@@ -79,7 +83,7 @@ public class Messaging {
             player = getRandomPlayer();
 
         if (player != null)
-            player.sendPluginMessage(FernCommands.getInstance(), "BungeeCord", stream.toByteArray());
+            player.sendPluginMessage(plugin, "BungeeCord", stream.toByteArray());
     }
 
 

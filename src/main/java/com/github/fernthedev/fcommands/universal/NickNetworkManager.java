@@ -1,8 +1,8 @@
 package com.github.fernthedev.fcommands.universal;
 
-import com.github.fernthedev.fcommands.spigot.nick.NickManager;
 import com.github.fernthedev.fcommands.universal.mysql.nick.NickDatabaseInfo;
 import com.github.fernthedev.fernapi.universal.Universal;
+import com.github.fernthedev.fernapi.universal.data.chat.ChatColor;
 import com.github.fernthedev.fernapi.universal.data.database.TableInfo;
 import com.github.fernthedev.fernapi.universal.data.network.Channel;
 import com.github.fernthedev.fernapi.universal.data.network.PluginMessageData;
@@ -10,8 +10,9 @@ import com.github.fernthedev.fernapi.universal.handlers.PluginMessageHandler;
 import com.github.fernthedev.fernapi.universal.handlers.ServerType;
 import com.github.fernthedev.fernapi.universal.mysql.DatabaseListener;
 import com.google.gson.Gson;
-import org.bukkit.ChatColor;
+import lombok.Getter;
 
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,10 +20,24 @@ import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+@Singleton
 public class NickNetworkManager extends PluginMessageHandler {
+
+    public record NickData(String uuid, String playerName, String nick) {}
+
+    @Getter
+    private final EventCallback<NickData> handleNick = new EventCallback<>();
+
+    private static Object l = null;
 
     public NickNetworkManager() {
         super();
+
+        if (l != null)
+            throw new IllegalArgumentException("Already created nick network manager");
+
+        l = new Object();
+
         DatabaseListener databaseManager = UniversalMysql.getDatabaseManager();
 
         databaseManager.runOnConnect(() -> {
@@ -99,7 +114,7 @@ public class NickNetworkManager extends PluginMessageHandler {
                         }
 
 
-                    NickManager.handleNick(uuid, playerName, nick);
+                    handleNick.invoke(new NickData(uuid, playerName, nick));
                 }
             });
         }

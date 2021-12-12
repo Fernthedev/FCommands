@@ -6,40 +6,41 @@ import com.github.fernthedev.fernapi.universal.util.VersionUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+
+import javax.inject.Inject;
 
 public class FernMain implements CommandExecutor {
+
+    @Inject
+    private FernCommands fernCommands;
+
+    @Inject
+    private Help help;
+
+    @Inject
+    private ReloadConfig reloadConfig;
+
+    @Inject
+    private Hooks hooks;
+
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if(args.length == 0) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
+        if (args.length == 0) {
             sender.sendMessage(FernCommands.message("&aRunning FernCommands version " + Universal.getPlugin().getPluginData().getVersion() + " (FernAPI: " + VersionUtil.getVersionData().getFernapi_version() + ")"));
-            sender.sendMessage(FernCommands.message("&aAuthors: " + FernCommands.getInstance().getDescription().getAuthors()));
-        }else{
+            sender.sendMessage(FernCommands.message("&aAuthors: " + fernCommands.getDescription().getAuthors()));
+        } else {
             String arg1 = args[0];
 
             switch (arg1.toLowerCase()) {
-                case "help" -> Help.getInstance().onCommand(sender, command, s, args);
-                case "reload" -> ReloadConfig.getInstance().onCommand(sender, command, s, args);
-                case "hookmanager" -> Hooks.getInstance().onCommand(sender, command, s, args);
+                case "help" -> help.onCommand(sender, command, s, args);
+                case "reload" -> reloadConfig.onCommand(sender, command, s, args);
+                case "hookmanager" -> hooks.onCommand(sender, command, s, args);
                 default -> {
                     sender.sendMessage(FernCommands.message("&cInvalid argument"));
-                    Help.getInstance().onCommand(sender, command, s, args);
+                    help.onCommand(sender, command, s, args);
                 }
             }
-
-            /*
-
-            if(arg1.equalsIgnoreCase("Help")) {
-                    Help.getInstance().onCommand(sender,command,s,args);
-            }else
-                if(arg1.equalsIgnoreCase("reload")) {
-                ReloadConfig.getInstance().onCommand(sender, command, s, args);
-            }else
-                if (arg1.equalsIgnoreCase("HookManager")) {
-                        HookManager.getInstance().onCommand(sender, command, s, args);
-                    }else {
-                sender.sendMessage(FernCommands.message("&cInvalid argument"));
-                Help.getInstance().onCommand(sender,command,s,args);
-                }*/
         }
         return true;
     }

@@ -1,21 +1,29 @@
 package com.github.fernthedev.fcommands.spigot.misc;
 
-import com.github.fernthedev.fcommands.spigot.FernCommands;
-import com.github.fernthedev.fcommands.spigot.FilesManager;
+import com.github.fernthedev.fcommands.spigot.SpigotFileManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.Plugin;
+
+import javax.inject.Inject;
 
 public class RandomKick {
 
+    @Inject
+    private SpigotFileManager spigotFileManager;
+
+    @Inject
+    private Plugin plugin;
+
     public void registerListener() {
-        boolean randomKick = FilesManager.getInstance().getValue("RandomKick", false);
+        boolean randomKick = spigotFileManager.getValue("RandomKick", false);
 
-        String randomKickMessageCountdown = FilesManager.getInstance().getValue("RandomKickMessageCountdown", "&c&lRemoving trash in %count%");
-        String randomKickMessage = FilesManager.getInstance().getValue("RandomKickMessage", "&a&lRemoved %player% which is trash");
-        long randomKickCountTimeSeconds = FilesManager.getInstance().getValue("RandomKickCountTimeSeconds", 5 * 60);
+        String randomKickMessageCountdown = spigotFileManager.getValue("RandomKickMessageCountdown", "&c&lRemoving trash in %count%");
+        String randomKickMessage = spigotFileManager.getValue("RandomKickMessage", "&a&lRemoved %player% which is trash");
+        long randomKickCountTimeSeconds = spigotFileManager.getValue("RandomKickCountTimeSeconds", 5 * 60);
 
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(FernCommands.getInstance(), () -> {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             String countDown = ChatColor.translateAlternateColorCodes('&', randomKickMessageCountdown);
 
             for (int i = 10; i > 0; i--) {

@@ -1,6 +1,5 @@
 package com.github.fernthedev.fcommands.spigot.ncp;
 
-import com.github.fernthedev.fcommands.spigot.FernCommands;
 import fr.neatmonster.nocheatplus.checks.CheckType;
 
 public class PlayerReport {
@@ -9,9 +8,9 @@ public class PlayerReport {
     private final CheckType check;
     private final double violation;
 
-    public PlayerReport(String player, CheckType check, double violation) {
+    public PlayerReport(String player, CheckType check, double violation, String serverName) {
         this.player = player;
-        this.server = FernCommands.SERVER_NAME;
+        this.server = serverName;
         this.check = check;
         this.violation = violation;
     }

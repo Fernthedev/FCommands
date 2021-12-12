@@ -1,6 +1,5 @@
 package com.github.fernthedev.fcommands.spigot.misc;
 
-import com.github.fernthedev.fcommands.spigot.FernCommands;
 import com.github.fernthedev.fernapi.universal.Universal;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
@@ -22,10 +21,14 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Team;
 
+import javax.inject.Inject;
 import java.util.*;
 
 public class RideBow implements Listener {
 
+
+
+    private final Plugin plugin;
 
     private static ShapelessRecipe shapelessRecipe;
 
@@ -33,6 +36,7 @@ public class RideBow implements Listener {
 
     private static final Map<Arrow, Player> ignoreEntityHit = new HashMap<>();
 
+    @Inject
     public RideBow(Plugin plugin) {
 
         // Our custom variable which we will be changing around.
@@ -69,6 +73,7 @@ public class RideBow implements Listener {
         shapelessRecipe.addIngredient(Material.ENDER_PEARL);
 
         Bukkit.addRecipe(shapelessRecipe);
+        this.plugin = plugin;
     }
 
     private void recurseEject(Entity e) {
@@ -84,8 +89,7 @@ public class RideBow implements Listener {
         if (e.getRecipe() == shapelessRecipe && !p.hasPermission("fernc.craft.bow")) e.setCancelled(true);
     }
 
-    //boolean teleport = false;
-    //Player pl = null;
+
 
     @EventHandler
     public void onHitEntity(EntityDamageByEntityEvent e) {
@@ -127,26 +131,8 @@ public class RideBow implements Listener {
                     }
 
                     removeArrow(arrow);
-//                    arrow.getPassengers().parallelStream().filter(Objects::nonNull).forEach(Entity::eject);
-
-//                    entities.parallelStream().filter(entity -> e instanceof Player).forEach(Entity::remove);
-
-
-
-
-
-
                 }
             }
-
-
-            //     if(teleport) {
-            // Location telep = arrow.getLocation();
-            //   if(pl != null)
-            //   pl.teleport(telep);
-            //    teleport = false;
-            //       pl = null;
-            //      }
         }
     }
 
@@ -158,7 +144,8 @@ public class RideBow implements Listener {
 
             try {
                 team.unregister();
-            } catch (IllegalStateException ignored) {}
+            } catch (IllegalStateException ignored) {
+            }
         }
 
         teamMap.remove(arrow.getUniqueId());
@@ -182,18 +169,6 @@ public class RideBow implements Listener {
                 if (hasLore && player.getInventory().getItemInMainHand().getItemMeta().getLore().contains(ChatColor.GRAY + "Riding")) {
 
 
-
-
-                    //FernCommands.getInstance().getLogger().info("has lore and shot");
-                    //e.getProjectile().addPassenger(player);'
-                    //         //teleport = true;
-                    //          //   pl = player;
-                    //if (!e.getProjectile().getPassengers().contains(player)) {
-                    //  player.sendMessage("Unable to ride projectile");
-                    // }
-
-
-
                     Arrow arrow = (Arrow) e.getProjectile();
 
                     boolean creative = player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR;
@@ -208,12 +183,9 @@ public class RideBow implements Listener {
                         for (ItemStack item : inv) {
 
                             if (item == null) continue;
-                            //sender.sendMessage(item + " is in your inventory");
-                            //FernCommands.getInstance().getLogger().info(item + "is in " + player + "'s inventory");
                             if (item.getType() == Material.ENDER_PEARL) {
                                 amount = item.getAmount();
                                 enderpearl = item;
-                                //player.sendMessage(amount + "of enderpearls");
                                 break;
                             }
                         }
@@ -226,8 +198,8 @@ public class RideBow implements Listener {
                         }
                     }
 
-                    arrow.setMetadata("teleport", new FixedMetadataValue(FernCommands.getInstance(), player));
-                    arrow.setMetadata("teleport_ride", new FixedMetadataValue(FernCommands.getInstance(), !player.isSneaking()));
+                    arrow.setMetadata("teleport", new FixedMetadataValue(plugin, player));
+                    arrow.setMetadata("teleport_ride", new FixedMetadataValue(plugin, !player.isSneaking()));
 
 
                     new BukkitRunnable() {
@@ -243,9 +215,9 @@ public class RideBow implements Listener {
                             }
                         }
 
-                    }.runTaskTimer(FernCommands.getInstance(), 0L, 5L);
+                    }.runTaskTimer(plugin, 0L, 5L);
 
-                    if (!player.isSneaking() ) {
+                    if (!player.isSneaking()) {
 
                         Team team = Bukkit.getScoreboardManager().getMainScoreboard().registerNewTeam(arrow.getUniqueId().toString().trim().replaceAll("-", "").substring(0, 15));
                         team.addEntry(arrow.getUniqueId().toString());
@@ -255,8 +227,8 @@ public class RideBow implements Listener {
                         List<Entity> passengers = player.getPassengers();
 
                         passengers.forEach(entity -> {
-                            if (e instanceof Player) {
-                                team.addEntry(((Player) e).getName());
+                            if (e instanceof Player p) {
+                                team.addEntry(p.getName());
                             } else {
                                 team.addEntry(entity.getUniqueId().toString());
                             }
@@ -276,90 +248,10 @@ public class RideBow implements Listener {
 
                         passengers.forEach(player::addPassenger);
                     }
-
-                    // arrow.playEffect(EntityEffect.FIREWORK_EXPLODE);
-                    //player.spawnParticle(Particle.SPELL,player.getLocation(),200);
-
-
                 }
             }
         }
     }
 
 
-
-//
-//    @Override
-//    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-//        if (sender instanceof Player) {
-//            Player player = (Player) sender;
-//            if (player.hasPermission("fernc.craft.bow")) {
-//                if (player.getInventory().getItemInMainHand().getType() == Material.BOW && player.getInventory().getItemInMainHand().getType() != null) {
-//                    ItemStack bow = player.getInventory().getItemInMainHand();
-//                    ItemMeta mainlore = bow.getItemMeta();
-//                    boolean haslo = false;
-//                    if (player.getInventory().getItemInMainHand().getItemMeta().hasLore())
-//                        haslo = true;
-//
-//                    if (haslo) {
-//                        if (player.getInventory().getItemInMainHand().getItemMeta().getLore().contains(ChatColor.GRAY + "Riding")) {
-//                            player.sendMessage(ChatColor.BLUE + "This bow already has riding enchant");
-//                        }
-//                    }
-//                    if (!haslo) {
-//                        if (player.getInventory().contains(Material.ENDER_PEARL)) {
-//                            ArrayList<String> lore = new ArrayList<>();
-//                            lore.add(ChatColor.GRAY + "Riding");
-//                            mainlore.setLore(lore);
-//                            ItemStack[] inv = player.getInventory().getContents();
-//                            ItemStack enderpearl = null;
-//                            int amount = 0;
-//                            boolean creative = false;
-//                            if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
-//                                creative = true;
-//                            }
-//                            for (ItemStack item : inv) {
-//                                //sender.sendMessage(item + " is in your inventory");
-//                                //FernCommands.getInstance().getLogger().info(item + "is in " + player + "'s inventory");
-//                                if (item.getType() == Material.ENDER_PEARL) {
-//                                    amount = item.getAmount();
-//                                    enderpearl = item;
-//                                    //player.sendMessage(amount + "of enderpearls");
-//                                    break;
-//                                }
-//                            }
-//                            if (amount == 0) {
-//                                if (!creative) {
-//                                    sender.sendMessage(ChatColor.RED + "Failed to get inventory items or amount");
-//                                    return true;
-//                                }
-//                            } else {
-//                                if (!creative) {
-//                                    amount -= 1;
-//                                    enderpearl.setAmount(amount);
-//                                }
-//                                bow.setItemMeta(mainlore);
-//                                sender.sendMessage(ChatColor.GREEN + "Enchanted bow with riding successfully");
-//                                FernCommands.getInstance().getLogger().info("Successfully enchanted bow with riding");
-//                                return true;
-//                            }
-//                        } else {
-//                            player.sendMessage(ChatColor.RED + "YOU MUST BE HOLDING A BOW AND HAVE ATLEAST ONE ENDERPEARL");
-//                            return true;
-//                        }
-//                    }
-//                } else {
-//                    player.sendMessage(ChatColor.RED + "YOU MUST BE HOLDING A BOW AND HAVE ATLEAST ONE ENDERPEARL");
-//                    return true;
-//                }
-//            } else {
-//                sender.sendMessage(ChatColor.RED + "You do not have permission to craft that item");
-//                return true;
-//            }
-//        } else {
-//            sender.sendMessage(ChatColor.RED + "You must be a player to craft stuff. k?");
-//            return true;
-//        }
-//        return true;
-//    }
 }

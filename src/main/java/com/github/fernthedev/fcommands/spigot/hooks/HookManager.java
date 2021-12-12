@@ -4,34 +4,38 @@ import com.github.fernthedev.fcommands.spigot.FernCommands;
 import com.github.fernthedev.fcommands.spigot.nick.NickManager;
 import com.github.fernthedev.fcommands.spigot.placeholderapi.VanishPlaceholder;
 import com.github.fernthedev.fernapi.universal.Universal;
+import com.google.inject.Injector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.logging.Logger;
 
+@Singleton
+@Getter
 public class HookManager {
 
 
-    @Getter
-    private static boolean vault;
 
-    @Getter
-    private static boolean nte;
+    @Inject
+    private FernCommands fernCommands;
 
+    @Inject
+    private Server server;
 
-    @Getter
-    private static boolean placeHolderAPI;
+    @Inject
+    private Injector injector;
 
-    @Getter
-    private static boolean worldGuard;
+    private boolean vault;
+    private boolean nte;
+    private boolean placeHolderAPI;
+    private boolean worldGuard;
+    private boolean essentials;
 
-    @Getter
-    private static boolean essentials;
-
-    @Getter
     private WorldGuardPlugin worldGuardPlugin;
 
     //CHECK IF COMPATIBLE PLUGINS ARE ENABLED
@@ -44,14 +48,16 @@ public class HookManager {
      * This registers if any compatible plugins are enabled for other methods
      */
     public void registerPlugins() {
+        Logger logger = fernCommands.getLogger();
+
         /*
           Checks for vault
          */
         vault = false;
         if(this.getServer().getPluginManager().isPluginEnabled("Vault")) {
             vault = true;
-            FernCommands.getInstance().setupVault();
-            getLogger().info("HOOKED VAULT ECONOMY PERMISSIONS AND CHAT");
+            fernCommands.setupVault();
+            logger.info("HOOKED VAULT ECONOMY PERMISSIONS AND CHAT");
         }
 
         /*
@@ -59,22 +65,22 @@ public class HookManager {
          */
         nte = this.getServer().getPluginManager().isPluginEnabled("NametagEdit");
         if(nte)
-            getLogger().info("HOOKED NAMETAGEDIT API");
+            logger.info("HOOKED NAMETAGEDIT API");
 
         placeHolderAPI = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
         if(placeHolderAPI) {
             //Registering placeholder will be use here
             new VanishPlaceholder().register();
 
-            getLogger().info("HOOKED PLACEHOLDERAPI");
+            logger.info("HOOKED PLACEHOLDERAPI");
             //messageListener.addListener(new HookPlaceHolderAPI());
-            getLogger().info("HOOKED PLACEHOLDERAPI BUNGEE MESSAGING");
+            logger.info("HOOKED PLACEHOLDERAPI BUNGEE MESSAGING");
         }
 
         essentials = Bukkit.getPluginManager().isPluginEnabled("Essentials");
         Universal.getLogger().info("Essentials status: {}", essentials);
         if(essentials) {
-            FernCommands.getInstance().getServer().getPluginManager().registerEvents(new NickManager(), FernCommands.getInstance());
+            fernCommands.getServer().getPluginManager().registerEvents(injector.getInstance(NickManager.class), fernCommands);
         }
     }
 
@@ -94,14 +100,6 @@ public class HookManager {
 
         worldGuard = true;
         return (WorldGuardPlugin) plugin;
-    }
-
-    private Logger getLogger() {
-        return FernCommands.getInstance().getLogger();
-    }
-
-    private Server getServer() {
-        return FernCommands.getInstance().getServer();
     }
 
 }

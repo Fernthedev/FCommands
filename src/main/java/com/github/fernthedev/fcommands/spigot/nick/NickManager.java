@@ -2,10 +2,12 @@ package com.github.fernthedev.fcommands.spigot.nick;
 
 import com.github.fernthedev.fcommands.spigot.FernCommands;
 import com.github.fernthedev.fcommands.spigot.hooks.HookManager;
+import com.github.fernthedev.fcommands.universal.NickNetworkManager;
 import com.github.fernthedev.fcommands.universal.mysql.nick.NickDatabaseInfo;
 import com.github.fernthedev.fernapi.universal.Universal;
 import com.github.fernthedev.fernapi.universal.mysql.DatabaseListener;
 import com.google.gson.Gson;
+import kotlin.Unit;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -13,6 +15,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,14 +24,24 @@ import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+@Singleton
 public class NickManager implements Listener {
 
-    static final HashMap<String, String> nicknames = new HashMap<>();
+    private FernCommands plugin;
+    private HookManager hookManager;
+    private NickNetworkManager nickNetworkManager;
+
+    private static final HashMap<String, String> nicknames = new HashMap<>();
 
     private static final NickDatabaseInfo databaseInfo = new NickDatabaseInfo();
 
-    public NickManager() {
-        DatabaseListener databaseManager = FernCommands.getDatabaseManager();
+    @Inject
+    public NickManager(NickNetworkManager nickNetworkManager, HookManager hookManager, FernCommands plugin) {
+        this.plugin = plugin;
+        this.hookManager = hookManager;
+        this.nickNetworkManager = nickNetworkManager;
+
+        DatabaseListener databaseManager = plugin.getDatabaseManager();
         Universal.getLogger().info("Initiating Global Nicks");
 
 
@@ -52,12 +66,16 @@ public class NickManager implements Listener {
                     return t;
                 }));
 
+        nickNetworkManager.getHandleNick().register(this, nickData -> {
+            handleNick(nickData.uuid(), nickData.playerName(), nickData.nick());
+            return Unit.INSTANCE;
+        });
     }
 
-    public static void handleNick(String uuid, String playerName, String nick) {
+    public void handleNick(String uuid, String playerName, String nick) {
         Universal.debug(() -> nick + " " + uuid);
         if (nick != null) {
-            Bukkit.getScheduler().callSyncMethod(FernCommands.getInstance(), () -> {
+            Bukkit.getScheduler().callSyncMethod(plugin, () -> {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "essentials:nick " + playerName + " " + nick);
                 return null;
             });
@@ -69,7 +87,7 @@ public class NickManager implements Listener {
     }
 
     private CompletableFuture<Void> runSqlSync() {
-        DatabaseListener databaseManager = FernCommands.getDatabaseManager();
+        DatabaseListener databaseManager = plugin.getDatabaseManager();
 
         return databaseInfo.loadFromDB(databaseManager).thenRun(() -> {
             Queue<NickDatabaseInfo.NickDatabaseRowInfo> rowDataStack = new LinkedList<>(databaseInfo.getRowDataListCopy().values());
@@ -87,10 +105,10 @@ public class NickManager implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        if (HookManager.isEssentials())
+        if (hookManager.isEssentials())
             Universal.getScheduler().runAsync(() -> {
                 try {
-                    DatabaseListener databaseManager = FernCommands.getDatabaseManager();
+                    DatabaseListener databaseManager = plugin.getDatabaseManager();
                     if (databaseManager.isConnected()) {
                         runSqlSync().get();
                         String uuid = e.getPlayer().getUniqueId().toString();
@@ -118,7 +136,7 @@ public class NickManager implements Listener {
 
                         if (!NickManager.nicknames.get(uuid).equals(nick)) {
                             String finalNick = nick;
-                            Bukkit.getScheduler().runTask(FernCommands.getInstance(), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "essentials:nick " + playerName + " " + finalNick));
+                            Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "essentials:nick " + playerName + " " + finalNick));
                             NickManager.nicknames.put(uuid, nick);
                         }
 

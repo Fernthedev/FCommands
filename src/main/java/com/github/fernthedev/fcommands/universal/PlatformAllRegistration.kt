@@ -40,7 +40,7 @@ object PlatformAllRegistration {
         Universal.getCommandHandler().registerCommand(DebugCommand())
 
         if (UniversalMysql.getDatabaseManager() != null) {
-            Universal.getMessageHandler().registerMessageHandler(NickNetworkManager())
+            Universal.getMessageHandler().registerMessageHandler(injector.getInstance(NickNetworkManager::class.java))
             Universal.getLogger().info("Registered fern nicks velocity channels.")
         }
     }

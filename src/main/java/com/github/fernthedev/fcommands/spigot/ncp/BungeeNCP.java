@@ -1,30 +1,57 @@
 package com.github.fernthedev.fcommands.spigot.ncp;
 
-import com.github.fernthedev.fcommands.spigot.FernCommands;
 import com.github.fernthedev.fcommands.spigot.misc.Messaging;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import fr.neatmonster.nocheatplus.NCPAPIProvider;
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.checks.access.IViolationInfo;
 import fr.neatmonster.nocheatplus.hooks.AbstractNCPHook;
 import org.bukkit.ChatColor;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
 
-@SuppressWarnings("CatchMayIgnoreException")
-public class BungeeNCP extends AbstractNCPHook implements PluginMessageListener,Listener {
+@Singleton
+public class BungeeNCP extends AbstractNCPHook implements PluginMessageListener, Listener {
+
+    private String serverName;
+    private Cooldown cooldown = new Cooldown();
+
+    private boolean isStaffMemberOnline = false;
+
+    @Inject
+    private Server server;
+
+    @Inject
+    private Plugin plugin;
+
+    private static final Gson gson = new Gson();
+
+    public void checkForStaffMembers() {
+        for (Player onlineplayer : server.getOnlinePlayers()) {
+            if (onlineplayer.hasPermission("nocheatplus.notify")) {
+                isStaffMemberOnline = true;
+                break;
+            }
+        }
+    }
+
     @Override
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
         if (!channel.equals("BungeeCord"))
@@ -34,9 +61,9 @@ public class BungeeNCP extends AbstractNCPHook implements PluginMessageListener,
         String subChannel = in.readUTF();
 
         if (subChannel.equals("GetServer"))
-            FernCommands.SERVER_NAME = in.readUTF();
+            serverName = in.readUTF();
 
-        if (subChannel.equals(FernCommands.getInstance().getName())) {
+        if (subChannel.equals(plugin.getName())) {
 
             // Use the code sample in the 'Response' sections below to read
             // the data.
@@ -48,7 +75,7 @@ public class BungeeNCP extends AbstractNCPHook implements PluginMessageListener,
 
             try {
                 // Transform the JSON-String back to the PlayerReport class
-                report = FernCommands.getGson().fromJson(msgIn.readUTF(), PlayerReport.class);
+                report = gson.fromJson(msgIn.readUTF(), PlayerReport.class);
             } catch (JsonSyntaxException | IOException e) {
                 e.printStackTrace();
             }
@@ -67,7 +94,11 @@ public class BungeeNCP extends AbstractNCPHook implements PluginMessageListener,
             }
             // Get the Report Message from the config and replace the variables
             String reportMessage = ChatColor.translateAlternateColorCodes('&', "&c&lNCP ( %server% ) &7»&r &c%player% &7could be using &6%check% &7VL " + violation);
-            reportMessage = reportMessage.replaceAll("%player%", report.getPlayer()).replaceAll("%server%", report.getServer()).replaceAll("%check%", report.getCheckType().getName()).replaceAll("%violation%", String.valueOf(report.getViolation()));
+            reportMessage = reportMessage
+                    .replace("%player%", report.getPlayer())
+                    .replace("%server%", report.getServer())
+                    .replace("%check%", report.getCheckType().getName())
+                    .replace("%violation%", String.valueOf(report.getViolation()));
 
             // Send an admin notification to players with the corresponding permission (only if the player has turned notifications on)
             NCPAPIProvider.getNoCheatPlusAPI().sendAdminNotifyMessage(reportMessage);
@@ -83,38 +114,34 @@ public class BungeeNCP extends AbstractNCPHook implements PluginMessageListener,
 
                     Messaging.sendRequest(event.getPlayer(), "GetServer");
             }
-        }.runTaskLater(FernCommands.getInstance(), 5L);
-        FernCommands.getInstance().checkForStaffMembers();
+        }.runTaskLater(plugin, 5L);
+        checkForStaffMembers();
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        FernCommands.getInstance().checkForStaffMembers();
-        if (FernCommands.getCooldownManager().hasCooldown(player.getUniqueId()))
-            FernCommands.getCooldownManager().removeCooldown(player.getUniqueId());
+        checkForStaffMembers();
+        if (cooldown.hasCooldown(player.getUniqueId()))
+            cooldown.removeCooldown(player.getUniqueId());
     }
 
 
     @Override
     public String getHookName() {
-        return FernCommands.getInstance().getDescription().getName();
+        return plugin.getDescription().getName();
     }
 
     @Override
     public String getHookVersion() {
-        return FernCommands.getInstance().getDescription().getVersion();
+        return plugin.getDescription().getVersion();
     }
 
 
     @Override
     public boolean onCheckFailure(CheckType checkType, Player player, IViolationInfo info) {
-
-        if (FernCommands.getInstance().isStaffMemberOnline())
+        if (isStaffMemberOnline)
             return false;
-
-
-        Cooldown cooldown = FernCommands.getCooldownManager();
 
         // Player is still on Cooldown, return false
         if (cooldown.hasCooldown(player.getUniqueId()) && !cooldown.isExpired(player.getUniqueId()))
@@ -122,16 +149,10 @@ public class BungeeNCP extends AbstractNCPHook implements PluginMessageListener,
 
         try {
             // Send a report notification to other servers
-            Messaging.sendRequest(player, FernCommands.getGson().toJson(new PlayerReport(player.getName(), checkType, info.getTotalVl())), "Forward", "ONLINE", FernCommands.getInstance().getName());
+            Messaging.sendRequest(player, gson.toJson(new PlayerReport(player.getName(), checkType, info.getTotalVl(), serverName)), "Forward", "ONLINE", plugin.getName());
         } catch (IOException e) {
 
         }
-        /*try {
-            // Send a report notification to other servers
-            Request.sendRequest(player, BungeeNCPNotify.getGson().toJson(new PlayerReport(player.getName(), checkType, info.getTotalVl())), "Forward", "ONLINE", BungeeNCPNotify.getInstance().getName());
-        } catch (IOException e) {
-        }*/
-
 
         return true;
     }
