@@ -47,6 +47,7 @@ public class RideBow implements Listener {
 
         // This sets the name of the item.
 // Instead of the § symbol, you can use ChatColor.<color>
+        assert meta != null;
         meta.setDisplayName("§5Teleport Bow");
 
         ArrayList<String> lore = new ArrayList<>();
@@ -65,14 +66,16 @@ public class RideBow implements Listener {
 
 
 // We will initialise the next variable after changing the properties of the sword
+        if (shapelessRecipe == null) {
+            NamespacedKey key = new NamespacedKey(plugin, "teleport_bow");
 
-        NamespacedKey key = new NamespacedKey(plugin, "teleport_bow");
-        shapelessRecipe = new ShapelessRecipe(key, item);
+            shapelessRecipe = new ShapelessRecipe(key, item);
 
-        shapelessRecipe.addIngredient(Material.BOW);
-        shapelessRecipe.addIngredient(Material.ENDER_PEARL);
+            shapelessRecipe.addIngredient(Material.BOW);
+            shapelessRecipe.addIngredient(Material.ENDER_PEARL);
 
-        Bukkit.addRecipe(shapelessRecipe);
+            Bukkit.addRecipe(shapelessRecipe);
+        }
         this.plugin = plugin;
     }
 
@@ -104,35 +107,41 @@ public class RideBow implements Listener {
 
     @EventHandler
     public void onLand(ProjectileHitEvent e) {
-        if (e.getEntity() instanceof Arrow arrow) {
-            if (arrow.hasMetadata("teleport")) {
+        if (e.getEntity() instanceof Arrow arrow && arrow.hasMetadata("teleport")) {
 
-                List<MetadataValue> tp = arrow.getMetadata("teleport");
-                if (!tp.isEmpty()) {
-                    double telepx = arrow.getLocation().getX();
-                    double telepy = arrow.getLocation().getY();
-                    double telepz = arrow.getLocation().getZ();
-                    Player player = (Player) arrow.getMetadata("teleport").get(0).value();
-                    boolean riding = arrow.getMetadata("teleport_ride").get(0).asBoolean();
-                    Universal.debug(player + " shot an arrow with metadata ");
-                    World telepworld = arrow.getWorld();
-
-                    List<Entity> entities = new ArrayList<>(arrow.getPassengers());
-
-                    if ((player.getVehicle() != null && player.getVehicle() == arrow) || (!riding)) {
-                        if (player.getVehicle() != null)
-                            player.getVehicle().eject();
-
-
-                        player.teleport(new Location(telepworld, telepx, telepy, telepz));
-
-                        World world = player.getWorld();
-                        world.spawnParticle(Particle.TOTEM, player.getLocation(), 40);
-                    }
-
-                    removeArrow(arrow);
-                }
+            List<MetadataValue> tp = arrow.getMetadata("teleport");
+            if (tp.isEmpty()) {
+                return;
             }
+
+            Player player = (Player) arrow.getMetadata("teleport").get(0).value();
+            boolean riding = arrow.getMetadata("teleport_ride").get(0).asBoolean();
+            Universal.debug(() -> player + " shot an arrow with metadata ");
+
+            if (player != null && ((player.getVehicle() != null && player.getVehicle() == arrow) || (!riding))) {
+                if (player.getVehicle() != null)
+                    player.getVehicle().eject();
+
+                Location arrowLocation = arrow.getLocation();
+                double targetX = arrowLocation.getX();
+                double targetY = arrowLocation.getY();
+                double targetZ = arrowLocation.getZ();
+
+                World targetWorld = arrow.getWorld();
+
+                var playerLocation = player.getLocation();
+
+                float yaw = playerLocation.getYaw();
+                float pitch = playerLocation.getPitch();
+
+
+                player.teleport(new Location(targetWorld, targetX, targetY, targetZ, yaw, pitch));
+
+                World world = player.getWorld();
+                world.spawnParticle(Particle.TOTEM, player.getLocation(), 40);
+            }
+
+            removeArrow(arrow);
         }
     }
 
@@ -159,17 +168,11 @@ public class RideBow implements Listener {
 
     @EventHandler
     public void onShoot(EntityShootBowEvent e) {
-        //FernCommands.getInstance().getLogger().info(e.getEntity() + " SHOT AN ARROW");
-        if (e.getEntity() instanceof Player player && e.getProjectile() instanceof Arrow) {
+        if (e.getEntity() instanceof Player player && e.getProjectile() instanceof Arrow arrow) {
             if (player.getInventory().getItemInMainHand().getType() == Material.BOW) {
-                //FernCommands.getInstance().getLogger().info("is sneaking and shot bow");
-                //List<String> lore = player.getItemOnCursor().getItemMeta().getLore();
                 boolean hasLore = player.getInventory().getItemInMainHand().getItemMeta().hasLore();
 
                 if (hasLore && player.getInventory().getItemInMainHand().getItemMeta().getLore().contains(ChatColor.GRAY + "Riding")) {
-
-
-                    Arrow arrow = (Arrow) e.getProjectile();
 
                     boolean creative = player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR;
 
