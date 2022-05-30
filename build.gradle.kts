@@ -5,7 +5,7 @@ plugins {
     id("maven-publish")
     id("com.github.johnrengelman.shadow") version "7.1.0"
     id("io.freefair.lombok") version "6.3.0"
-    kotlin("jvm") version "1.6.0"
+    kotlin("jvm") version "1.6.21"
 }
 
 
@@ -62,12 +62,12 @@ val system: Configuration by configurations.creating {
 }
 
 dependencies {
-    implementation ("com.github.Fernthedev.FernAPI:all:761bc7cd47") { //1.9.0-rc4"
+    implementation ("com.github.Fernthedev.FernAPI:all:e8ea75f9b3") { //1.9.0-rc4"
         exclude(group = "fr.minuskube.inv")
     }
     implementation ("com.github.Fernthedev.FernAPI:core") { //1.9.0-rc4"
         version() {
-            strictly("761bc7cd47")
+            strictly("e8ea75f9b3")
         }
     }
 
@@ -76,7 +76,7 @@ dependencies {
     compileOnly("com.github.Fernthedev.preferences_api:api:0.2.0")
 
     implementation("com.github.Fernthedev:FernUtils:1.3.3")
-    implementation("org.mariadb.jdbc:mariadb-java-client:2.7.3")
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.0.4")
     compileOnly ("net.md-5:bungeecord-api:1.18-R0.1-SNAPSHOT")
     compileOnly ("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
     compileOnly ("me.clip:placeholderapi:2.9.2")
