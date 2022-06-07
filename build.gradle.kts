@@ -24,9 +24,8 @@ java.targetCompatibility = java.sourceCompatibility
 
 repositories {
     mavenLocal()
-    maven(url = "https://repo.aikar.co/content/groups/aikar/") {  }
+    maven(url = "https://repo.aikar.co/content/groups/aikar/")
     maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
-
     maven(url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
 
     maven(url = "https://repo.md-5.net/content/repositories/snapshots/")
@@ -62,18 +61,23 @@ val system: Configuration by configurations.creating {
 }
 
 dependencies {
-    implementation ("com.github.Fernthedev.FernAPI:all:e8ea75f9b3") { //1.9.0-rc4"
+    implementation ("com.github.Fernthedev.FernAPI:all:35afca1cdc") { //1.9.0-rc4"
         exclude(group = "fr.minuskube.inv")
     }
     implementation ("com.github.Fernthedev.FernAPI:core") { //1.9.0-rc4"
         version() {
-            strictly("e8ea75f9b3")
+            strictly("35afca1cdc")
         }
     }
 
 
     // TODO: Publish this
     compileOnly("com.github.Fernthedev.preferences_api:api:0.2.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
+    // kotlin coroutines baby
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.2.0")
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.2.0")
+    implementation("com.zaxxer:HikariCP:5.0.1")
 
     implementation("com.github.Fernthedev:FernUtils:1.3.3")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.0.4")
@@ -103,6 +107,8 @@ tasks.shadowJar {
         exclude(dependency("org.mariadb.jdbc:.*:.*"))
 
         exclude(dependency("org.mariadb.*:"))
+        exclude(dependency("com.github.shynixn.mccoroutine.*:.*-core"))
+        exclude(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core"))
     }
     mergeServiceFiles()
 
@@ -133,6 +139,7 @@ tasks.shadowJar {
     relocate("org.jetbrains", "${depGroupId}.org.jetbrains")
     relocate("org.mariadb", "${depGroupId}.org.mariadb")
     relocate("com.google", "${depGroupId}.com.google")
+    relocate("com.github.shynixn", "${depGroupId}.com.github.shynixn")
     relocate("kotlin", "${depGroupId}.kotlin")
     relocate("fr", "${depGroupId}.fr")
 

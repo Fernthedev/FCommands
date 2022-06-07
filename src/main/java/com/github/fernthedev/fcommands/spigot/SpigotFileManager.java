@@ -1,5 +1,8 @@
 package com.github.fernthedev.fcommands.spigot;
 
+import com.github.fernthedev.config.common.Config;
+import com.github.fernthedev.config.common.exceptions.ConfigLoadException;
+import com.github.fernthedev.config.gson.GsonConfig;
 import lombok.Getter;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -20,13 +23,27 @@ public class SpigotFileManager {
 
     private final Plugin plugin;
 
+    private final Config<NewSpigotConfig> newSpigotConfigConfig;
+
+    public Config<NewSpigotConfig> getNewSpigotConfigConfig() {
+        return newSpigotConfigConfig;
+    }
+
     @Inject
     public SpigotFileManager(FileConfiguration config, Plugin plugin) {
         this.config = config;
         configFile = new File(plugin.getDataFolder(), "config.yml");
         this.plugin = plugin;
+        try {
+            newSpigotConfigConfig = new GsonConfig<>(new NewSpigotConfig(), new File(plugin.getDataFolder(), "newconfig.json"));
+            newSpigotConfigConfig.load();
+            newSpigotConfigConfig.save();
+        } catch (ConfigLoadException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    @Deprecated
     public <T> T getValue(String val, T defval) {
         if(val != null && defval != null) {
             if (config.get(val) == null) {
@@ -37,6 +54,7 @@ public class SpigotFileManager {
         return null;
     }
 
+    @Deprecated
     public String getValue(String val, String defval) {
         if(val != null && defval != null) {
             if (config.get(val) == null) {
@@ -47,6 +65,7 @@ public class SpigotFileManager {
         return null;
     }
 
+    @Deprecated
     public boolean getValue(String val, boolean defval) {
         if(val != null) {
             if (config.get(val) == null) {
@@ -70,6 +89,9 @@ public class SpigotFileManager {
                 //createFile();
                 setDefault();
             }
+
+            newSpigotConfigConfig.syncLoad();
+            newSpigotConfigConfig.syncSave();
         }
     }
 

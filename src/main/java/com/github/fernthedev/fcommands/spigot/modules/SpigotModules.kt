@@ -12,6 +12,8 @@ class SpigotModules(
 ) : AbstractModule() {
     /** Configures a [Binder] via the exposed methods.  */
     override fun configure() {
+        // Use providers so the instance itself
+        // doesn't have injectMembers called on it
         bind(Plugin::class.java)
             .toProvider(Providers.of(plugin))
 
@@ -23,5 +25,7 @@ class SpigotModules(
 
         bind(FileConfiguration::class.java)
             .toProvider(Providers.of(plugin.config))
+
+        install(SpigotFileManagerModules())
     }
 }

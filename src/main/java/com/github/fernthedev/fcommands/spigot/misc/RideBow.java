@@ -1,5 +1,7 @@
 package com.github.fernthedev.fcommands.spigot.misc;
 
+import com.github.fernthedev.config.common.Config;
+import com.github.fernthedev.fcommands.spigot.NewSpigotConfig;
 import com.github.fernthedev.fernapi.universal.Universal;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
@@ -26,18 +28,15 @@ import java.util.*;
 
 public class RideBow implements Listener {
 
-
-
     private final Plugin plugin;
-
-    private static ShapelessRecipe shapelessRecipe;
-
-    private static final Map<UUID, Team> teamMap = new HashMap<>();
-
-    private static final Map<Arrow, Player> ignoreEntityHit = new HashMap<>();
+    private ShapelessRecipe shapelessRecipe;
+    private final Map<UUID, Team> teamMap = new HashMap<>();
+    private final Map<Arrow, Player> ignoreEntityHit = new HashMap<>();
+    private final Config<NewSpigotConfig> config;
 
     @Inject
-    public RideBow(Plugin plugin) {
+    public RideBow(Plugin plugin, Config<NewSpigotConfig> config) {
+        this.config = config;
 
         // Our custom variable which we will be changing around.
         ItemStack item = new ItemStack(Material.BOW);
@@ -89,17 +88,24 @@ public class RideBow implements Listener {
     public void onCraft(CraftItemEvent e) {
         Player p = (Player) e.getWhoClicked();
 
-        if (e.getRecipe() == shapelessRecipe && !p.hasPermission("fernc.craft.bow")) e.setCancelled(true);
+        if (!config.getConfigData().getRideBow()) return;
+        if (e.getRecipe() != shapelessRecipe) return;
+
+        if (!p.hasPermission("fernc.craft.bow")) {
+            e.setCancelled(true);
+        }
     }
 
 
 
     @EventHandler
     public void onHitEntity(EntityDamageByEntityEvent e) {
+        if (!config.getConfigData().getRideBow()) return;
+
         if (e.getDamager() instanceof Arrow arrow
-                && e.getEntity() instanceof Player player // Check entity types
-                && ignoreEntityHit.containsKey((Arrow) e.getDamager()) // Check if the ignore should be done
-                && ignoreEntityHit.get((Arrow) e.getDamager()) == e.getEntity()) { // Check if both entities are the rider
+                && e.getEntity() instanceof Player // Check entity types
+                && ignoreEntityHit.containsKey(arrow) // Check if the ignore should be done
+                && ignoreEntityHit.get(arrow) == e.getEntity()) { // Check if both entities are the rider
 
             e.setCancelled(true);
         }
@@ -107,6 +113,8 @@ public class RideBow implements Listener {
 
     @EventHandler
     public void onLand(ProjectileHitEvent e) {
+        if (!config.getConfigData().getRideBow()) return;
+
         if (e.getEntity() instanceof Arrow arrow && arrow.hasMetadata("teleport")) {
 
             List<MetadataValue> tp = arrow.getMetadata("teleport");
@@ -168,6 +176,8 @@ public class RideBow implements Listener {
 
     @EventHandler
     public void onShoot(EntityShootBowEvent e) {
+        if (!config.getConfigData().getRideBow()) return;
+
         if (e.getEntity() instanceof Player player && e.getProjectile() instanceof Arrow arrow) {
             if (player.getInventory().getItemInMainHand().getType() == Material.BOW) {
                 boolean hasLore = player.getInventory().getItemInMainHand().getItemMeta().hasLore();
