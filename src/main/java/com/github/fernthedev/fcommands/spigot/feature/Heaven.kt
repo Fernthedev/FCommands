@@ -17,15 +17,17 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.plugin.Plugin
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.random.Random
 
 
+@Singleton
 class Heaven @Inject constructor(
     private val config: Config<NewSpigotConfig>,
     private val plugin: Plugin
 ) : Listener {
 
-    private val playersWhoDied = HashMap<Player, Boolean>()
+    private var playersWhoDied = HashMap<Player, Boolean>()
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerDeath(event: PlayerRespawnEvent) {
@@ -35,28 +37,37 @@ class Heaven @Inject constructor(
 
         if (!player.hasPermission("fernc.heaven.spawn")) return
 
-        // double assurance!
-        event.respawnLocation = config.configData.heaven.councilLocation.toLocation();
-        player.teleport(config.configData.heaven.councilLocation.toLocation())
 
-        plugin.launch {
-            val heaven = playersWhoDied[player] ?: coroutineScope {
-                val v = lokiSpeak(Universal.getMethods().convertPlayerObjectToFPlayer(player))
-                playersWhoDied[player] = v
-                delay(1500)
-                v
-            }
-
+        if (playersWhoDied.containsKey(player)) {
+            val heaven = playersWhoDied[player]!!
             val location =
                 if (heaven) config.configData.heaven.heavenLocation.toLocation()
                 else config.configData.heaven.hellLocation.toLocation()
 
-            player.teleport(location)
+            event.respawnLocation = location
+        } else {
+            event.respawnLocation = config.configData.heaven.councilLocation.toLocation()
+
+
+            plugin.launch {
+                val heaven = playersWhoDied[player] ?: coroutineScope {
+                    val v = lokiSpeak(Universal.getMethods().convertPlayerObjectToFPlayer(player))
+                    playersWhoDied[player] = v
+                    delay(1500)
+                    v
+                }
+
+                val location =
+                    if (heaven) config.configData.heaven.heavenLocation.toLocation()
+                    else config.configData.heaven.hellLocation.toLocation()
+
+                player.teleport(location)
+            }
         }
     }
 
     fun resetChance() {
-        playersWhoDied.clear()
+        playersWhoDied = HashMap()
     }
 
 
