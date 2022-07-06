@@ -1,6 +1,7 @@
 package com.github.fernthedev.fcommands.spigot;
 
 import com.github.fernthedev.fcommands.spigot.commands.FernMain;
+import com.github.fernthedev.fcommands.spigot.feature.FernProtection;
 import com.github.fernthedev.fcommands.spigot.feature.Heaven;
 import com.github.fernthedev.fcommands.spigot.gui.NameColor;
 import com.github.fernthedev.fcommands.spigot.hooks.HookManager;
@@ -121,6 +122,7 @@ public class FernCommands extends FernSpigotAPI {
          */
         getServer().getPluginManager().registerEvents(injector.getInstance(RideBow.class), this);
         getServer().getPluginManager().registerEvents(injector.getInstance(Heaven.class), this);
+        getServer().getPluginManager().registerEvents(injector.getInstance(FernProtection.class), this);
 
 
         /*

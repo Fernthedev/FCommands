@@ -1,10 +1,13 @@
+
+import io.freefair.gradle.plugins.lombok.tasks.Delombok
+
 plugins {
     idea
     java
 
     id("maven-publish")
     id("com.github.johnrengelman.shadow") version "7.1.0"
-    id("io.freefair.lombok") version "6.3.0"
+    id("io.freefair.lombok") version "6.4.3"
     kotlin("jvm") version "1.6.21"
 }
 
@@ -225,6 +228,9 @@ publishing {
 }
 
 
+tasks.withType<Delombok>() {
+    quiet.set(true)
+}
 
 tasks.javadoc {
     isFailOnError = false

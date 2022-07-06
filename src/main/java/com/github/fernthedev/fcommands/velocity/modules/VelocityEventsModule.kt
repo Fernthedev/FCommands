@@ -16,8 +16,10 @@ class VelocityEventsModule : AbstractModule() {
             parentKlass = parentKlass.superclass
         }
 
+        val typeLiteral: Class<out Nothing> = VelocityEvents::class.java.asSubclass(Nothing::class.java);
+
         classes.forEach { clazz ->
-            bind(clazz) to VelocityEvents::class.java
+            bind(clazz).to(typeLiteral)
         }
     }
 }

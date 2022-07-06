@@ -17,9 +17,11 @@ class BungeeEventsModule : AbstractModule() {
             parentKlass = parentKlass.superclass
         }
 
+        val typeLiteral: Class<out Nothing> = BungeeEvents::class.java.asSubclass(Nothing::class.java);
+
         classes.forEach { clazz ->
             Universal.getLogger().info("Registering ${clazz.toGenericString()}")
-            bind(clazz) to BungeeEvents::class.java
+            bind(clazz).to(typeLiteral)
         }
     }
 }
