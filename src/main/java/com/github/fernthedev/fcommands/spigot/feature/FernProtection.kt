@@ -10,6 +10,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.plugin.Plugin
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -30,7 +31,18 @@ class FernProtection @Inject constructor(
         plugin.launch {
             strikeLightningLoop(e.player)
         }
+    }
 
+    @EventHandler
+    fun onFernBlockReplace(e: BlockPlaceEvent) {
+        if (!config.configData.fernBreakProtection) return
+        if (!e.canBuild()) return
+        if (e.blockReplacedState.block.type != Material.FERN) return
+        if (e.player.hasPermission("fernc.fernbreak.ignore")) return
+
+        plugin.launch {
+            strikeLightningLoop(e.player)
+        }
     }
 
     private suspend fun strikeLightningLoop(player: Player) {
