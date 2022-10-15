@@ -64,18 +64,18 @@ val system: Configuration by configurations.creating {
 }
 
 dependencies {
-    implementation ("com.github.Fernthedev.FernAPI:all:cdf0f1a320") { //1.9.0-rc4"
+    implementation ("com.github.Fernthedev.FernAPI:all:1112a387c0") { //1.9.0-rc4"
         exclude(group = "fr.minuskube.inv")
     }
     implementation ("com.github.Fernthedev.FernAPI:core") { //1.9.0-rc4"
         version() {
-            strictly("cdf0f1a320")
+            strictly("1112a387c0")
         }
     }
 
 
     // TODO: Publish this
-    compileOnly("com.github.Fernthedev.preferences_api:api:0.2.0")
+    compileOnly("com.github.Fernthedev.preferences_api:api:0.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     // kotlin coroutines baby
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.5.0")
@@ -128,6 +128,7 @@ tasks.shadowJar {
 
     relocate("com.github.fernthedev.fcommands", "com.github.fernthedev.fcommands")
     relocate("com.github.fernthedev.preferences", "com.github.fernthedev.preferences")
+    relocate("com.github.fernthedev.fernapi", "com.github.fernthedev.fernapi")
     relocate("com.github.fernthedev", "${depGroupId}.fernthedev")
         // Why doesn't this work???
 //    {

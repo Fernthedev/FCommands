@@ -16,7 +16,7 @@ import com.github.fernthedev.fernapi.universal.api.IFPlayer;
 import com.github.fernthedev.fernapi.universal.data.chat.*;
 import com.github.fernthedev.preferences.api.PreferenceManager;
 import com.github.fernthedev.preferences.api.command.PreferenceCommandUtil;
-import com.github.fernthedev.preferences.api.config.PlayerPreferencesSingleton;
+import com.github.fernthedev.preferences.api.config.PlayerPreferencesMap;
 import kotlin.Unit;
 
 import javax.inject.Inject;
@@ -84,12 +84,13 @@ public class Seen extends BaseCommand {
 
         SeenPlayerValue seenPlayerValue = seenConfig.getConfigData().getPlayers(uuid);
 
-        PlayerPreferencesSingleton pref;
+        PlayerPreferencesMap pref;
 
         if (sender instanceof IFPlayer<?> player) {
             pref = PreferenceManager.getPlayerPref(player.getUuid());
-        } else
-            pref = new PlayerPreferencesSingleton(UUID.randomUUID());
+        } else {
+            pref = PreferenceManager.getConsolePref();
+        }
 
         if (seenPlayerValue == null) {
             sender.sendMessage(new TextMessage("&cPlayer has not played on the server, or info is not found about player."));
