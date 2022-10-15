@@ -64,26 +64,26 @@ val system: Configuration by configurations.creating {
 }
 
 dependencies {
-    implementation ("com.github.Fernthedev.FernAPI:all:35afca1cdc") { //1.9.0-rc4"
+    implementation ("com.github.Fernthedev.FernAPI:all:cdf0f1a320") { //1.9.0-rc4"
         exclude(group = "fr.minuskube.inv")
     }
     implementation ("com.github.Fernthedev.FernAPI:core") { //1.9.0-rc4"
         version() {
-            strictly("35afca1cdc")
+            strictly("cdf0f1a320")
         }
     }
 
 
     // TODO: Publish this
     compileOnly("com.github.Fernthedev.preferences_api:api:0.2.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     // kotlin coroutines baby
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.2.0")
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.2.0")
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.5.0")
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.5.0")
     implementation("com.zaxxer:HikariCP:5.0.1")
 
     implementation("com.github.Fernthedev:FernUtils:1.3.3")
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.0.4")
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.0.6")
     compileOnly ("net.md-5:bungeecord-api:1.18-R0.1-SNAPSHOT")
     compileOnly ("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
     compileOnly ("me.clip:placeholderapi:2.9.2")

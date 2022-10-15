@@ -3,7 +3,8 @@ package com.github.fernthedev.fcommands.proxy;
 import com.github.fernthedev.config.common.Config;
 import com.github.fernthedev.fcommands.proxy.data.ConfigValues;
 import com.github.fernthedev.fcommands.proxy.data.ServerData;
-import com.github.fernthedev.fernapi.universal.Universal;
+import com.github.fernthedev.fernapi.universal.APIHandler;
+import com.github.fernthedev.fernapi.universal.handlers.IScheduler;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -19,15 +20,18 @@ public class ServerMaintenance {
     @Inject
     private Config<ConfigValues> config;
 
+    @Inject
+    private IScheduler<?, ?> scheduler;
+
     public void setupTask() {
-        Universal.getScheduler().runSchedule(() -> {
+        scheduler.runSchedule(() -> {
             try {
-                Universal.debug(() ->"Pinging the servers");
+                APIHandler.debug(() ->"Pinging the servers");
 
                 for (ServerData serverData : config.getConfigData().getServerChecks()) {
-                    Universal.getScheduler().runAsync(() -> {
+                    scheduler.runAsync(() -> {
                         serverData.ping();
-                        Universal.debug(() ->"Pinging the server info Name:" + serverData.getName() + " status: " + serverData.getOnline() + " " + serverData);
+                        APIHandler.debug(() ->"Pinging the server info Name:" + serverData.getName() + " status: " + serverData.getOnline() + " " + serverData);
                         serverMap.put(serverData.getName(), serverData.getOnline());
                     });
                 }

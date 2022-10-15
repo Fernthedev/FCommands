@@ -4,8 +4,6 @@ import com.github.fernthedev.fcommands.bungee.BungeeRegistration.bungeeInit
 import com.github.fernthedev.fcommands.bungee.commands.BungeePluginList
 import com.github.fernthedev.fcommands.bungee.commands.ip.AltsBan
 import com.github.fernthedev.fcommands.proxy.ProxyFileManager
-import com.github.fernthedev.fcommands.universal.PlatformAllRegistration
-import com.github.fernthedev.fcommands.universal.PlatformAllRegistration.injector
 import com.github.fernthedev.fernapi.server.bungee.FernBungeeAPI
 import net.md_5.bungee.api.ChatColor
 
@@ -18,8 +16,7 @@ class FernCommands : FernBungeeAPI() {
             logger.info("$mkdir folder make")
         }
         hookManager = HookManager()
-        bungeeInit()
-        val injector = PlatformAllRegistration.injector
+        injector = bungeeInit(injector)
 
         proxy.pluginManager.registerCommand(this, BungeePluginList())
         proxy.pluginManager.registerListenerInjected<BungeeEvents>(this, injector)

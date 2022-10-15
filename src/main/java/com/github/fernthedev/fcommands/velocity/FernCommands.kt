@@ -1,12 +1,12 @@
 package com.github.fernthedev.fcommands.velocity
 
 import com.github.fernthedev.fcommands.proxy.ProxyFileManager
-import com.github.fernthedev.fcommands.universal.PlatformAllRegistration.injector
 import com.github.fernthedev.fcommands.velocity.VelocityRegistration.velocityInit
 import com.github.fernthedev.fcommands.velocity.commands.VelocityPluginList
 import com.github.fernthedev.fernapi.server.velocity.FernVelocityAPI
 import com.github.fernthedev.fernapi.universal.data.chat.ChatColor
 import com.google.inject.Inject
+import com.google.inject.Injector
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent
@@ -24,8 +24,8 @@ import org.slf4j.Logger
     authors = ["Fernthedev"],
     dependencies = [Dependency(id = "preference_manager")]
 )
-class FernCommands @Inject constructor(server: ProxyServer?, logger: Logger?, pluginContainer: PluginContainer?) :
-    FernVelocityAPI(server, logger, pluginContainer) {
+class FernCommands @Inject constructor(server: ProxyServer?, logger: Logger?, pluginContainer: PluginContainer?, injector: Injector) :
+    FernVelocityAPI(server, logger, pluginContainer, injector) {
     @Subscribe
     override fun onProxyInitialization(event: ProxyInitializeEvent) {
         super.onProxyInitialization(event)
@@ -36,7 +36,7 @@ class FernCommands @Inject constructor(server: ProxyServer?, logger: Logger?, pl
             getLogger().info("$mkdir folder make")
         }
 
-        velocityInit()
+        injector = velocityInit(injector)
 
         server.commandManager.register("vplugins", VelocityPluginList(server))
         server.eventManager.registerInjected<VelocityEvents>(this, injector)

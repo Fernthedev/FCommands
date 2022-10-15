@@ -1,6 +1,7 @@
 package com.github.fernthedev.fcommands.universal;
 
-import com.github.fernthedev.fernapi.universal.Universal;
+
+import com.github.fernthedev.fernapi.universal.APIHandler;
 import com.github.fernthedev.fernapi.universal.data.database.DatabaseAuthInfo;
 import com.github.fernthedev.fernapi.universal.mysql.AikarFernDatabase;
 import com.github.fernthedev.fernapi.universal.mysql.DatabaseListener;
@@ -8,7 +9,7 @@ import com.github.fernthedev.fernapi.universal.mysql.DatabaseListener;
 
 public class DBManager extends DatabaseListener {
     public DBManager(String username, String password, String port, String URLHost, String database) {
-        super(AikarFernDatabase.createHikariDatabase(Universal.getPlugin(), new DatabaseAuthInfo(username, password, port, URLHost, database)));
+        super(AikarFernDatabase.createHikariDatabase(APIHandler.getInstance().getPlugin(), new DatabaseAuthInfo(username, password, port, URLHost, database)));
     }
 
     /**
@@ -20,9 +21,9 @@ public class DBManager extends DatabaseListener {
     @Override
     public void onConnectAttempt(boolean connected) {
         if(connected) {
-            Universal.getMethods().getAbstractLogger().info("Connected successfully");
+            APIHandler.getInstance().getMethods().getAbstractLogger().info("Connected successfully");
         }else{
-            Universal.getMethods().getAbstractLogger().warn("Unable to connect successfully");
+            APIHandler.getInstance().getMethods().getAbstractLogger().warn("Unable to connect successfully");
         }
     }
 }

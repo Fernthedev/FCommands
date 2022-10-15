@@ -44,10 +44,8 @@ public class FernCommands extends FernSpigotAPI {
     public void onEnable() {
         super.onEnable();
 
-        SpigotRegistration.spigotInit(this);
+        injector = SpigotRegistration.spigotInit(this, injector);
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-
-        Injector injector = PlatformAllRegistration.getInjector();
 
         hookManager = injector.getInstance(HookManager.class);
 
@@ -74,8 +72,6 @@ public class FernCommands extends FernSpigotAPI {
         getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", messageListener);
 
         Messaging.sendRequest("GetServer");
-
-        PlatformAllRegistration.commonInit();
 
         hookManager.registerPlugins();
 

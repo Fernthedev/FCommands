@@ -1,7 +1,6 @@
 package com.github.fernthedev.fcommands.spigot.commands;
 
 import com.github.fernthedev.fcommands.spigot.FernCommands;
-import com.github.fernthedev.fernapi.universal.Universal;
 import com.github.fernthedev.fernapi.universal.util.VersionUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,7 +26,7 @@ public class FernMain implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage(FernCommands.message("&aRunning FernCommands version " + Universal.getPlugin().getPluginData().getVersion() + " (FernAPI: " + VersionUtil.getVersionData().getFernapi_version() + ")"));
+            sender.sendMessage(FernCommands.message("&aRunning FernCommands version " + fernCommands.getPluginData().getVersion() + " (FernAPI: " + VersionUtil.getVersionData().getFernapi_version() + ")"));
             sender.sendMessage(FernCommands.message("&aAuthors: " + fernCommands.getDescription().getAuthors()));
         } else {
             String arg1 = args[0];

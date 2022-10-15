@@ -5,7 +5,8 @@ import com.github.fernthedev.fcommands.bungee.FernCommands;
 import com.github.fernthedev.fcommands.proxy.ProxyFileManager;
 import com.github.fernthedev.fcommands.proxy.commands.ip.IPAlgorithms;
 import com.github.fernthedev.fcommands.proxy.data.ConfigValues;
-import com.github.fernthedev.fernapi.universal.Universal;
+import com.github.fernthedev.fernapi.universal.APIHandler;
+import com.github.fernthedev.fernapi.universal.handlers.IScheduler;
 import com.github.fernthedev.fernapi.universal.util.UUIDFetcher;
 import me.leoko.advancedban.bungee.event.PunishmentEvent;
 import me.leoko.advancedban.manager.PunishmentManager;
@@ -19,6 +20,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 public class AltsBan implements Listener {
@@ -29,77 +31,59 @@ public class AltsBan implements Listener {
     @Inject
     private ProxyFileManager proxyFileManager;
 
+    @Inject
+    private IScheduler<?, ?> scheduler;
+
+    @Inject
+    private UUIDFetcher uuidFetcher;
+
     @EventHandler
     public void onJoin(PostLoginEvent e) {
         if (FernCommands.getHookManager().hasAdvancedBan() && config.getConfigData().getAltsBan()) {
-            Universal.getScheduler().runAsync(() -> {
+            scheduler.runAsync(() -> {
 
-                String formattedUUIDJoin = e.getPlayer().getUniqueId().toString().replace("-","");
+                String formattedUUIDJoin = e.getPlayer().getUniqueId().toString().replace("-", "");
 
                 if (PunishmentManager.get().isBanned(formattedUUIDJoin))
                     return;
 
-                List<Runnable> tasksTodo = new ArrayList<>();
-
                 IPAlgorithms.IPUUIDLists ipData = IPAlgorithms.scan(e.getPlayer().getUniqueId(), proxyFileManager);
 
+                ConcurrentLinkedQueue<UUID> uuidConcurrentLinkedQueue = new ConcurrentLinkedQueue<>(ipData.getUuids());
 
-                int tasksPerThread = ipData.getIps().size() / 4;
+                int threads = 4;
 
-                int tasksQueued = 0;
+                for (int i = 0; i < threads; i++) {
+                    scheduler.runAsync(() -> {
+                        while (!uuidConcurrentLinkedQueue.isEmpty()) {
+                            UUID uuid = uuidConcurrentLinkedQueue.remove();
+                            String formattedUUID = uuid.toString().replace("-", "");
+                            String playerName = uuidFetcher.getName(formattedUUID);
+                            if (PunishmentManager.get().isBanned(formattedUUID) || PunishmentManager.get().isMuted(formattedUUID)) {
 
-                for (UUID uuid : ipData.getUuids()) {
+                                List<Punishment> punishments = new ArrayList<>();
 
-                    String formattedUUID = uuid.toString().replace("-","");
+                                punishments.addAll(PunishmentManager.get().getPunishments(formattedUUID, PunishmentType.TEMP_MUTE, true));
+                                punishments.addAll(PunishmentManager.get().getPunishments(formattedUUID, PunishmentType.MUTE, true));
 
-                    tasksQueued++;
-
-                    if (tasksQueued > tasksPerThread) {
-                        tasksQueued = 0;
-                        List<Runnable> runnableList = new ArrayList<>(tasksTodo);
-                        Universal.getScheduler().runAsync(() -> {
-                            for (Runnable runnable : runnableList)
-                                runnable.run();
-                        });
-                        tasksTodo.clear();
-                    }
-
-                    tasksTodo.add(() -> {
-                        String playerName = UUIDFetcher.getName(formattedUUID);
-                        if (PunishmentManager.get().isBanned(formattedUUID) || PunishmentManager.get().isMuted(formattedUUID)) {
-
-                            List<Punishment> punishments = new ArrayList<>();
-
-                            punishments.addAll(PunishmentManager.get().getPunishments(formattedUUID, PunishmentType.TEMP_MUTE, true));
-                            punishments.addAll(PunishmentManager.get().getPunishments(formattedUUID, PunishmentType.MUTE, true));
-
-                            punishments.addAll(PunishmentManager.get().getPunishments(formattedUUID, PunishmentType.TEMP_BAN, true));
-                            punishments.addAll(PunishmentManager.get().getPunishments(formattedUUID, PunishmentType.IP_BAN, true));
-                            punishments.addAll(PunishmentManager.get().getPunishments(formattedUUID, PunishmentType.TEMP_IP_BAN, true));
+                                punishments.addAll(PunishmentManager.get().getPunishments(formattedUUID, PunishmentType.TEMP_BAN, true));
+                                punishments.addAll(PunishmentManager.get().getPunishments(formattedUUID, PunishmentType.IP_BAN, true));
+                                punishments.addAll(PunishmentManager.get().getPunishments(formattedUUID, PunishmentType.TEMP_IP_BAN, true));
 
 
-                            for (Punishment punishment : punishments) {
-                                Punishment punishment1 = new Punishment(playerName, formattedUUID, punishment.getReason() + "&6From an alt which is " + UUIDFetcher.getName(punishment.getUuid()), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
+                                for (Punishment punishment : punishments) {
+                                    Punishment punishment1 = new Punishment(playerName, formattedUUID, punishment.getReason() + "&6From an alt which is " + uuidFetcher.getName(punishment.getUuid()), punishment.getOperator(), punishment.getType(), punishment.getStart(), punishment.getEnd(), punishment.getCalculation(), -1);
 
-                                boolean hasPunishmentAlready = hasPunishmentAlready(formattedUUID, punishment1);
+                                    boolean hasPunishmentAlready = hasPunishmentAlready(formattedUUID, punishment1);
 
-                                if (!hasPunishmentAlready) {
-                                    Universal.debug("Punishing because not punished already " + punishment1);
-                                    punishment1.create(true);
+                                    if (!hasPunishmentAlready) {
+                                        APIHandler.debug(() -> "Punishing because not punished already {}", punishment1);
+                                        punishment1.create(true);
+                                    }
                                 }
                             }
                         }
                     });
-                }
-
-                if (!tasksTodo.isEmpty()) {
-                    Universal.getScheduler().runAsync(() -> {
-                        for (Runnable runnable : tasksTodo) {
-                            runnable.run();
-                        }
-                        tasksTodo.clear();
-                    });
-
                 }
             });
         }
@@ -116,34 +100,34 @@ public class AltsBan implements Listener {
 
         String uuidPlayer = e.getPunishment().getUuid();
 
-        Universal.getScheduler().runAsync(() -> {
+        scheduler.runAsync(() -> {
             if (uuidPlayer != null) {
 
 
-                IPAlgorithms.IPUUIDLists ipData = IPAlgorithms.scan(UUIDFetcher.uuidFromString(e.getPunishment().getUuid()), proxyFileManager);
+                IPAlgorithms.IPUUIDLists ipData = IPAlgorithms.scan(UUIDFetcher.Companion.uuidFromString(e.getPunishment().getUuid()), proxyFileManager);
 
 
                 for (UUID plUuid : ipData.getUuids()) {
-                    String playerName = UUIDFetcher.getName(plUuid);
+                    String playerName = uuidFetcher.getName(plUuid);
 
                     //                            print("A uuid is " + plUuid + " and name is " + playerName + " punishing now.");
                     if (playerName != null) {
 
                         String formattedUUID = plUuid.toString().replace("-", "");
 
-                        Punishment punishment = new Punishment(playerName, formattedUUID, e.getPunishment().getReason() + " &6From an alt which is " + UUIDFetcher.getName(e.getPunishment().getUuid()), e.getPunishment().getOperator(), e.getPunishment().getType(), e.getPunishment().getStart(), e.getPunishment().getEnd(), e.getPunishment().getCalculation(), -1);
+                        Punishment punishment = new Punishment(playerName, formattedUUID, e.getPunishment().getReason() + " &6From an alt which is " + uuidFetcher.getName(e.getPunishment().getUuid()), e.getPunishment().getOperator(), e.getPunishment().getType(), e.getPunishment().getStart(), e.getPunishment().getEnd(), e.getPunishment().getCalculation(), -1);
 
                         boolean hasPunishmentAlready = hasPunishmentAlready(formattedUUID, punishment);
 
 
                         if (!hasPunishmentAlready) {
-                            Universal.debug("Punishing because not punished already " + punishment);
+                            APIHandler.debug("Punishing because not punished already " + punishment);
                             punishment.create(true);
                         }
                     }
                 }
             } else {
-                Universal.getLogger().error("Failed to load ips. UUID Player is " + null);
+                APIHandler.getInstance().getLogger().error("Failed to load ips. UUID Player is " + null);
             }
         });
 
@@ -152,7 +136,7 @@ public class AltsBan implements Listener {
     private boolean hasPunishmentAlready(String formattedUUID, Punishment checkPunishment) {
         for (Punishment punishment1 : PunishmentManager.get().getPunishments(formattedUUID, checkPunishment.getType(), true)) {
 
-            Universal.debug("Checking punishments: \ncheck" + punishment1.toString() + "\nparam: " + checkPunishment);
+            APIHandler.debug("Checking punishments: \ncheck" + punishment1.toString() + "\nparam: " + checkPunishment);
             if (
                     punishment1.getUuid().equals(checkPunishment.getUuid()) &&
                             punishment1.getEnd() == checkPunishment.getEnd() &&

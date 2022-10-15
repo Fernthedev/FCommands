@@ -1,17 +1,20 @@
 package com.github.fernthedev.fcommands.universal;
 
 import com.github.fernthedev.fcommands.universal.mysql.nick.NickDatabaseInfo;
-import com.github.fernthedev.fernapi.universal.Universal;
+import com.github.fernthedev.fernapi.universal.APIHandler;
 import com.github.fernthedev.fernapi.universal.data.chat.ChatColor;
 import com.github.fernthedev.fernapi.universal.data.database.TableInfo;
 import com.github.fernthedev.fernapi.universal.data.network.Channel;
 import com.github.fernthedev.fernapi.universal.data.network.PluginMessageData;
+import com.github.fernthedev.fernapi.universal.handlers.IScheduler;
+import com.github.fernthedev.fernapi.universal.handlers.MethodInterface;
 import com.github.fernthedev.fernapi.universal.handlers.PluginMessageHandler;
 import com.github.fernthedev.fernapi.universal.handlers.ServerType;
 import com.github.fernthedev.fernapi.universal.mysql.DatabaseListener;
 import com.google.gson.Gson;
 import lombok.Getter;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -27,6 +30,14 @@ public class NickNetworkManager extends PluginMessageHandler {
 
     @Getter
     private final EventCallback<NickData> handleNick = new EventCallback<>();
+
+    @Inject
+    private MethodInterface<?, ?> methodHandler;
+    @Inject
+    private IScheduler<?,?> scheduler;
+
+    @Inject
+    private APIHandler apiHandler;
 
     private static Object l = null;
 
@@ -75,9 +86,9 @@ public class NickNetworkManager extends PluginMessageHandler {
 
     @Override
     public void onMessageReceived(PluginMessageData pluginMessageData, Channel channel) {
-        if (Universal.getMethods().getServerType() == ServerType.BUKKIT) {
+        if (methodHandler.getServerType() == ServerType.BUKKIT) {
 
-            Universal.getScheduler().runAsync(() -> {
+            scheduler.runAsync(() -> {
                 String type = pluginMessageData.getProxyChannelType(); //TYPE
                 String server = pluginMessageData.getServer(); // Server
                 String subChannel = pluginMessageData.getSubChannel(); // Subchannel
@@ -102,8 +113,8 @@ public class NickNetworkManager extends PluginMessageHandler {
                     if (nickRow != null) {
                         nick = nickRow.getNick();
 
-                        if (Universal.isDebug())
-                            Universal.debug("Found nick {} from uuid {} info: {}", nick, uuid, ChatColor.GOLD + new Gson().toJson(nickRow));
+                        if (apiHandler.getDebug())
+                            apiHandler.debug("Found nick {} from uuid {} info: {}", nick, uuid, ChatColor.GOLD + new Gson().toJson(nickRow));
                     }
 
                     if (nick == null)

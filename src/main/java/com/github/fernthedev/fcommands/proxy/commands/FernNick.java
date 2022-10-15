@@ -5,7 +5,7 @@ import co.aikar.commands.annotation.*;
 import com.github.fernthedev.fcommands.universal.Channels;
 import com.github.fernthedev.fcommands.universal.UniversalMysql;
 import com.github.fernthedev.fcommands.universal.mysql.nick.NickDatabaseInfo;
-import com.github.fernthedev.fernapi.universal.Universal;
+import com.github.fernthedev.fernapi.universal.APIHandler;
 import com.github.fernthedev.fernapi.universal.api.FernCommandIssuer;
 import com.github.fernthedev.fernapi.universal.api.IFPlayer;
 import com.github.fernthedev.fernapi.universal.data.network.PluginMessageData;
@@ -93,7 +93,7 @@ public class FernNick extends BaseCommand {
         data.addData(player.getName());
         data.addData(player.getUuid().toString());
 
-        Universal.getMessageHandler().sendPluginData(data);
+        APIHandler.getInstance().getMessageHandler().sendPluginData(data);
     }
 
     @HelpCommand

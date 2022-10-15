@@ -2,7 +2,7 @@ package com.github.fernthedev.fcommands.spigot.misc;
 
 import com.github.fernthedev.config.common.Config;
 import com.github.fernthedev.fcommands.spigot.NewSpigotConfig;
-import com.github.fernthedev.fernapi.universal.Universal;
+import com.github.fernthedev.fernapi.universal.APIHandler;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
@@ -34,9 +34,12 @@ public class RideBow implements Listener {
     private final Map<Arrow, Player> ignoreEntityHit = new HashMap<>();
     private final Config<NewSpigotConfig> config;
 
+    private final APIHandler apiHandler;
+
     @Inject
-    public RideBow(Plugin plugin, Config<NewSpigotConfig> config) {
+    public RideBow(Plugin plugin, Config<NewSpigotConfig> config, APIHandler apiHandler) {
         this.config = config;
+        this.apiHandler = apiHandler;
 
         // Our custom variable which we will be changing around.
         ItemStack item = new ItemStack(Material.BOW);
@@ -124,7 +127,7 @@ public class RideBow implements Listener {
 
             Player player = (Player) arrow.getMetadata("teleport").get(0).value();
             boolean riding = arrow.getMetadata("teleport_ride").get(0).asBoolean();
-            Universal.debug(() -> player + " shot an arrow with metadata ");
+            apiHandler.debug(() -> player + " shot an arrow with metadata ");
 
             if (player != null && ((player.getVehicle() != null && player.getVehicle() == arrow) || (!riding))) {
                 if (player.getVehicle() != null)

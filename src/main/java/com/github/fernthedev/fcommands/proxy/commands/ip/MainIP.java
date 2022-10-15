@@ -10,9 +10,10 @@ import com.github.fernthedev.fcommands.proxy.ProxyFileManager;
 import com.github.fernthedev.fcommands.proxy.data.IPDeleteValues;
 import com.github.fernthedev.fcommands.proxy.data.IPSaveValues;
 import com.github.fernthedev.fcommands.proxy.data.ip.IPDeletePlayerValue;
-import com.github.fernthedev.fernapi.universal.Universal;
+import com.github.fernthedev.fernapi.universal.APIHandler;
 import com.github.fernthedev.fernapi.universal.api.IFPlayer;
 import com.github.fernthedev.fernapi.universal.data.chat.TextMessage;
+import com.github.fernthedev.fernapi.universal.handlers.MethodInterface;
 import com.github.fernthedev.fernapi.universal.util.UUIDFetcher;
 import lombok.SneakyThrows;
 
@@ -36,6 +37,12 @@ public class MainIP extends BaseCommand {
     @Inject
     private Config<IPDeleteValues> deleteIPConfig;
 
+    @Inject
+    private UUIDFetcher uuidFetcher;
+
+    @Inject
+    private MethodInterface<?, ?> methodInterface;
+
     public void loadTasks() {
         proxyFileManager.configLoad(ipConfig);
         proxyFileManager.configLoad(deleteIPConfig);
@@ -44,7 +51,7 @@ public class MainIP extends BaseCommand {
             String dateString = "";
             Timer timer = new Timer();
 
-            Universal.debug(() -> "The date string is " + dateString);
+            APIHandler.debug(() -> "The date string is " + dateString);
             Date deleteDate = value.getDeleteDate();
 
             ////////////////////////////////////////////////////////////
@@ -89,7 +96,7 @@ public class MainIP extends BaseCommand {
         issuer.sendMessage(TextMessage.fromColor("&bAccounts:"));
         if (deletePlayerValue == null || !deletePlayerValue.isHidden()) {
             for (UUID player : players) {
-                String player1 = UUIDFetcher.getName(player.toString());
+                String player1 = uuidFetcher.getName(player.toString());
                 if (player1 != null) {
 
                     issuer.sendMessage(TextMessage.fromColor("&9-&3" + player1));
@@ -151,9 +158,9 @@ public class MainIP extends BaseCommand {
         String hiddenDeleteDateFormatted = dateFormat.format(hideDeleteDate);
         String deleteDateFormatted = dateFormat.format(deleteDate);
 
-        Universal.getMethods().getAbstractLogger().info("The time to hide delete is {}", hiddenDeleteDateFormatted);
+        methodInterface.getAbstractLogger().info("The time to hide delete is {}", hiddenDeleteDateFormatted);
 
-        Universal.getMethods().getAbstractLogger().info("The time to delete is {}", deleteDateFormatted);
+        methodInterface.getAbstractLogger().info("The time to delete is {}", deleteDateFormatted);
 
         timer.schedule(new TimerTask() {
             @Override
@@ -179,7 +186,7 @@ public class MainIP extends BaseCommand {
         proxyFileManager.configSave(deleteIPConfig);
 
         if (p != null)
-            Universal.debug("Deleted ip on all files " + ip + " requested by " + p.getRequester());
+            APIHandler.debug("Deleted ip on all files " + ip + " requested by " + p.getRequester());
     }
 
 

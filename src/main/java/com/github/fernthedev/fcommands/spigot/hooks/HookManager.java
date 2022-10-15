@@ -3,7 +3,7 @@ package com.github.fernthedev.fcommands.spigot.hooks;
 import com.github.fernthedev.fcommands.spigot.FernCommands;
 import com.github.fernthedev.fcommands.spigot.nick.NickManager;
 import com.github.fernthedev.fcommands.spigot.placeholderapi.VanishPlaceholder;
-import com.github.fernthedev.fernapi.universal.Universal;
+import com.github.fernthedev.fernapi.universal.APIHandler;
 import com.google.inject.Injector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import lombok.Getter;
@@ -19,8 +19,6 @@ import java.util.logging.Logger;
 @Getter
 public class HookManager {
 
-
-
     @Inject
     private FernCommands fernCommands;
 
@@ -29,6 +27,9 @@ public class HookManager {
 
     @Inject
     private Injector injector;
+
+    @Inject
+    private APIHandler apiHandler;
 
     private boolean vault;
     private boolean nte;
@@ -78,7 +79,7 @@ public class HookManager {
         }
 
         essentials = Bukkit.getPluginManager().isPluginEnabled("Essentials");
-        Universal.getLogger().info("Essentials status: {}", essentials);
+        apiHandler.getLogger().info("Essentials status: {}", essentials);
         if(essentials) {
             fernCommands.getServer().getPluginManager().registerEvents(injector.getInstance(NickManager.class), fernCommands);
         }

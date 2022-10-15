@@ -7,10 +7,12 @@ import com.github.fernthedev.fcommands.proxy.data.ConfigValues
 import com.github.fernthedev.fcommands.proxy.data.IPDeleteValues
 import com.github.fernthedev.fcommands.proxy.data.IPSaveValues
 import com.github.fernthedev.fcommands.proxy.data.SeenValues
-import com.github.fernthedev.fernapi.universal.Universal
+import com.github.fernthedev.fernapi.universal.debugLog
+import com.github.fernthedev.fernapi.universal.handlers.MethodInterface
 import java.io.File
 import java.io.IOException
 import java.util.*
+import javax.inject.Inject
 import javax.inject.Singleton
 
 enum class WhichFile(private val value: String) {
@@ -37,7 +39,8 @@ enum class WhichFile(private val value: String) {
 }
 
 @Singleton
-class ProxyFileManager {
+class ProxyFileManager @Inject constructor(
+    private val methodHandler: MethodInterface<*, *>) {
 
     val configManager: Config<ConfigValues>
     val seenConfig: Config<SeenValues>
@@ -61,11 +64,11 @@ class ProxyFileManager {
 
     @Synchronized
     @Throws(IOException::class)
-    fun loadFiles(file: WhichFile, silent: Boolean) {
+    fun loadFiles(file: WhichFile) {
         IllegalAccessError("This is deprecated. Just an error message").printStackTrace()
         //CHECK IF PLUGIN FOLDER EXISTS
-        if (!Universal.getMethods().dataFolder.exists()) {
-            Universal.getMethods().dataFolder.mkdir()
+        if (!methodHandler.dataFolder.exists()) {
+            methodHandler.dataFolder.mkdir()
         }
         val goConfig = file == WhichFile.CONFIG || file == WhichFile.ALL
         //CONFIG
@@ -78,14 +81,14 @@ class ProxyFileManager {
         val goSeen = file == WhichFile.SEEN || file == WhichFile.ALL
         if (goSeen) {
             configLoad(seenConfig)
-            if (!silent) Universal.getMethods().abstractLogger.info("Seen Config was reloaded  $file")
+            debugLog { "Seen Config was reloaded $file" }
         }
 
         //IP
         val goIP = file == WhichFile.IP || file == WhichFile.ALL
         if (goIP) {
             configLoad(ipConfig)
-            if (!silent) Universal.getMethods().abstractLogger.info("Ips was reloaded  $file")
+            debugLog {  "Ips was reloaded $file"}
         }
 
 
@@ -94,19 +97,19 @@ class ProxyFileManager {
         val goIPDelete = file == WhichFile.DELETEIP || file == WhichFile.ALL
         if (goIPDelete) {
             configLoad(deleteIPConfig)
-            if (!silent) Universal.getMethods().abstractLogger.info("deleteIps was reloaded  $file")
+            debugLog { "deleteIps was reloaded $file"}
         }
     }
 
     init {
         try {
-            configManager = GsonConfig(ConfigValues(), File(Universal.getMethods().dataFolder, "config.json"))
+            configManager = GsonConfig(ConfigValues(), File(methodHandler.dataFolder, "config.json"))
             configManager.load()
-            deleteIPConfig = GsonConfig(IPDeleteValues(), File(Universal.getMethods().dataFolder, "ipdelete.json"))
+            deleteIPConfig = GsonConfig(IPDeleteValues(), File(methodHandler.dataFolder, "ipdelete.json"))
             deleteIPConfig.load()
-            ipConfig = GsonConfig(IPSaveValues(), File(Universal.getMethods().dataFolder, "ipdata.json"))
+            ipConfig = GsonConfig(IPSaveValues(), File(methodHandler.dataFolder, "ipdata.json"))
             ipConfig.load()
-            seenConfig = GsonConfig(SeenValues(), File(Universal.getMethods().dataFolder, "seen.json"))
+            seenConfig = GsonConfig(SeenValues(), File(methodHandler.dataFolder, "seen.json"))
             seenConfig.load()
         } catch (e: ConfigLoadException) {
             throw IllegalStateException(e)

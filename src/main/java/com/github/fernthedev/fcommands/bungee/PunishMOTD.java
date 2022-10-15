@@ -6,7 +6,8 @@ import com.github.fernthedev.fcommands.proxy.ProxyFileManager;
 import com.github.fernthedev.fcommands.proxy.data.ConfigValues;
 import com.github.fernthedev.fcommands.proxy.data.IPSaveValues;
 import com.github.fernthedev.fcommands.proxy.data.PunishValues;
-import com.github.fernthedev.fernapi.universal.Universal;
+import com.github.fernthedev.fernapi.universal.handlers.FernAPIPlugin;
+import com.github.fernthedev.fernapi.universal.handlers.IScheduler;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
@@ -19,7 +20,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.scheduler.TaskScheduler;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
@@ -41,6 +41,12 @@ public class PunishMOTD implements Listener {
     @Inject
     private ProxyFileManager proxyFileManager;
 
+    @Inject
+    private FernAPIPlugin plugin;
+
+    @Inject
+    private IScheduler<?, ?> scheduler;
+
     @EventHandler(priority = EventPriority.HIGH)
     public void pingEvent(ProxyPingEvent eping) {
         TaskScheduler taskScheduler = ProxyServer.getInstance().getScheduler();
@@ -58,7 +64,7 @@ public class PunishMOTD implements Listener {
         List<UUID> players = ipConfig.getConfigData().getPlayers(hostAddress);
 
         if (players != null && !players.isEmpty()) {
-            taskScheduler.runAsync((Plugin) Universal.getPlugin(), () -> {
+            scheduler.runAsync(() -> {
 
                 PunishValues punishValues = config.getConfigData().getPunishValues();
 
@@ -120,7 +126,7 @@ public class PunishMOTD implements Listener {
     @EventHandler
     public void onLoginIp(PostLoginEvent event) {
         if (config.getConfigData().getCacheIps()) {
-            Universal.getScheduler().runAsync(() -> {
+            scheduler.runAsync(() -> {
                 String ip = event.getPlayer().getAddress().getHostString().replaceAll("\\.", " ");
    
                 proxyFileManager.configLoad(ipConfig);

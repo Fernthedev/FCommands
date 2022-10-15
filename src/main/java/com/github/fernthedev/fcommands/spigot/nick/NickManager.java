@@ -4,7 +4,7 @@ import com.github.fernthedev.fcommands.spigot.FernCommands;
 import com.github.fernthedev.fcommands.spigot.hooks.HookManager;
 import com.github.fernthedev.fcommands.universal.NickNetworkManager;
 import com.github.fernthedev.fcommands.universal.mysql.nick.NickDatabaseInfo;
-import com.github.fernthedev.fernapi.universal.Universal;
+import com.github.fernthedev.fernapi.universal.APIHandler;
 import com.github.fernthedev.fernapi.universal.mysql.DatabaseListener;
 import com.google.gson.Gson;
 import kotlin.Unit;
@@ -29,20 +29,20 @@ public class NickManager implements Listener {
 
     private FernCommands plugin;
     private HookManager hookManager;
-    private NickNetworkManager nickNetworkManager;
+    private final APIHandler apiHandler;
 
     private static final HashMap<String, String> nicknames = new HashMap<>();
 
     private static final NickDatabaseInfo databaseInfo = new NickDatabaseInfo();
 
     @Inject
-    public NickManager(NickNetworkManager nickNetworkManager, HookManager hookManager, FernCommands plugin) {
+    public NickManager(NickNetworkManager nickNetworkManager, HookManager hookManager, FernCommands plugin, APIHandler apiHandler) {
         this.plugin = plugin;
         this.hookManager = hookManager;
-        this.nickNetworkManager = nickNetworkManager;
+        this.apiHandler = apiHandler;
 
         DatabaseListener databaseManager = plugin.getDatabaseManager();
-        Universal.getLogger().info("Initiating Global Nicks");
+        apiHandler.getLogger().info("Initiating Global Nicks");
 
 
         databaseManager.runOnConnect(() -> {
@@ -57,11 +57,11 @@ public class NickManager implements Listener {
         });
         databaseManager.connect();
 
-        Universal.getScheduler().runAsync(() ->
+        apiHandler.getScheduler().runAsync(() ->
                 runSqlSync().handle((t, throwable) -> {
                     if (throwable != null) {
                         throwable.printStackTrace();
-                    } else Universal.getLogger().info("Finished loading Global Nicks");
+                    } else apiHandler.getLogger().info("Finished loading Global Nicks");
 
                     return t;
                 }));
@@ -73,7 +73,7 @@ public class NickManager implements Listener {
     }
 
     public void handleNick(String uuid, String playerName, String nick) {
-        Universal.debug(() -> nick + " " + uuid);
+        apiHandler.debug(() -> nick + " " + uuid);
         if (nick != null) {
             Bukkit.getScheduler().callSyncMethod(plugin, () -> {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "essentials:nick " + playerName + " " + nick);
@@ -106,7 +106,7 @@ public class NickManager implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         if (hookManager.isEssentials())
-            Universal.getScheduler().runAsync(() -> {
+            apiHandler.getScheduler().runAsync(() -> {
                 try {
                     DatabaseListener databaseManager = plugin.getDatabaseManager();
                     if (databaseManager.isConnected()) {
@@ -120,8 +120,8 @@ public class NickManager implements Listener {
                         if (nickRow != null) {
                             nick = nickRow.getNick();
 
-                            if (Universal.isDebug())
-                                Universal.debug("Found nick {} from uuid {} info: {}", nick, uuid, ChatColor.GOLD + new Gson().toJson(nickRow));
+                            if (apiHandler.getDebug())
+                                apiHandler.debug("Found nick {} from uuid {} info: {}", nick, uuid, ChatColor.GOLD + new Gson().toJson(nickRow));
                         }
 
                         if (nick == null)

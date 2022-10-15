@@ -2,8 +2,8 @@ package com.github.fernthedev.fcommands.spigot.feature
 
 import com.github.fernthedev.config.common.Config
 import com.github.fernthedev.fcommands.spigot.NewSpigotConfig
-import com.github.fernthedev.fernapi.universal.Universal
 import com.github.fernthedev.fernapi.universal.api.IFPlayer
+import com.github.fernthedev.fernapi.universal.handlers.MethodInterface
 import com.github.shynixn.mccoroutine.bukkit.launch
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -24,7 +24,8 @@ import kotlin.random.Random
 @Singleton
 class Heaven @Inject constructor(
     private val config: Config<NewSpigotConfig>,
-    private val plugin: Plugin
+    private val plugin: Plugin,
+    private val methodHandler: MethodInterface<*, *>
 ) : Listener {
 
     private var playersWhoDied = HashMap<Player, Boolean>()
@@ -51,7 +52,7 @@ class Heaven @Inject constructor(
 
             plugin.launch {
                 val heaven = playersWhoDied[player] ?: coroutineScope {
-                    val v = lokiSpeak(Universal.getMethods().convertPlayerObjectToFPlayer(player))
+                    val v = lokiSpeak(methodHandler.convertPlayerObjectToFPlayer(player))
                     playersWhoDied[player] = v
                     delay(1500)
                     v

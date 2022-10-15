@@ -3,23 +3,21 @@ package com.github.fernthedev.fcommands.bungee
 import com.github.fernthedev.fcommands.bungee.modules.BungeeModules
 import com.github.fernthedev.fcommands.proxy.ProxyRegistration
 import com.github.fernthedev.fcommands.universal.PlatformAllRegistration
-import com.google.inject.Guice
+import com.google.inject.Injector
 
 object BungeeRegistration {
 
     @JvmStatic
-    fun bungeeInit() {
-        buildInjector()
-
-        ProxyRegistration.proxyInit()
+    fun bungeeInit(injector: Injector): Injector {
+        return ProxyRegistration.proxyInit(buildInjector(injector))
     }
 
     /**
      * Order:
      * @see PlatformAllRegistration.injector
      */
-    private fun buildInjector() {
-        PlatformAllRegistration.injector = Guice.createInjector(
+    private fun buildInjector(injector: Injector): Injector {
+        return injector.createChildInjector(
             BungeeModules()
         )
     }

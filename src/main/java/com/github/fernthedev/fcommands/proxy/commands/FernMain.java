@@ -6,8 +6,9 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import com.github.fernthedev.fcommands.proxy.ProxyFileManager;
 import com.github.fernthedev.fcommands.proxy.WhichFile;
-import com.github.fernthedev.fernapi.universal.Universal;
+import com.github.fernthedev.fernapi.universal.APIHandler;
 import com.github.fernthedev.fernapi.universal.data.chat.ChatColor;
+import com.github.fernthedev.fernapi.universal.handlers.FernAPIPlugin;
 import com.github.fernthedev.fernapi.universal.util.VersionUtil;
 
 import javax.inject.Inject;
@@ -20,19 +21,25 @@ public class FernMain extends BaseCommand {
     @Inject
     private ProxyFileManager proxyFileManager;
 
+    @Inject
+    private APIHandler apiHandler;
+
+    @Inject
+    private FernAPIPlugin plugin;
+
     @Description("Reload configs")
     @CommandCompletion(CONFIG_LIST)
     @Subcommand("config")
     @CommandPermission("fernc.config.reload")
     public void reloadConfig(CommandIssuer sender, WhichFile config) throws IOException {
         try {
-            proxyFileManager.loadFiles(config, false);
+            proxyFileManager.loadFiles(config);
         }catch (IOException e) {
-            Universal.getMethods().getAbstractLogger().warn("&cUnable to reload files");
+            apiHandler.getMethods().getAbstractLogger().warn("&cUnable to reload files");
             throw e;
         }
 
-        Universal.getMethods().getAbstractLogger().info("Successfully reloaded files");
+        apiHandler.getMethods().getAbstractLogger().info("Successfully reloaded files");
 
 
         sender.sendMessage(ChatColor.GREEN + "Successfully reloaded files");
@@ -43,7 +50,7 @@ public class FernMain extends BaseCommand {
     @HelpCommand
     @Default
     public void onHelp(CommandIssuer sender, CommandHelp help) {
-        sender.sendMessage(ChatColor.BLUE + "Hello there. FernCommands are running. " + Universal.getPlugin().getPluginData().getVersion() + " (FernAPI: " + VersionUtil.getVersionData().getFernapi_version() + ")");
+        sender.sendMessage(ChatColor.BLUE + "Hello there. FernCommands are running. " + plugin.getPluginData().getVersion() + " (FernAPI: " + VersionUtil.getVersionData().getFernapi_version() + ")");
         help.showHelp();
     }
 }

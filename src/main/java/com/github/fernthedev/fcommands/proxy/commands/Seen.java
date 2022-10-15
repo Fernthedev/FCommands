@@ -10,11 +10,10 @@ import com.github.fernthedev.fcommands.proxy.ProxyFileManager;
 import com.github.fernthedev.fcommands.proxy.data.SeenPlayerValue;
 import com.github.fernthedev.fcommands.proxy.data.SeenValues;
 import com.github.fernthedev.fcommands.universal.PluginPreferenceManager;
-import com.github.fernthedev.fernapi.universal.Universal;
+import com.github.fernthedev.fernapi.universal.APIHandler;
 import com.github.fernthedev.fernapi.universal.api.FernCommandIssuer;
 import com.github.fernthedev.fernapi.universal.api.IFPlayer;
 import com.github.fernthedev.fernapi.universal.data.chat.*;
-import com.github.fernthedev.fernapi.universal.util.network.vanish.VanishProxyCheck;
 import com.github.fernthedev.preferences.api.PreferenceManager;
 import com.github.fernthedev.preferences.api.command.PreferenceCommandUtil;
 import com.github.fernthedev.preferences.api.config.PlayerPreferencesSingleton;
@@ -27,7 +26,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @CommandAlias("seen|saw|swho")
 @CommandPermission("fernc.seen")
@@ -44,6 +42,9 @@ public class Seen extends BaseCommand {
     private ProxyFileManager proxyFileManager;
 
     @Inject
+    private APIHandler apiHandler;
+
+    @Inject
     public Seen(ProxyEvents proxyEvents) {
         proxyEvents.getOnLeave().register(this, ifPlayer -> {
             onLeave(ifPlayer);
@@ -52,35 +53,23 @@ public class Seen extends BaseCommand {
     }
 
     private void sendFoundUser(FernCommandIssuer sender, IFPlayer<?> p) {
-        Universal.debug(() -> "Requesting if " + p.getName() + " is vanished");
+        apiHandler.debug(() -> "Requesting if " + p.getName() + " is vanished");
 
         if (sender.hasVanishPermission()) {
             sender.sendMessage(new TextMessage("&aPlayer &2" + p.getName() + " &awas found. Player is currently online on server: " + p.getCurrentServerName()));
             return;
         }
 
+        BaseMessage m = new TextMessage();
 
-        new VanishProxyCheck(p, (player, isVanished, timedOut) -> {
-            boolean doInfo = !(timedOut || isVanished);
+        m.addExtra(new TextMessage("&aPlayer &2"));
+        m.addExtra(p.getName());
+        m.addExtra(new TextMessage("&awas found. Player is currently online on server: "));
+        m.addExtra(new TextMessage(p.getCurrentServerName()));
 
+        m.setClickData(new ClickData(ClickData.Action.SUGGEST_COMMAND, "/" + p.getCurrentServerName()));
 
-            if (!doInfo) {
-                sender.sendMessage(new TextMessage("&cThere was an error trying to find this player. Please try again later"));
-                return;
-            }
-
-            BaseMessage m = new TextMessage();
-
-            m.addExtra(new TextMessage("&aPlayer &2"));
-            m.addExtra(p.getName());
-            m.addExtra(new TextMessage("&awas found. Player is currently online on server: "));
-            m.addExtra(new TextMessage(p.getCurrentServerName()));
-
-            m.setClickData(new ClickData(ClickData.Action.SUGGEST_COMMAND, "/" + p.getCurrentServerName()));
-
-            sender.sendMessage(m);
-        }).setTimeout(10, TimeUnit.SECONDS);
-
+        sender.sendMessage(m);
     }
 
     private void sendLastSeen(FernCommandIssuer sender, IFPlayer<?> p) {
@@ -173,7 +162,7 @@ public class Seen extends BaseCommand {
 
         String server = player.getCurrentServerName();
 
-        Universal.getScheduler().runAsync(() -> {
+        apiHandler.getScheduler().runAsync(() -> {
             proxyFileManager.configLoad(seenConfig);
 
             SeenPlayerValue seenPlayerValue = seenConfig.getConfigData().getPlayers(player.getUuid());

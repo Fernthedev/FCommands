@@ -2,7 +2,7 @@ package com.github.fernthedev.fcommands.universal
 
 import com.github.fernthedev.fcommands.universal.commands.DebugCommand
 import com.github.fernthedev.fcommands.universal.commands.UFernPing
-import com.github.fernthedev.fernapi.universal.Universal
+import com.github.fernthedev.fernapi.universal.APIHandler
 import com.google.inject.Injector
 
 object PlatformAllRegistration {
@@ -34,14 +34,17 @@ object PlatformAllRegistration {
 //        }
 
     @JvmStatic
-    fun commonInit() {
-        Universal.getCommandHandler().enableUnstableAPI("help")
-        Universal.getCommandHandler().registerCommand(UFernPing())
-        Universal.getCommandHandler().registerCommand(DebugCommand())
+    fun commonInit(injector: Injector): Injector {
+        PlatformAllRegistration.injector = injector
+        val apiHandler = injector.getInstance(APIHandler::class.java)
+        apiHandler.commandManager.enableUnstableAPI("help")
+        apiHandler.commandManager.registerCommand(UFernPing())
+        apiHandler.commandManager.registerCommand(DebugCommand())
 
         if (UniversalMysql.getDatabaseManager() != null) {
-            Universal.getMessageHandler().registerMessageHandler(injector.getInstance(NickNetworkManager::class.java))
-            Universal.getLogger().info("Registered fern nicks velocity channels.")
+            apiHandler.messageHandler.registerMessageHandler(injector.getInstance(NickNetworkManager::class.java))
+            apiHandler.logger.info("Registered fern nicks velocity channels.")
         }
+        return PlatformAllRegistration.injector
     }
 }

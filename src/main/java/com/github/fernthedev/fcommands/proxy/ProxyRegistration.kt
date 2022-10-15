@@ -2,24 +2,22 @@ package com.github.fernthedev.fcommands.proxy
 
 import com.github.fernthedev.fcommands.proxy.commands.FernMain
 import com.github.fernthedev.fcommands.proxy.commands.FernNick
-import com.github.fernthedev.fcommands.proxy.commands.GetPlaceholderCommand
 import com.github.fernthedev.fcommands.proxy.commands.Seen
 import com.github.fernthedev.fcommands.proxy.commands.ip.MainIP
 import com.github.fernthedev.fcommands.proxy.commands.ip.ShowAlts
 import com.github.fernthedev.fcommands.proxy.data.ConfigValues
 import com.github.fernthedev.fcommands.universal.*
-import com.github.fernthedev.fcommands.universal.commands.NameHistory
-import com.github.fernthedev.fernapi.universal.Universal
+import com.github.fernthedev.fernapi.universal.APIHandler
+import com.google.inject.Injector
 
 object ProxyRegistration {
-    fun proxyInit() {
-        PlatformAllRegistration.commonInit()
-        val injector = PlatformAllRegistration.injector
+    fun proxyInit(injector: Injector): Injector {
+        PlatformAllRegistration.commonInit(injector)
 
         injector.getInstance(ServerMaintenance::class.java).setupTask()
-
-        Universal.getCommandHandler().registerCommandInjected<FernMain>(injector)
-        if (Universal.getMethods().serverType.isProxy) {
+        val apiHandler = injector.getInstance(APIHandler::class.java)
+        apiHandler.commandManager.registerCommandInjected<FernMain>(injector)
+        if (apiHandler.methods.serverType.isProxy) {
             try {
                 // Use reflection to avoid classpath issues with Spigot
                 val aClass = Class.forName("com.github.fernthedev.preferences.api.PreferenceManager")
@@ -35,29 +33,26 @@ object ProxyRegistration {
         val mainIp = injector.getInstance(MainIP::class.java)
 
         if (configValues.allowIPShow) {
-            Universal.getCommandHandler().registerCommand(mainIp)
+            apiHandler.commandManager.registerCommand(mainIp)
         }
         if (configValues.showAltsCommand) {
-            Universal.getCommandHandler().registerCommandInjected<ShowAlts>(injector)
+            apiHandler.commandManager.registerCommandInjected<ShowAlts>(injector)
         }
         if (configValues.allowIPDelete) {
             mainIp.loadTasks()
         }
-        if (configValues.allowNameHistory) {
-//            getProxy().getPluginManager().registerCommand(this, new NameHistory());
-            Universal.getCommandHandler().registerCommand(NameHistory())
-        }
+
 
 
 
         //SEEN COMMAND
         if (configValues.allowSeenCommand) {
-            Universal.getCommandHandler().registerCommandInjected<Seen>(injector)
+            apiHandler.commandManager.registerCommandInjected<Seen>(injector)
         }
 
         val databaseAuthInfo = configValues.databaseAuthInfo
         if (configValues.databaseConnect) {
-            Universal.getLogger()
+            apiHandler.logger
                 .info("Using database info: database: ${databaseAuthInfo.database} host: ${databaseAuthInfo.urlHost} port: ${databaseAuthInfo.port} user: ${databaseAuthInfo.username}")
             val databaseManager = DBManager(
                 databaseAuthInfo.username,
@@ -69,8 +64,9 @@ object ProxyRegistration {
             UniversalMysql.setDatabaseManager(databaseManager)
         }
         if (configValues.globalNicks && configValues.databaseConnect) {
-            Universal.getCommandHandler().registerCommandInjected<FernNick>(injector)
+            apiHandler.commandManager.registerCommandInjected<FernNick>(injector)
         }
-        Universal.getCommandHandler().registerCommand(GetPlaceholderCommand())
+
+        return injector
     }
 }
