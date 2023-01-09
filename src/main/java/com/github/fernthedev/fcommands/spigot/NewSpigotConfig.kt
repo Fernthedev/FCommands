@@ -27,4 +27,5 @@ data class NewSpigotConfig(
     var heaven: HeavenData = HeavenData(),
     var rideBow: Boolean = true,
     var fernBreakProtection: Boolean = true,
+    var snowball: Boolean = true,
 )
